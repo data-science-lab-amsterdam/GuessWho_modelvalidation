@@ -1,0 +1,41 @@
+
+body {
+    background-color: green;
+    color: white;
+}
+
+input, div.Select, div.Select-input, div.Select-placeholder, div.Select-menu-outer {
+    #background-color: grey;
+    color: black;
+}
+
+#input-character-select {
+    min-width: 200px;
+}
+
+img#output-selected-character {
+    width: 70px;
+    height: 70px;
+}
+
+div.character-board {
+    margin: 4px;
+    padding: 6px;
+    background-color: #7caf7c;
+}
+
+img.character-image {
+    border: 2px solid white;
+    margin: 4px;
+    width: 50px;
+    height: 50px;
+}
+
+div#spacer {
+    min-height: 100px;
+    height: 100px;
+}
+
+._dash-undo-redo {
+    display: none;
+}
