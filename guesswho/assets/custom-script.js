@@ -28,12 +28,15 @@ var clickCharacter = function(player_id, i)
 };
 
 var endGame = function(winner) {
-    document.getElementById('end-modal').innerHTML = (
+    document.getElementById('end-modal-content').innerHTML = (
         winner == 'computer' ?
-        'Too bad. The computer has won the game!' :
-        'Congratulations, you\'ve won the game!'
+        'Too bad. The computer has won the game!<br>' :
+        'Congratulations, you\'ve won the game!<br>'
     );
-    document.getElementById('end-modal').setAttribute('className', 'modal is-active');
+    btn_class = (winner == 'computer' ? 'is-danger' : 'is-succes')
+    document.getElementById('end-modal-button').className = 'button is-medium '+btn_class;
+    document.getElementById('end-modal').className = 'modal is-active';
+    document.getElementById('end-modal-button').addEventListener('click', function() {location.reload()})
 }
 
 var update_computer_board = function()
@@ -73,6 +76,9 @@ var init = function() {
         mutations.forEach(function(mutation) {
             if (mutation.attributeName == "accesskey") {  // note the small k for key!
                 console.log("attributes changed")
+                // close waiting modal
+                document.getElementById('waiting-modal').className = 'modal';
+                
                 update_computer_board()
             }
         });
@@ -81,6 +87,13 @@ var init = function() {
         attributes: true,
         characterData: true
     });
+
+    document.getElementById('input-endturn-button').addEventListener('click', function() {
+        document.getElementById('waiting-modal').className = 'modal is-active';
+    })
+    document.getElementById('waiting-modal-button').addEventListener('click', function() {
+        document.getElementById('waiting-modal').className = 'modal';
+    })
 
 }
 

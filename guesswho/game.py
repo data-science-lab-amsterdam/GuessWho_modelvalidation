@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import json
 import numpy as np
+import pandas as pd
 import logging
 import time
 
@@ -10,9 +11,22 @@ def random_from(my_list):
     return my_list[np.random.randint(0, len(my_list))]
 
 
+def create_probability_list(amount_of_numbers):
+    # Create logarithmic discounter
+    numbers = [x / 100 for x in reversed(np.logspace(0.1, stop=2, num=amount_of_numbers))]
+
+    # Crunch these in a softmax so they sum to 1
+    def softmax(x):
+        """Compute softmax values for each sets of scores in x."""
+        e_x = np.exp(x - np.max(x))
+        return e_x / e_x.sum()
+
+    return softmax(numbers)
+
+
 class GuessWhoGame:
 
-    SLEEP_BETWEEN_TURNS = 2
+    SLEEP_BETWEEN_TURNS = 1
     PROPERTIES = {
         'hair color': ['dark', 'light', 'none'],
         'hair length': ['short', 'long', 'bald'],
@@ -35,8 +49,9 @@ class GuessWhoGame:
         self.computer_player = ComputerPlayer(self, 'computer')
         self.computer_player.set_board(self.board)
 
-        self.human_player.set_character(self.data[np.random.randint(0, len(self.data))])
-        self.whose_turn_is_it = random_from(['human', 'computer'])  # randomly choose start player
+        self.human_player.set_character(random_from(self.data))
+        #self.whose_turn_is_it = random_from(['human', 'computer'])  # randomly choose start player
+        self.whose_turn_is_it = 'human'
 
     def set_computer_character(self, name):
         for x in self.data:
@@ -44,6 +59,14 @@ class GuessWhoGame:
                 self.computer_player.set_character(x)
                 return
         raise ValueError("Invalid name: '{}'".format(name))
+
+    def set_computer_mode(self, mode):
+        if mode == 'best':
+            self.computer_player.MODE = 'best'
+        elif mode == 'random':
+            self.computer_player.MODE = 'random'
+        else:
+            raise ValueError("Invalid mode: {}".format(mode))
 
     def get_characters(self):
         return [{k: v for k, v in x.items() if k in ['id', 'name', 'file']} for x in self.data]
@@ -59,14 +82,15 @@ class GuessWhoGame:
         k, v = question
         logging.info("Answering question if {} is {} for character '{}'".format(k, v, character['name']))
         answer = character['properties'][k] == v
+        logging.info("Answer is {}".format(answer))
         return True, answer
 
-    def answer_guess(self, player_name, character, character_name):
+    def answer_guess(self, player_name, player_character, guessed_character):
         if self.whose_turn_is_it != player_name:
             logging.warning("Wait for your turn!")
             return False, None
 
-        answer = character['name'] == character_name
+        answer = player_character['id'] == guessed_character['id']
         return True, answer
 
     def end_turn(self):
@@ -80,6 +104,9 @@ class GuessWhoGame:
         game_finished, updated_board = self.computer_player.move()
         self.end_turn()
         return game_finished, updated_board
+
+    def end(self):
+        self.__init__(self.data_file)
 
 
 class Board:
@@ -107,7 +134,7 @@ class Board:
 
     @staticmethod
     def get_properties():
-        return GuessWhoGame.PROPERTIES.keys()
+        return list(GuessWhoGame.PROPERTIES.keys())
 
     @staticmethod
     def get_property_options(key):
@@ -134,8 +161,8 @@ class BasePlayer(ABC):
         ok, answer = self.game.answer_question(self.name, self.character, question)
         return ok, answer
 
-    def guess_character(self, character_name):
-        ok, answer = self.game.answer_guess(self.name, self.character, character_name)
+    def guess_character(self, character):
+        ok, answer = self.game.answer_guess(self.name, self.character, character)
         return ok, answer
 
 
@@ -152,15 +179,29 @@ class HumanPlayer(BasePlayer):
 
 class ComputerPlayer(BasePlayer):
 
+    MODE = 'random'
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.is_human = False
         self.board = None
         self.options = None
+        self.dataframe = None
+        self.difficulty = 0.9  # 1 = most difficult, 0 = easiest
+
+    def _set_dataframe(self):
+        newrows = []
+        for row in self.board.data:
+            newrow = {k: v for k, v in row.items() if k in ['id', 'name']}
+            newrow.update(row['properties'])
+            newrow['is_open'] = True
+            newrows.append(newrow)
+        self.dataframe = pd.DataFrame(newrows).set_index('id')
 
     def set_board(self, board):
         self.board = board
         self.options = {c['id']: True for c in self.board}
+        self._set_dataframe()
 
     def move(self):
         logging.info('{} options left'.format(sum(self.options.values())))
@@ -170,6 +211,8 @@ class ComputerPlayer(BasePlayer):
             ok, answer = self.guess_character(character)
             if answer:
                 return True, self.options
+            else:
+                raise ValueError('Only 1 option left, but somehow it isn\'t the right one: {}'.format(character['name']))
 
         question = self._find_question()
         ok, answer = self.ask_question(question)
@@ -180,14 +223,59 @@ class ComputerPlayer(BasePlayer):
         self._update_board(question, answer)
         return False, self.options
 
+    def _evaluate_question(self, key, value):
+        df = self.dataframe[self.dataframe['is_open']]
+        num_options = len(df)
+        num_selection = len(df[df[key] == value])
+        logging.info('Checking {} = {}: {} out of {}'.format(key, value, num_selection, num_options))
+        if num_selection == 0 or num_selection == num_options:
+            return 0
+        c1 = num_selection / float(num_options)
+        c2 = 1 - c1
+        probs = np.array([c1, c2])
+        entropy = np.sum(-np.log2(probs)*probs)
+        return entropy
+
+    def _find_best_question(self):
+        properties = self.board.get_properties()
+        num_properties = len(properties)
+        max_num_options = np.max([len(self.board.get_property_options(p)) for p in properties])
+        scores = np.zeros(shape=(num_properties, max_num_options), dtype='float32')
+        for i, key in enumerate(properties):
+            for j, value in enumerate(self.board.get_property_options(key)):
+                scores[i, j] = self._evaluate_question(key, value)
+
+        logging.info(scores)
+
+        if self.MODE == 'best':
+            # select the best option
+            idx = np.argmax(scores, axis=None)
+        else:
+            # select semi-random option
+            sorted_idx = np.flip(np.argsort(scores, axis=None), axis=0)
+            idx = np.random.choice(len(sorted_idx), 1, p=create_probability_list(len(sorted_idx)))[0]
+
+        i_sel, j_sel = np.unravel_index(idx, scores.shape)
+
+        k = properties[i_sel]
+        v = self.board.get_property_options(k)[j_sel]
+        return k, v
+
     def _find_question(self):
-        k = random_from(self.board.get_properties())
-        v = random_from(self.board.get_property_options(k))
+        try:
+            k, v = self._find_best_question()
+        except Exception as e:
+            logging.error("Finding best option failed. Resorting to random option")
+            k = random_from(self.board.get_properties())
+            v = random_from(self.board.get_property_options(k))
         logging.info('Computer\'s question: {}: {}'.format(k, v))
         return k, v
 
     def _update_board(self, question, answer):
         k, v = question
+        logging.info("Updating board: {}, {}, {}".format(k, v, answer))
         for character in self.board:
             if (character['properties'][k] == v) != answer:
                 self.options[character['id']] = False
+                logging.info('Flipping id {}'.format(character['id']))
+                self.dataframe.loc[character['id'], 'is_open'] = False

@@ -16,7 +16,6 @@ logging.basicConfig(level=logging.INFO)
 
 game = GuessWhoGame(data_file='./guesswho/data/test.json')
 
-
 # characters = [
 #     {'name': os.path.splitext(os.path.basename(filename))[0].split('-')[0],
 #      'file': filename
@@ -68,30 +67,15 @@ def get_answer(question_type, question_value):
 
 
 def guess_character(name):
-    ok, answer = game.human_player.guess_character(name)
+    character = game.board.get_character_by_name(name)
+    ok, answer = game.human_player.guess_character(character)
     return ok, answer
 
-# def render_board_characters(player_id):
-#     elements = []
-#     for c in characters:
-#         elements.append(html.Div(className='xcolumn is-1', children=[
-#             html.A(
-#                 id='a-p{}-character-{}'.format(player_id, c['id']),
-#                 href="javascript:clickCharacter({}, {})".format(player_id, c['id']),
-#                 n_clicks=0,
-#                 children=[
-#                     html.Div(className='has-text-centered', children=[
-#                         html.Img(id='img-p{}-character-{}'.format(player_id, c['id']), className='character-image', src=c['file']),
-#                         html.Figcaption(c['name'])
-#                     ])
-#                 ]
-#             )
-#         ]))
-#     return html.Div(className='xcolumns is-gapless is-multiline', children=elements)
+
 def render_board_characters(player_id):
     elements = []
     for c in characters:
-        elements.append(#html.Div(className='xcolumn is-inline', children=[
+        elements.append(
             html.A(
                 id='a-p{}-character-{}'.format(player_id, c['id']),
                 href="javascript:clickCharacter({}, {})".format(player_id, c['id']),
@@ -103,20 +87,8 @@ def render_board_characters(player_id):
                     ])
                 ]
             )
-        )#]))
+        )
     return elements
-
-
-def bulma_with_label(component, label):
-    """
-    Handle boiler plate stuff for putting a label on a dcc / input field
-    """
-    return html.Div(className='field', children=[
-        html.Label(className='label', children=label),
-        html.Div(className='control', children=[
-            component
-        ])
-    ])
 
 
 def bulma_center(component):
@@ -129,7 +101,17 @@ def bulma_center(component):
 
 def bulma_columns(components):
     return html.Div(className='columns', children=[
-        html.Div(className='column has-text-centered', children=[c]) for c in components
+        html.Div(className='column', children=[c]) for c in components
+    ])
+
+
+def bulma_field(label, component):
+    """
+    Handle boiler plate stuff for putting a label on a dcc / input field
+    """
+    return html.Div(className='field', children=[
+        html.Label(className='label', children=label),
+        html.Div(className='control', children=[component])
     ])
 
 
@@ -154,14 +136,23 @@ app.layout = html.Div(children=[
         ])
     ]),
 
-    # Select computer character
+    # Select computer difficulty and character
     bulma_center(
         html.Div(id='computer-character', className='level', children=[
             html.Div(className='level-left', children=[
                 html.Div(className='level-item', children=[
-                    bulma_with_label(component=dcc.Dropdown(id='input-character-select', options=get_character_options()),
-                                     label='Opponent\'s character'
-                                     )
+                    bulma_field(label="Select computer difficulty",
+                                component=dcc.Dropdown(id='input-computer-mode',
+                                                       options=[{'label': 'Hard', 'value': 'hard'},
+                                                                {'label': 'Easy', 'value': 'easy'}],
+                                                       value='hard'
+                                                       )
+                                )
+                ]),
+                html.Div(className='level-item', children=[
+                    bulma_field(label='Select computer character',
+                                component=dcc.Dropdown(id='input-character-select', options=get_character_options())
+                                )
                 ]),
                 html.Div(className='level-item', children=[
                     html.Img(id='output-selected-character', src=default_image)
@@ -170,6 +161,7 @@ app.layout = html.Div(children=[
             html.Div(className='level-right', children=[])
         ])
     ),
+    dcc.Input(id='output-dummy-1', type='hidden', className='is-hidden', value=''),
 
     # Human player board
     html.Div(className='character-board panel', children=[
@@ -182,15 +174,22 @@ app.layout = html.Div(children=[
                     html.H4('Select your next question:')
                 ]),
                 html.Div(className='column', children=[
-                    html.Span('Category:'),
-                    dcc.Dropdown(id='input-question-type', options=get_question_type_options(), multi=False)
+                    bulma_field(label='Category:',
+                                component=dcc.Dropdown(id='input-question-type',
+                                                       options=get_question_type_options())
+                                )
                 ]),
                 html.Div(className='column', children=[
-                    html.Span('Options:'),
-                    dcc.Dropdown(id='input-question-value', options=[], multi=False)
+                    bulma_field('Options:', dcc.Dropdown(id='input-question-value', options=[], multi=False))
                 ]),
                 html.Div(className='column', children=[
-                    html.Button(id='input-question-button', className='button is-info is-large', n_clicks=0, children='Ask!')
+                    bulma_field(label=[html.Span(className='is-invisible', children='.')],
+                                component=html.Button(id='input-question-button',
+                                                      className='button is-info is-inverted',
+                                                      n_clicks=0,
+                                                      children='Ask!'
+                                                      )
+                                )
                 ])
             ]),
             html.Div(className='columns', children=[
@@ -198,17 +197,25 @@ app.layout = html.Div(children=[
                     html.H4('...or make a guess!')
                 ]),
                 html.Div(className='column is-half', children=[
-                    html.Span('Pick a character:'),
-                    dcc.Dropdown(id='input-character-guess', options=get_character_options(), multi=False)
+                    bulma_field(label='Pick a character',
+                                component=dcc.Dropdown(id='input-character-guess',
+                                                       options=get_character_options(),
+                                                       multi=False
+                                                       )
+                                )
                 ]),
                 html.Div(className='column', children=[
-                    html.Button(id='input-guess-button', className='button is-info is-large', n_clicks=0, children='Guess!')
+                    bulma_field(label=[html.Span(className='is-invisible', children='.')],
+                                component=html.Button(id='input-guess-button',
+                                                      className='button is-info is-inverted',
+                                                      n_clicks=0,
+                                                      children='Guess!'
+                                                      )
+                                )
                 ])
             ]),
             html.Div([
-                bulma_with_label(component=html.Div(id='output-question-answer', children=''),
-                                 label='Answer'
-                                 ),
+                bulma_field(label='Answer', component=html.Div(id='output-question-answer', children='')),
                 html.Div(id='output-guess-answer', children='')
             ])
         ])
@@ -221,7 +228,27 @@ app.layout = html.Div(children=[
 
     html.Div(className='modal', id='end-modal', children=[
         html.Div(className='modal-background'),
-        html.Div(className='modal-content', id='end-modal-content', children=''),
+        html.Div(className='modal-content', children=[
+            html.Div(className='box', children=[
+                html.Div(className='content', children=[
+                    html.Div(id='end-modal-content', children=''),
+                    html.Button(id='end-modal-button', className='button is-large', n_clicks=0, children='End game')
+                ])
+            ])
+        ]),
+        html.Button(className="modal-close is-large")
+    ]),
+
+    html.Div(className='modal', id='waiting-modal', children=[
+        html.Div(className='modal-background'),
+        html.Div(className='modal-content', children=[
+            html.Div(className='box', children=[
+                html.Div(className='content', children=[
+                    html.Div(id='end-modal-content', children='Waiting for computer to move...'),
+                    html.Button(id='waiting-modal-button', className='button is-medium is-info', n_clicks=0, children='OK')
+                ])
+            ])
+        ])
     ]),
 
     html.Div(' ', id='spacer')
@@ -232,6 +259,20 @@ app.layout = html.Div(children=[
 def serve_images(path):
     root_dir = os.getcwd()
     return flask.send_from_directory(os.path.join(root_dir, 'images'), path)
+
+
+@app.callback(
+    Output('output-dummy-1', 'value'),
+    [Input(component_id='input-computer-mode', component_property='value')]
+)
+def set_difficulty(difficulty):
+    if difficulty == 'hard':
+        game.set_computer_mode('best')
+    elif difficulty == 'easy':
+        game.set_computer_mode('random')
+    else:
+        pass
+    return ''
 
 
 @app.callback(
@@ -313,6 +354,25 @@ def end_human_turn(_):
     else:
         logging.info(updated_computer_board)
         return json.dumps(updated_computer_board)
+
+
+@app.callback(
+    Output('waiting-modal', 'className'),
+    [Input('output-hidden-state', 'accessKey')]
+)
+def close_waiting_modal(_):
+    return 'modal'
+
+
+@app.callback(
+    Output('end-modal', 'className'),
+    [Input('end-modal-button', 'n_clicks')]
+)
+def end_game(_):
+    if _ > 0:
+        game.end()
+
+    return 'modal'
 
 
 if __name__ == '__main__':
