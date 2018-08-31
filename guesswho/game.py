@@ -210,7 +210,12 @@ class ComputerPlayer(BasePlayer):
             character = self.board.get_character_by_id(id)
             ok, answer = self.guess_character(character)
             if answer:
-                return True, self.options
+                computer_move = {
+                    'question': ['character', character],
+                    'answer': answer,
+                    'board': self.options
+                }
+                return True, computer_move
             else:
                 raise ValueError('Only 1 option left, but somehow it isn\'t the right one: {}'.format(character['name']))
 
@@ -221,7 +226,12 @@ class ComputerPlayer(BasePlayer):
             raise ValueError("Could not answer question")
 
         self._update_board(question, answer)
-        return False, self.options
+        computer_move = {
+            'question': list(question),
+            'answer': answer,
+            'board': self.options
+        }
+        return False, computer_move
 
     def _evaluate_question(self, key, value):
         df = self.dataframe[self.dataframe['is_open']]

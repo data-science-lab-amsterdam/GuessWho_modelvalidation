@@ -45,6 +45,15 @@ def create_test_data(out_file):
 
 #create_test_data('./guesswho/data/test.json')
 
+def reset_game():
+    global game
+    global characters
+    global properties
+    
+    game = GuessWhoGame(data_file='./guesswho/data/test.json')
+    characters = game.get_characters()
+    questions = game.PROPERTIES
+
 def get_character_options():
     return [{'label': c['name'], 'value': c['name']} for c in game.board.get_characters()]
 
@@ -100,7 +109,7 @@ def bulma_center(component):
 
 
 def bulma_columns(components):
-    return html.Div(className='columns', children=[
+    return html.Div(className='columns has-text-centered', children=[
         html.Div(className='column', children=[c]) for c in components
     ])
 
@@ -244,7 +253,7 @@ app.layout = html.Div(children=[
         html.Div(className='modal-content', children=[
             html.Div(className='box', children=[
                 html.Div(className='content', children=[
-                    html.Div(id='end-modal-content', children='Waiting for computer to move...'),
+                    html.Div(id='waiting-modal-content', children='Waiting for computer to move...'),
                     html.Button(id='waiting-modal-button', className='button is-medium is-info', n_clicks=0, children='OK')
                 ])
             ])
@@ -282,6 +291,8 @@ def set_difficulty(difficulty):
 def select_character(name):
     if name is None:
         return default_image
+
+    logging.info("Setting computer character to {}".format(name))
     for c in characters:
         if c['name'] == name:
             game.set_computer_character(name)
@@ -334,6 +345,7 @@ def make_guess(_, character_name):
     if not ok:
         return ''
     if answer:
+        reset_game()
         return 'Correct! You\'ve won the game!'
     else:
         return 'Too bad. That\'s not correct'
@@ -347,13 +359,12 @@ def end_human_turn(_):
     if _ is None or _ == 0:
         return initial_hidden_state
     game.end_turn()
-    game_finished, updated_computer_board = game.do_computer_move()
+    game_finished, computer_move = game.do_computer_move()
     if game_finished:
         logging.info("Computer has won!")
-        return 'FINISHED'
-    else:
-        logging.info(updated_computer_board)
-        return json.dumps(updated_computer_board)
+        reset_game()
+    logging.info(computer_move)
+    return json.dumps(computer_move)
 
 
 @app.callback(

@@ -59,6 +59,10 @@ img.character-image {
     height: 50px;
 }
 
+div.modal button {
+    margin-top: 20px;
+}
+
 div#output-answer {
     font-size: 200%;
 }
