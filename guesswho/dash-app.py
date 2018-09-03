@@ -224,9 +224,9 @@ app.layout = html.Div(children=[
                 ])
             ]),
             html.Div([
-                bulma_field(label='Answer', component=html.Div(id='output-question-answer', children='')),
-                html.Div(id='output-guess-answer', children='')
-            ])
+                bulma_field(label='Answer', component=html.Div(id='output-question-answer', children=''))
+            ]),
+            html.Div(id='output-hidden-guess', accessKey="")
         ])
     ]),
 
@@ -255,6 +255,18 @@ app.layout = html.Div(children=[
                 html.Div(className='content', children=[
                     html.Div(id='waiting-modal-content', children='Waiting for computer to move...'),
                     html.Button(id='waiting-modal-button', className='button is-medium is-info', n_clicks=0, children='OK')
+                ])
+            ])
+        ])
+    ]),
+
+    html.Div(className='modal', id='feedback-modal', children=[
+        html.Div(className='modal-background'),
+        html.Div(className='modal-content', children=[
+            html.Div(className='box', children=[
+                html.Div(className='content', children=[
+                    html.Div(id='feedback-modal-content', children='Waiting for computer to move...'),
+                    html.Button(id='feedback-modal-button', className='button is-medium is-info', n_clicks=0, children='OK')
                 ])
             ])
         ])
@@ -292,6 +304,7 @@ def select_character(name):
     if name is None:
         return default_image
 
+    reset_game()
     logging.info("Setting computer character to {}".format(name))
     for c in characters:
         if c['name'] == name:
@@ -333,7 +346,7 @@ def ask_question(_, question_type, question_value):
 
 
 @app.callback(
-    Output('output-guess-answer', 'children'),
+    Output('output-hidden-guess', 'accessKey'),
     [Input('input-guess-button', 'n_clicks')],
     [State('input-character-guess', 'value')],
 )
@@ -346,9 +359,9 @@ def make_guess(_, character_name):
         return ''
     if answer:
         reset_game()
-        return 'Correct! You\'ve won the game!'
+        return '1'
     else:
-        return 'Too bad. That\'s not correct'
+        return '0'
 
 
 @app.callback(

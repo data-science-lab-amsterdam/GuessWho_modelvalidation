@@ -102,6 +102,7 @@ var showModal = function(id, options)
     } else {
         var callback = function() { closeModal(id) };
     }
+    qs('#'+id+'-button').className = ['button', (options['style'] || "is-info")].join(' ');
     qs('#'+id+'-button').addEventListener('click', callback);
 
     document.getElementById(id).className = 'modal is-active'
@@ -140,19 +141,56 @@ var handleComputerMove = function()
     }
 }
 
+var handleGuessAnswer = function()
+{
+    var state = qs("#output-hidden-guess").getAttribute('accessKey');
+    if (state == '1') {
+        showModal('feedback-modal', {
+            'text': 'Congratulations! You have guessed your character and won the game!',
+            'style': 'is-success',
+            'button-text': 'OK',
+            'callback': function() {
+                location.reload();
+            }
+        });
+    } else {
+        showModal('feedback-modal', {
+            'text': 'Too bad! That\'s incorrect...',
+            'style': 'is-danger',
+            'button-text': 'OK',
+            'callback': function() {
+                closeModal('feedback-modal');
+            }
+        });
+    }
+}
+
 var init = function() {
 
-    var observer = new MutationObserver(function(mutations) {
+    var mo1 = new MutationObserver(function(mutations) {
         console.log('mutation observed!')
         mutations.forEach(function(mutation) {
             if (mutation.attributeName == "accesskey") {  // note the small k for key!
-                console.log("attributes changed");
+                console.log("computer board changed");
                 handleComputerMove();
             }
         });
     });
-    observer.observe(qs("#output-hidden-state"), {
-    //observer.observe(document.getElementById('output-hidden-state'), {
+    mo1.observe(qs("#output-hidden-state"), {
+        attributes: true,
+        characterData: true
+    });
+
+    var mo2 = new MutationObserver(function(mutations) {
+        console.log('mutation observed!')
+        mutations.forEach(function(mutation) {
+            if (mutation.attributeName == "accesskey") {  // note the small k for key!
+                console.log("guess answer changed");
+                handleGuessAnswer();
+            }
+        });
+    });
+    mo2.observe(qs("#output-hidden-guess"), {
         attributes: true,
         characterData: true
     });
@@ -166,8 +204,6 @@ var init = function() {
     qs('#waiting-modal-button').addEventListener('click', function() {
         closeModal('waiting-modal');
     })
-
-    qs('#outout-guess-answer').addEventListener('change')
 
 }
 
