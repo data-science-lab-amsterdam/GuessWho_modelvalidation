@@ -7,11 +7,17 @@ import time
 
 
 def random_from(my_list):
+    """
+    Select a random element from a list
+    """
     my_list = list(my_list)
     return my_list[np.random.randint(0, len(my_list))]
 
 
 def create_probability_list(amount_of_numbers):
+    """
+    An exponentially decreasing (sort of) list of probabilities
+    """
     # Create logarithmic discounter
     numbers = [x / 100 for x in reversed(np.logspace(0.1, stop=2, num=amount_of_numbers))]
 
@@ -25,7 +31,9 @@ def create_probability_list(amount_of_numbers):
 
 
 class GuessWhoGame:
-
+    """
+    Game controller class
+    """
     SLEEP_BETWEEN_TURNS = 1
     PROPERTIES = {
         'hair color': ['dark', 'light', 'none'],
@@ -52,8 +60,12 @@ class GuessWhoGame:
         self.human_player.set_character(random_from(self.data))
         #self.whose_turn_is_it = random_from(['human', 'computer'])  # randomly choose start player
         self.whose_turn_is_it = 'human'
+        self.player_has_made_a_move = False
 
     def set_computer_character(self, name):
+        """
+        Sets the computer player's character for a game
+        """
         for x in self.data:
             if x['name'] == name:
                 self.computer_player.set_character(x)
@@ -61,6 +73,9 @@ class GuessWhoGame:
         raise ValueError("Invalid name: '{}'".format(name))
 
     def set_computer_mode(self, mode):
+        """
+        Set difficulty level, either 'best' or 'random'
+        """
         if mode == 'best':
             self.computer_player.MODE = 'best'
         elif mode == 'random':
@@ -69,49 +84,85 @@ class GuessWhoGame:
             raise ValueError("Invalid mode: {}".format(mode))
 
     def get_characters(self):
+        """
+        Get the character items, without the properties
+        """
         return [{k: v for k, v in x.items() if k in ['id', 'name', 'file']} for x in self.data]
 
     def get_question_types(self):
-        return self.PROPERTIES.keys()
+        """
+        A list of categories to choose from for a question
+        """
+        return list(self.PROPERTIES.keys())
 
     def answer_question(self, player_name, character, question):
+        """
+        Given a player's question, give the answer
+        """
         if self.whose_turn_is_it != player_name:
             logging.warning("Wait for your turn!")
+            return False, None
+
+        if self.player_has_made_a_move:
+            logging.warning("Player has already made a move and needs to end its turn")
             return False, None
 
         k, v = question
         logging.info("Answering question if {} is {} for character '{}'".format(k, v, character['name']))
         answer = character['properties'][k] == v
         logging.info("Answer is {}".format(answer))
+        self.player_has_made_a_move = True
         return True, answer
 
     def answer_guess(self, player_name, player_character, guessed_character):
+        """
+        Check if a player has guessed the right character
+        """
         if self.whose_turn_is_it != player_name:
             logging.warning("Wait for your turn!")
             return False, None
 
+        if self.player_has_made_a_move:
+            logging.warning("Player has already made a move and needs to end its turn")
+            return False, None
+
         answer = player_character['id'] == guessed_character['id']
+        self.player_has_made_a_move = True
         return True, answer
 
     def end_turn(self):
+        """
+        Switch turn to other player
+        """
         if self.whose_turn_is_it == 'human':
             self.whose_turn_is_it = 'computer'
         else:
             self.whose_turn_is_it = 'human'
 
+        self.player_has_made_a_move = False
+
     def do_computer_move(self):
+        """
+        Let the computer player make a move
+        """
         time.sleep(self.SLEEP_BETWEEN_TURNS)
         game_finished, updated_board = self.computer_player.move()
         self.end_turn()
         return game_finished, updated_board
 
     def end(self):
+        """
+        Reloads the game instance
+        """
         self.__init__(self.data_file)
 
 
 class Board:
 
     def __init__(self, data):
+        """
+        Representation of the board with characters, based on an input data file
+        """
         self.data = data
 
     def __iter__(self):
@@ -121,12 +172,18 @@ class Board:
         return self.data
 
     def get_character_by_name(self, name):
+        """
+        Lookup character object by name
+        """
         for character in self.data:
             if character['name'] == name:
                 return character
         raise ValueError("Character '{}' not found".format(name))
 
     def get_character_by_id(self, id):
+        """
+        Lookup character object by id
+        """
         for character in self.data:
             if character['id'] == id:
                 return character
@@ -138,12 +195,18 @@ class Board:
 
     @staticmethod
     def get_property_options(key):
+        """
+        Get possible values for a certain property
+        """
         return GuessWhoGame.PROPERTIES[key]
 
 
 class BasePlayer(ABC):
 
     def __init__(self, game, name):
+        """
+        Abstract player class, to be extended by either HumanPlayer or ComputerPlayer   
+        """
         super().__init__()
         self.game = game
         self.name = name
@@ -158,10 +221,16 @@ class BasePlayer(ABC):
         pass
 
     def ask_question(self, question):
+        """
+        Dispatch a question to the game class to get an answer
+        """
         ok, answer = self.game.answer_question(self.name, self.character, question)
         return ok, answer
 
     def guess_character(self, character):
+        """
+        Dispatch character guess to the game classs to get an answer
+        """
         ok, answer = self.game.answer_guess(self.name, self.character, character)
         return ok, answer
 
@@ -169,6 +238,9 @@ class BasePlayer(ABC):
 class HumanPlayer(BasePlayer):
 
     def __init__(self, *args, **kwargs):
+        """
+        Extension of BasePlayer class, for the human player
+        """
         super().__init__(*args, **kwargs)
         self.is_human = True
 
@@ -182,6 +254,9 @@ class ComputerPlayer(BasePlayer):
     MODE = 'best'
 
     def __init__(self, *args, **kwargs):
+        """
+        Extension of BasePlayer class, for the computer player
+        """
         super().__init__(*args, **kwargs)
         self.is_human = False
         self.board = None
@@ -190,6 +265,9 @@ class ComputerPlayer(BasePlayer):
         self.difficulty = 0.9  # 1 = most difficult, 0 = easiest
 
     def _set_dataframe(self):
+        """
+        Transform the properties dict into a dataframe for finding a question
+        """
         newrows = []
         for row in self.board.data:
             newrow = {k: v for k, v in row.items() if k in ['id', 'name']}
@@ -199,11 +277,17 @@ class ComputerPlayer(BasePlayer):
         self.dataframe = pd.DataFrame(newrows).set_index('id')
 
     def set_board(self, board):
+        """
+        Assign a board to the player
+        """
         self.board = board
         self.options = {c['id']: True for c in self.board}
         self._set_dataframe()
 
     def move(self):
+        """
+        Let the computer player choose and execute a move
+        """
         logging.info('{} options left'.format(sum(self.options.values())))
         if sum(self.options.values()) == 1:
             id = [k for k, v in self.options.items() if v][0]
@@ -234,6 +318,9 @@ class ComputerPlayer(BasePlayer):
         return False, computer_move
 
     def _evaluate_question(self, key, value):
+        """
+        Assess how good a question is
+        """
         df = self.dataframe[self.dataframe['is_open']]
         num_options = len(df)
         num_selection = len(df[df[key] == value])
@@ -247,6 +334,9 @@ class ComputerPlayer(BasePlayer):
         return entropy
 
     def _find_best_question(self):
+        """
+        Determine which question to ask
+        """
         properties = self.board.get_properties()
         num_properties = len(properties)
         max_num_options = np.max([len(self.board.get_property_options(p)) for p in properties])
@@ -283,6 +373,9 @@ class ComputerPlayer(BasePlayer):
         return k, v
 
     def _update_board(self, question, answer):
+        """
+        Update the board representation (i.e. flip characters) based on the received answer
+        """
         k, v = question
         logging.info("Updating board: {}, {}, {}".format(k, v, answer))
         for character in self.board:

@@ -45,10 +45,9 @@ var endGame = function(winner)
     document.getElementById('end-modal-button').addEventListener('click', function() {location.reload()})
 }
 
+// determine which characters should be flipped
 var updateComputerBoard = function(board)
 {
-    // flip the selected characters
-    //var num_flipped_computer = 0;
     var to_be_flipped = [];
     var elm;
     for (var id in board) {
@@ -69,6 +68,7 @@ var updateComputerBoard = function(board)
 
 }
 
+// animate the flipping of characters
 var flipCharacters = function(ids, idx)
 {
     var id = ids[idx];
@@ -113,6 +113,7 @@ var closeModal = function(id)
     document.getElementById(id).className = 'modal'
 }
 
+// show what the computer has done
 var handleComputerMove = function()
 {
     // read json data
@@ -120,20 +121,22 @@ var handleComputerMove = function()
     var state = JSON.parse(decodeURIComponent(raw_state));
 
     if (state['question'][0] == 'character' && state['answer'] == true) {
+        // computer has won
         endGame('computer');
     } else {
         // close waiting modal
         closeModal('waiting-modal');
 
-        // show computer move
+        // show computer's question and answer
         var text = [
-            'Computer\'s question: "Is '+state['question'][0]+' '+state['question'][1]+'?"',
-            'Answer: "'+(state['answer'] ? 'Yes' : 'No')+'"'
+            '<strong>Computer\'s question:</strong> <em>"Is '+state['question'][0]+' '+state['question'][1]+'?"</em>',
+            '<strong>Answer:</strong> <em>"'+(state['answer'] ? 'Yes' : 'No')+'</em>"'
         ].join('<br>');
         showModal('waiting-modal', {
             'text': text,
             'button-text': 'OK',
             'callback': function() {
+                // after button press: flip character's on the computer's board
                 closeModal('waiting-modal');
                 updateComputerBoard(state['board']);
             }
@@ -141,6 +144,7 @@ var handleComputerMove = function()
     }
 }
 
+// show feedback after a guess
 var handleGuessAnswer = function()
 {
     var state = qs("#output-hidden-guess").getAttribute('accessKey');
@@ -153,7 +157,7 @@ var handleGuessAnswer = function()
                 location.reload();
             }
         });
-    } else {
+    } else if (state == '0') {
         showModal('feedback-modal', {
             'text': 'Too bad! That\'s incorrect...',
             'style': 'is-danger',
@@ -162,9 +166,19 @@ var handleGuessAnswer = function()
                 closeModal('feedback-modal');
             }
         });
+    } else if (state == '9') {
+        showModal('feedback-modal', {
+            'text': 'You\'ve already made a move. Click "End turn".',
+            'style': 'is-warning',
+            'button-text': 'Sorry. I won\'t try to cheat again',
+            'callback': function() {
+                closeModal('feedback-modal');
+            }
+        });
     }
 }
 
+// set some event listeners
 var init = function() {
 
     var mo1 = new MutationObserver(function(mutations) {

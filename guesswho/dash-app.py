@@ -54,6 +54,7 @@ def reset_game():
     characters = game.get_characters()
     questions = game.PROPERTIES
 
+
 def get_character_options():
     return [{'label': c['name'], 'value': c['name']} for c in game.board.get_characters()]
 
@@ -124,9 +125,9 @@ def bulma_field(label, component):
     ])
 
 
-def bulma_modal(id, content='', btn_text='OK', btn_class='is-info', active=False):
+def bulma_modal(id, content=None, btn_text='OK', btn_class='is-info', active=False):
     """
-    Create a modal (overlay) in bulma dformat
+    Create a modal (overlay) in bulma format
     """
     return html.Div(className='modal {}'.format('is-active' if active else ''), id='{}-modal'.format(id), children=[
         html.Div(className='modal-background'),
@@ -269,33 +270,14 @@ app.layout = html.Div(children=[
         html.Button(className="modal-close is-large")
     ]),
 
-    html.Div(className='modal', id='waiting-modal', children=[
-        html.Div(className='modal-background'),
-        html.Div(className='modal-content', children=[
-            html.Div(className='box', children=[
-                html.Div(className='content', children=[
-                    html.Div(id='waiting-modal-content', children='Waiting for computer to move...'),
-                    html.Button(id='waiting-modal-button', className='button is-medium is-info', n_clicks=0, children='OK')
-                ])
-            ])
-        ])
-    ]),
+    bulma_modal(id='waiting', content='Waiting for computer to move...'),
 
-    html.Div(className='modal', id='feedback-modal', children=[
-        html.Div(className='modal-background'),
-        html.Div(className='modal-content', children=[
-            html.Div(className='box', children=[
-                html.Div(className='content', children=[
-                    html.Div(id='feedback-modal-content', children='Waiting for computer to move...'),
-                    html.Button(id='feedback-modal-button', className='button is-medium is-info', n_clicks=0, children='OK')
-                ])
-            ])
-        ])
-    ]),
+    bulma_modal(id='feedback'),
 
     bulma_modal(id='intro',
                 content=[
                     html.Img(className='header-logo', src='./images/guesswho_logo.png'),
+                    html.Br(), html.Br(),
                     html.Div("Welcome! To play a game:"),
                     html.Ul(children=[
                         html.Li("Start a new game"),
@@ -304,7 +286,7 @@ app.layout = html.Div(children=[
                         html.Li("Click 'End turn' and wait for the computer to move")
                     ])
                 ],
-                btn_text='Start!',
+                btn_text='Start game!',
                 btn_class='is-success',
                 active=True
                 ),
@@ -315,16 +297,21 @@ app.layout = html.Div(children=[
 
 @app.server.route('/images/<path:path>')
 def serve_images(path):
+    """
+    Pass local images to the web server
+    """
     root_dir = os.getcwd()
     return flask.send_from_directory(os.path.join(root_dir, 'images'), path)
 
 
 @app.callback(
-    #Output('output-dummy-1', 'value'),
     Output('intro-modal', 'className'),
     [Input('intro-modal-button', 'n_clicks')]
 )
 def start_game(_):
+    """
+    Start a new game with the modal button
+    """
     if _ is None or _ == 0:
         return 'modal is-active'
     reset_game()
@@ -336,6 +323,9 @@ def start_game(_):
     [Input(component_id='input-computer-mode', component_property='value')]
 )
 def set_difficulty(difficulty):
+    """
+    Set difficulty level with pulldown
+    """
     if difficulty == 'hard':
         game.set_computer_mode('best')
     elif difficulty == 'easy':
@@ -350,6 +340,9 @@ def set_difficulty(difficulty):
     [Input(component_id='input-character-select', component_property='value')]
 )
 def select_character(name):
+    """
+    Select computer character using pulldown
+    """
     if name is None:
         return default_image
 
@@ -366,6 +359,9 @@ def select_character(name):
     [Input(component_id='input-question-type', component_property='value')]
 )
 def set_question_options(question_type):
+    """
+    Fill pulldown options for questions
+    """
     if question_type is None:
         return []
     return get_question_value_options(question_type)
@@ -378,17 +374,20 @@ def set_question_options(question_type):
      State('input-question-value', 'value')],
 )
 def ask_question(_, question_type, question_value):
+    """
+    Ask a quesiton using the information in the pulldowns
+    """
     if _ is None or _ == 0:
         return ''
     logging.info('{}: {}'.format(question_type, question_value))
     ok, answer = get_answer(question_type, question_value)
     if not ok:
-        return ''
+        return 'You\'ve already made a move. Click "End turn".'
     else:
         return '{}, {} {} {}'.format(
             'Yes' if answer else 'No',
             question_type,
-            'is' if answer else 'isn\'t',
+            'is' if answer else 'is not',
             question_value
         )
 
@@ -399,13 +398,16 @@ def ask_question(_, question_type, question_value):
     [State('input-character-guess', 'value')],
 )
 def make_guess(_, character_name):
+    """
+    Guess character selected in pulldown
+    """
     if _ is None or _ == 0:
         return ''
     logging.info('Player is guessing for character {}'.format(character_name))
     ok, answer = guess_character(character_name)
     if not ok:
         logging.info("No answer received for guess")
-        return ''
+        return '9'
     if answer:
         logging.info("Guess is correct! Player has won!")
         return '1'
@@ -419,6 +421,9 @@ def make_guess(_, character_name):
     [Input('input-endturn-button', 'n_clicks')]
 )
 def end_human_turn(_):
+    """
+    Let computer player make a move and return updated game state to the front-end
+    """
     if _ is None or _ == 0:
         return initial_hidden_state
     game.end_turn()
@@ -435,6 +440,9 @@ def end_human_turn(_):
     [Input('output-hidden-state', 'accessKey')]
 )
 def close_waiting_modal(_):
+    """
+    Close the waiting modal once the game state has been updated (computer's turn is finished)
+    """
     return 'modal'
 
 
@@ -443,6 +451,9 @@ def close_waiting_modal(_):
     [Input('end-modal-button', 'n_clicks')]
 )
 def end_game(_):
+    """
+    Doesn't really do much since the front-end will reload and the game will be re-initialized
+    """
     if _ > 0:
         game.end()
 
