@@ -179,7 +179,7 @@ class HumanPlayer(BasePlayer):
 
 class ComputerPlayer(BasePlayer):
 
-    MODE = 'random'
+    MODE = 'best'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -265,6 +265,7 @@ class ComputerPlayer(BasePlayer):
             sorted_idx = np.flip(np.argsort(scores, axis=None), axis=0)
             idx = np.random.choice(len(sorted_idx), 1, p=create_probability_list(len(sorted_idx)))[0]
 
+        logging.info("Best option: {}".format(idx))
         i_sel, j_sel = np.unravel_index(idx, scores.shape)
 
         k = properties[i_sel]

@@ -48,7 +48,7 @@ def create_test_data(out_file):
 def reset_game():
     global game
     global characters
-    global properties
+    global questions
     
     game = GuessWhoGame(data_file='./guesswho/data/test.json')
     characters = game.get_characters()
@@ -124,9 +124,29 @@ def bulma_field(label, component):
     ])
 
 
-app = dash.Dash()
+def bulma_modal(id, content='', btn_text='OK', btn_class='is-info', active=False):
+    """
+    Create a modal (overlay) in bulma dformat
+    """
+    return html.Div(className='modal {}'.format('is-active' if active else ''), id='{}-modal'.format(id), children=[
+        html.Div(className='modal-background'),
+        html.Div(className='modal-content', children=[
+            html.Div(className='box', children=[
+                html.Div(className='content', children=[
+                    html.Div(id='{}-modal-content'.format(id), children=content),
+                    html.Button(id='{}-modal-button'.format(id),
+                                className='button is-medium {}'.format(btn_class),
+                                n_clicks=0,
+                                children=btn_text
+                                )
+                ])
+            ])
+        ])
+    ])
 
-app.css.append_css({'external_url': 'https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css'})
+
+app = dash.Dash()
+#app.css.append_css({'external_url': 'https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css'})
 
 app.layout = html.Div(children=[
     bulma_columns([
@@ -171,6 +191,7 @@ app.layout = html.Div(children=[
         ])
     ),
     dcc.Input(id='output-dummy-1', type='hidden', className='is-hidden', value=''),
+    dcc.Input(id='output-dummy-2', type='hidden', className='is-hidden', value=''),
 
     # Human player board
     html.Div(className='character-board panel', children=[
@@ -272,6 +293,22 @@ app.layout = html.Div(children=[
         ])
     ]),
 
+    bulma_modal(id='intro',
+                content=[
+                    html.Img(className='header-logo', src='./images/guesswho_logo.png'),
+                    html.Div("Welcome! To play a game:"),
+                    html.Ul(children=[
+                        html.Li("Start a new game"),
+                        html.Li("Select a character for your opponent"),
+                        html.Li("You're allowed to start, so go ahead and ask a question, or make a guess if you're feeling confident"),
+                        html.Li("Click 'End turn' and wait for the computer to move")
+                    ])
+                ],
+                btn_text='Start!',
+                btn_class='is-success',
+                active=True
+                ),
+
     html.Div(' ', id='spacer')
 ])
 
@@ -283,7 +320,19 @@ def serve_images(path):
 
 
 @app.callback(
-    Output('output-dummy-1', 'value'),
+    #Output('output-dummy-1', 'value'),
+    Output('intro-modal', 'className'),
+    [Input('intro-modal-button', 'n_clicks')]
+)
+def start_game(_):
+    if _ is None or _ == 0:
+        return 'modal is-active'
+    reset_game()
+    return 'modal'
+
+
+@app.callback(
+    Output('output-dummy-2', 'value'),
     [Input(component_id='input-computer-mode', component_property='value')]
 )
 def set_difficulty(difficulty):
@@ -304,7 +353,6 @@ def select_character(name):
     if name is None:
         return default_image
 
-    reset_game()
     logging.info("Setting computer character to {}".format(name))
     for c in characters:
         if c['name'] == name:
@@ -356,11 +404,13 @@ def make_guess(_, character_name):
     logging.info('Player is guessing for character {}'.format(character_name))
     ok, answer = guess_character(character_name)
     if not ok:
+        logging.info("No answer received for guess")
         return ''
     if answer:
-        reset_game()
+        logging.info("Guess is correct! Player has won!")
         return '1'
     else:
+        logging.info("Guess is incorrect")
         return '0'
 
 

@@ -127,7 +127,7 @@ var handleComputerMove = function()
 
         // show computer move
         var text = [
-            'Computers question: "Is '+state['question'][0]+' '+state['question'][1]+'?"',
+            'Computer\'s question: "Is '+state['question'][0]+' '+state['question'][1]+'?"',
             'Answer: "'+(state['answer'] ? 'Yes' : 'No')+'"'
         ].join('<br>');
         showModal('waiting-modal', {
