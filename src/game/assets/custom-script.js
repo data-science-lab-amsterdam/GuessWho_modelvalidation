@@ -51,7 +51,7 @@ var clickCharacter = function(player_id, i)
     }
 
     // flip the clicked image
-    document.getElementById('img-p2-character-'+i).src = './images/closed_red.png';
+    document.getElementById('img-p2-character-'+i).src = '/images/game/closed_red.png';
 
     // update the progress bar
     num_flipped_player += 1;
@@ -105,7 +105,7 @@ var flipCharacters = function(ids, idx)
     var id = ids[idx];
     console.log('flipping character: '+ids[idx]);
     // flip character
-    document.getElementById('img-p1-character-'+id).src = '/images/closed_blue.png';
+    document.getElementById('img-p1-character-'+id).src = '/images/game/closed_blue.png';
 
     // update the progress bar
     num_flipped_computer += 1;

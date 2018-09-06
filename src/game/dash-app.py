@@ -9,14 +9,14 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 import flask
+from guesswho import *
 
-from game import *
 
 logging.basicConfig(level=logging.INFO)
 
-LANG = 'nl'
+LANG = 'en'
 
-game = GuessWhoGame(data_file='./guesswho/data/test.json')
+game = GuessWhoGame(data_file='./data/test.json')
 
 # characters = [
 #     {'name': os.path.splitext(os.path.basename(filename))[0].split('-')[0],
@@ -26,7 +26,7 @@ game = GuessWhoGame(data_file='./guesswho/data/test.json')
 characters = game.get_characters()
 questions = game.PROPERTIES
 initial_hidden_state = json.dumps({c['id']: True for c in characters})
-default_image = './images/unknown.jpg'
+default_image = '/images/game/unknown.jpg'
 
 text_en = {
     'hair color': 'Hair color',
@@ -87,7 +87,7 @@ def reset_game():
     global characters
     global questions
     
-    game = GuessWhoGame(data_file='./guesswho/data/test.json')
+    game = GuessWhoGame(data_file='./data/test.json')
     characters = game.get_characters()
     questions = game.PROPERTIES
 
@@ -184,13 +184,12 @@ def bulma_modal(id, content=None, btn_text='OK', btn_class='is-info', active=Fal
 
 
 app = dash.Dash()
-#app.css.append_css({'external_url': 'https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css'})
 
 app.layout = html.Div(children=[
     bulma_columns([
-        html.Img(className='header-logo', src='./images/{}'.format(GAME_LOGO)),
+        html.Img(className='header-logo', src='/images/game/{}'.format(GAME_LOGO)),
         '',
-        html.Img(className='header-logo', src='./images/Logo_datasciencelab.png')
+        html.Img(className='header-logo', src='/images/game/Logo_datasciencelab.png')
     ]),
 
     # Computer player board
@@ -313,7 +312,7 @@ app.layout = html.Div(children=[
 
     bulma_modal(id='intro',
                 content=[
-                    html.Img(className='header-logo', src='./images/guesswho_logo.png'),
+                    html.Img(className='header-logo', src='/images/game/guesswho_logo.png'),
                     html.Br(), html.Br(),
                     html.Div("Welcome! To play a game:"),
                     html.Ul(children=[
@@ -338,7 +337,7 @@ def serve_images(path):
     Pass local images to the web server
     """
     root_dir = os.getcwd()
-    return flask.send_from_directory(os.path.join(root_dir, 'images'), path)
+    return flask.send_from_directory(os.path.join(root_dir, 'data/images'), path)
 
 
 @app.callback(
