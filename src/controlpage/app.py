@@ -10,8 +10,9 @@ import json
 
 from expo_models.Complete_Model import main_model
 
+
 image_directory = '/Users/demi/Documents/dsl/friday_funday/expo2018/dashapp/images/'
-list_of_images = [os.path.basename(x) for x in glob.glob('{}*.jpeg'.format(image_directory)) if 'dummy' not in x]
+list_of_images = [os.path.basename(x) for x in glob.glob(os.path.join(image_directory, '*.jpeg')) if 'dummy' not in x]
 static_image_route = '/static/'
 
 feature_keys = ['hair_colour', 'hair_type', 'hair_length', 'gender', 'hat', 'glasses', 'necklace', 'facial_hair']
@@ -19,7 +20,6 @@ feature_keys = ['hair_colour', 'hair_type', 'hair_length', 'gender', 'hat', 'gla
 current_image_object = None
 
 
-##########################################################################
 def bulma_field(label, component):
     """
     Handle boiler plate stuff for putting a label on a dcc / input field
@@ -29,6 +29,7 @@ def bulma_field(label, component):
         html.Div(className='control', children=[component])
     ])
 
+
 def bulma_dropdown(id, options):
     return html.Div(id=id, className='select', children=[
         html.Select([
@@ -36,7 +37,7 @@ def bulma_dropdown(id, options):
         ])
     ])
 
-##########################################################################
+
 app = dash.Dash()
 
 app.layout = html.Div([
@@ -114,28 +115,37 @@ app.layout = html.Div([
     html.Div(id='output-save', children='')
 ])
 
-@app.callback(
-    dash.dependencies.Output('image', 'src'),
-    [dash.dependencies.Input('image-dropdown', 'value')])
-def update_image_src(value):
-    if value is None or value == '':
-        return '/assets/dummy.png'
-    return os.path.join('/images', value)
 
-# Add a static image route that serves images from images dir
 @app.server.route('/images/<path:path>')
 def serve_images(path):
     """
     Pass local images to the web server
     """
     root_dir = os.getcwd()
-    return flask.send_from_directory(os.path.join(root_dir, 'images'), path) 
+    return flask.send_from_directory(os.path.join(root_dir, 'images'), path)
+
+
+@app.callback(
+    dash.dependencies.Output('image', 'src'),
+    [dash.dependencies.Input('image-dropdown', 'value')]
+)
+def update_image_src(value):
+    """
+    Show the selected image
+    """
+    if value is None or value == '':
+        return '/assets/dummy.png'
+    return os.path.join('/images', value)
 
 
 @app.callback(
     dash.dependencies.Output('data-container', 'accessKey'),
-    [dash.dependencies.Input('image-dropdown', 'value')])
+    [dash.dependencies.Input('image-dropdown', 'value')]
+)
 def choose_image(dropdown_value):
+    """
+    Use selected image to score model on and return estimated features
+    """
     if dropdown_value is None or dropdown_value == '':
         return ''
     print('You\'ve selected "{}"'.format(dropdown_value))
@@ -154,18 +164,19 @@ def choose_image(dropdown_value):
     current_image_object = data
     print('model done calculating')
     # return data
-    return json.dumps(current_image_object) # working
+    return json.dumps(current_image_object)
 
 
 @app.callback(
     dash.dependencies.Output('output-save', 'children'),
-    [dash.dependencies.Input('data-container2', 'accessKey')])
+    [dash.dependencies.Input('data-container2', 'accessKey')]
+)
 def save_correct_data(json_string):
-    data_output = json.loads(json_string)
-
-        # filename wordt: ./checked/9.jpg.json
+    features = json.loads(json_string)
+    data_output = current_image_object
+    data_output['features'] = features
     try:
-        filepath = './checked/{}.json'.format(data_output)
+        filepath = './data/checked/{}.json'.format(data_output)
         print("Saving data to {}".format(filepath))
         with open(filepath, 'w') as f:
             json.dump(data_output, f)
@@ -174,81 +185,6 @@ def save_correct_data(json_string):
         print(e)
         return False
 
-# @app.callback(
-#     Output('input-hair_colour', 'value'),
-#     [Input('hidden-hair_colour', 'value')]
-# )
-# def handle_hair_colour(value):
-#     print('Haarkleur:', value)
-#     return value
-
-# def create_callback_func(key):
-#     func_name = 'handle_input_{}'.format(key)
-#     @app.callback(
-#         Output('input-{}'.format(key), 'value'),
-#         [Input('hidden-{}'.format(key), 'value')]
-#     )
-#     def just_return_value(value):
-#         print('key', key)
-#         print('value', value)
-#         return value
-
-#     myfunc = just_return_value
-#     myfunc.__name__ = func_name
-#     return myfunc
-
-# for key in feature_keys:
-#     globals()['handle_input_{}'.format(key)] = create_callback_func(key)
-
-
-# @app.callback(
-#     dash.dependencies.Output('output-save', 'children'),
-#     [dash.dependencies.Input('save-button', 'n_clicks')],
-#     [dash.dependencies.State('input-hair_colour', 'value'),
-#      dash.dependencies.State('input-hair_type', 'value'),
-#      dash.dependencies.State('input-gender', 'value'),
-#      dash.dependencies.State('input-glasses', 'value'),
-#      dash.dependencies.State('input-hair_length', 'value'),
-#      dash.dependencies.State('input-facial_hair','value'),
-#      dash.dependencies.State('input-hat','value'),
-#      dash.dependencies.State('input-necklace', 'value')]
-# )
-# def save_data(n_clicks, f_hc, f_ht, f_ge, f_gl, f_hl, f_fh, f_h, f_n):
-#     if n_clicks is None or n_clicks == 0:
-#         return ''
-#     # return '''{},{},{},{},{},{},{},{}'''.format(n_clicks, f_hc, f_ht, f_ge, f_gl, f_hl, f_fh, f_h, f_n)
-#     def save_data_to_file(data):
-#         # filename wordt: ./checked/9.jpg.json
-#         try:
-#             d = data['name']
-            
-#             filepath = './checked/{}.json'.format(d)
-#             print("Saving data to {}".format(filepath))
-#             with open(filepath, 'w') as f:
-#                 json.dump(data, f)
-#             return True
-#         except Exception as e:
-#             print(e)
-#             return False
-
-#     data = current_image_object
-#     print('data', data)
-#     data['features'] = {
-#         'hair_color': f_hc,
-#         'hair_type': f_ht,
-#         'gender': f_ge,
-#         'glasses': f_gl,
-#         'hair_length': f_hl,
-#         'facial_hair': f_fh,
-#         'hat': f_h,
-#         'necklace': f_n
-#         }
-
-#     result = save_data_to_file(data)
-#     if result:
-#         return 'Saved successfully!'
-#     else:
-#         return 'Failed'
 
 if __name__ == '__main__':
     app.run_server(debug=True)
