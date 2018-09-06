@@ -14,6 +14,8 @@ from game import *
 
 logging.basicConfig(level=logging.INFO)
 
+LANG = 'nl'
+
 game = GuessWhoGame(data_file='./guesswho/data/test.json')
 
 # characters = [
@@ -25,6 +27,41 @@ characters = game.get_characters()
 questions = game.PROPERTIES
 initial_hidden_state = json.dumps({c['id']: True for c in characters})
 default_image = './images/unknown.jpg'
+
+text_en = {
+    'hair color': 'Hair color',
+    'dark': 'dark', 'light': 'light', 'none': 'none',
+    'hair length': 'Hair length',
+    'short': 'short', 'long': 'long', 'bald': 'bald',
+    'hair type': 'Hair type',
+    'curly': 'curly', 'straight': 'straight',
+    'glasses': 'Glasses',
+    'yes': 'yes', 'no': 'no',
+    'head wear': 'Head wear',
+    'hat': 'hat', 'cap': 'cap',
+    'sex': 'Sez',
+    'male': 'male', 'female': 'female',
+    'facial hair': 'Facial hair',
+    'beard': 'beard', 'moustache': 'moustache',
+    'accessories': 'Accessories',
+    'chain': 'chain', 'necklace': 'necklace',
+    'player_computer': 'Computer',
+    'player_human': 'You',
+    'select_difficulty': 'Select computer difficulty',
+    'level_hard': 'Hard',
+    'level_easy': 'Easy',
+    'select_character': 'Select computer character',
+    'select_question': 'Select your next question:'
+}
+
+text_nl = {}
+
+if LANG == 'nl':
+    TEXT = text_nl
+    GAME_LOGO = 'wiebenik.png'
+else:
+    TEXT = text_en
+    GAME_LOGO = 'guesswho_logo.png'
 
 
 def create_test_data(out_file):
@@ -60,11 +97,11 @@ def get_character_options():
 
 
 def get_question_type_options():
-    return [{'label': x, 'value': x} for x in questions.keys()]
+    return [{'label': TEXT[x], 'value': x} for x in questions.keys()]
 
 
 def get_question_value_options(question_type):
-    return [{'label': x, 'value': x} for x in questions[question_type]]
+    return [{'label': TEXT[x], 'value': x} for x in questions[question_type]]
 
 
 def get_answer(question_type, question_value):
@@ -151,14 +188,14 @@ app = dash.Dash()
 
 app.layout = html.Div(children=[
     bulma_columns([
-        html.Img(className='header-logo', src='./images/guesswho_logo.png'),
+        html.Img(className='header-logo', src='./images/{}'.format(GAME_LOGO)),
         '',
         html.Img(className='header-logo', src='./images/Logo_datasciencelab.png')
     ]),
 
     # Computer player board
     html.Div(className='character-board panel', children=[
-        html.P(className="panel-heading", children="Computer"),
+        html.P(className="panel-heading", children=TEXT['player_computer']),
         html.Div(className="panel-block is-block", children=[
             html.Div(id="computer-board", children=render_board_characters(player_id=1)),
             html.Progress(id='computer-progress', className="progress is-info", value="0", max="100"),
@@ -171,16 +208,16 @@ app.layout = html.Div(children=[
         html.Div(id='computer-character', className='level', children=[
             html.Div(className='level-left', children=[
                 html.Div(className='level-item', children=[
-                    bulma_field(label="Select computer difficulty",
+                    bulma_field(label=TEXT['select_difficulty'],
                                 component=dcc.Dropdown(id='input-computer-mode',
-                                                       options=[{'label': 'Hard', 'value': 'hard'},
-                                                                {'label': 'Easy', 'value': 'easy'}],
+                                                       options=[{'label': TEXT['level_hard'], 'value': 'hard'},
+                                                                {'label': TEXT['level_easy'], 'value': 'easy'}],
                                                        value='hard'
                                                        )
                                 )
                 ]),
                 html.Div(className='level-item', children=[
-                    bulma_field(label='Select computer character',
+                    bulma_field(label=TEXT['select_character'],
                                 component=dcc.Dropdown(id='input-character-select', options=get_character_options())
                                 )
                 ]),
@@ -196,13 +233,13 @@ app.layout = html.Div(children=[
 
     # Human player board
     html.Div(className='character-board panel', children=[
-        html.P(id="player-name", className="panel-heading", children="Player"),
+        html.P(id="player-name", className="panel-heading", children=TEXT['player_human']),
         html.Div(className="panel-block is-block", children=[
             html.Div(id='player-board', children=render_board_characters(player_id=2)),
             html.Progress(id='player-progress', className="progress is-danger", value="0", max="100"),
             html.Div(className='columns', children=[
                 html.Div(className='column', children=[
-                    html.H4('Select your next question:')
+                    html.H4(TEXT['select_question'])
                 ]),
                 html.Div(className='column', children=[
                     bulma_field(label='Category:',

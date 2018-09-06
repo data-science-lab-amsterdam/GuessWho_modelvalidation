@@ -9,6 +9,37 @@ var MutationObserver = window.MutationObserver || window.WebKitMutationObserver 
 var qs = function(x) { return document.querySelector(x) };
 var qsa = function(x) { return document.querySelectorAll(x) };
 
+var text_en = {
+    'computer_has_won': 'Too bad. The computer has guessed its character correctly and won the game!',
+    'player_has_won': 'Congratulations! You have guessed your character and won the game!',
+    'computer_question': 'Computer\'s question',
+    'answer': 'Answer',
+    'yes': 'Yes',
+    'no': 'No',
+    'ok': 'OK',
+    'guess_incorrect': 'Too bad! That\'s incorrect...',
+    'already_moved': 'You\'ve already made a move. Click "End turn".',
+    'button_already_moved': 'Sorry. I won\'t try to cheat again',
+    'waiting': 'Waiting for computer to move...'
+}
+
+var text_nl = {
+    'computer_has_won': 'Helaas... De computer heeft zijn karakter geraden en het spel gewonnen!',
+    'player_has_won': 'Gefeliciteerd! Je hebt het juiste karakter geraden en het spel gewonnen!',
+    'computer_question': 'Vraag van de computer',
+    'answer': 'Antwoord',
+    'yes': 'Ja',
+    'no': 'Nee',
+    'ok': 'OK',
+    'guess_incorrect': 'Helaas, je hebt verkeerd geraden...',
+    'already_moved': 'Je hebt al een vraag gesteld. Klik op "Einde beurt"',
+    'button_already_moved': 'Sorry. Ik zal niet meer vals proberen te spelen...',
+    'waiting': 'Wachten op de beurt van de computer...'
+}
+
+
+var text = text_nl;
+
 var clickCharacter = function(player_id, i)
 {
     if (player_id == 1) {
@@ -36,8 +67,8 @@ var endGame = function(winner)
     closeModal('waiting-modal');
     document.getElementById('end-modal-content').innerHTML = (
         winner == 'computer' ?
-        'Too bad. The computer has guessed its character correctly and won the game!' :
-        'Congratulations, you\'ve won the game!'
+        text['computer_has_won'] :
+        text['player_has_won']
     );
     btn_class = (winner == 'computer' ? 'is-danger' : 'is-succes')
     document.getElementById('end-modal-button').className = 'button is-medium '+btn_class;
@@ -128,13 +159,13 @@ var handleComputerMove = function()
         closeModal('waiting-modal');
 
         // show computer's question and answer
-        var text = [
-            '<strong>Computer\'s question:</strong> <em>"Is '+state['question'][0]+' '+state['question'][1]+'?"</em>',
-            '<strong>Answer:</strong> <em>"'+(state['answer'] ? 'Yes' : 'No')+'</em>"'
+        var modal_text = [
+            '<strong>'+text['computer_question']+':</strong> <em>"Is '+state['question'][0]+' '+state['question'][1]+'?"</em>',
+            '<strong>'+text['answer']+':</strong> <em>"'+(state['answer'] ? text['yes'] : text['no'])+'</em>"'
         ].join('<br>');
         showModal('waiting-modal', {
-            'text': text,
-            'button-text': 'OK',
+            'text': modal_text,
+            'button-text': text['ok'],
             'callback': function() {
                 // after button press: flip character's on the computer's board
                 closeModal('waiting-modal');
@@ -150,27 +181,27 @@ var handleGuessAnswer = function()
     var state = qs("#output-hidden-guess").getAttribute('accessKey');
     if (state == '1') {
         showModal('feedback-modal', {
-            'text': 'Congratulations! You have guessed your character and won the game!',
+            'text': text['player_has_won'],
             'style': 'is-success',
-            'button-text': 'OK',
+            'button-text': text['ok'],
             'callback': function() {
                 location.reload();
             }
         });
     } else if (state == '0') {
         showModal('feedback-modal', {
-            'text': 'Too bad! That\'s incorrect...',
+            'text': text['guess_incorrect'],
             'style': 'is-danger',
-            'button-text': 'OK',
+            'button-text': text['ok'],
             'callback': function() {
                 closeModal('feedback-modal');
             }
         });
     } else if (state == '9') {
         showModal('feedback-modal', {
-            'text': 'You\'ve already made a move. Click "End turn".',
+            'text': text['already_moved'],
             'style': 'is-warning',
-            'button-text': 'Sorry. I won\'t try to cheat again',
+            'button-text': text['button_already_moved'],
             'callback': function() {
                 closeModal('feedback-modal');
             }
@@ -211,8 +242,8 @@ var init = function() {
 
     qs('#input-endturn-button').addEventListener('click', function() {
         showModal('waiting-modal', {
-            'text': 'Waiting for computer to move...',
-            'button-text': 'OK'
+            'text': text['waiting'],
+            'button-text': text['ok']
         });
     })
     qs('#waiting-modal-button').addEventListener('click', function() {
