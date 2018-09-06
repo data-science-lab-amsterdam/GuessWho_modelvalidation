@@ -10,6 +10,22 @@ var qs = function(x) { return document.querySelector(x) };
 var qsa = function(x) { return document.querySelectorAll(x) };
 
 var text_en = {
+    'hair color': 'hair color',
+    'dark': 'dark', 'light': 'light', 'none': 'none',
+    'hair length': 'hair length',
+    'short': 'short', 'long': 'long', 'bald': 'bald',
+    'hair type': 'hair type',
+    'curly': 'curly', 'straight': 'straight',
+    'glasses': 'glasses',
+    'yes': 'yes', 'no': 'no',
+    'head wear': 'Head wear',
+    'hat': 'hat', 'cap': 'cap',
+    'sex': 'gender',
+    'male': 'man', 'female': 'woman',
+    'facial hair': 'facial hair',
+    'beard': 'beard', 'moustache': 'moustache',
+    'accessories': 'accessories',
+    'chain': 'chain', 'necklace': 'necklace',
     'computer_has_won': 'Too bad. The computer has guessed its character correctly and won the game!',
     'player_has_won': 'Congratulations! You have guessed your character and won the game!',
     'computer_question': 'Computer\'s question',
@@ -24,6 +40,22 @@ var text_en = {
 }
 
 var text_nl = {
+    'hair color': 'haarkleur',
+    'dark': 'donker', 'light': 'licht', 'none': 'geen',
+    'hair length': 'haarlengte',
+    'short': 'kort', 'long': 'lang', 'bald': 'kaal',
+    'hair type': 'haartype',
+    'curly': 'krullend', 'straight': 'steil',
+    'glasses': 'bril',
+    'yes': 'ja', 'no': 'nee',
+    'head wear': 'hoofddeksel',
+    'hat': 'hoed', 'cap': 'pet',
+    'sex': 'geslacht',
+    'male': 'man', 'female': 'vrouw',
+    'facial hair': 'gezichtsbeharing',
+    'beard': 'baard', 'moustache': 'snor',
+    'accessories': 'accessoires',
+    'chain': 'kettinkje', 'necklace': 'ketting',
     'computer_has_won': 'Helaas... De computer heeft zijn karakter geraden en het spel gewonnen!',
     'player_has_won': 'Gefeliciteerd! Je hebt het juiste karakter geraden en het spel gewonnen!',
     'computer_question': 'Vraag van de computer',
@@ -160,7 +192,7 @@ var handleComputerMove = function()
 
         // show computer's question and answer
         var modal_text = [
-            '<strong>'+text['computer_question']+':</strong> <em>"Is '+state['question'][0]+' '+state['question'][1]+'?"</em>',
+            '<strong>'+text['computer_question']+':</strong> <em>"Is '+text[state['question'][0]]+' '+text[state['question'][1]]+'?"</em>',
             '<strong>'+text['answer']+':</strong> <em>"'+(state['answer'] ? text['yes'] : text['no'])+'</em>"'
         ].join('<br>');
         showModal('waiting-modal', {

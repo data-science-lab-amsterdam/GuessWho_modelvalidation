@@ -61,11 +61,16 @@ class GuessWhoGame:
         #self.whose_turn_is_it = random_from(['human', 'computer'])  # randomly choose start player
         self.whose_turn_is_it = 'human'
         self.player_has_made_a_move = False
+        self.game_has_started = False
 
     def set_computer_character(self, name):
         """
         Sets the computer player's character for a game
         """
+        if self.game_has_started:
+            logging.warning("Game has already started. Cannot change computer character")
+            return
+
         for x in self.data:
             if x['name'] == name:
                 self.computer_player.set_character(x)
@@ -99,6 +104,8 @@ class GuessWhoGame:
         """
         Given a player's question, give the answer
         """
+        self.game_has_started = True
+
         if self.whose_turn_is_it != player_name:
             logging.warning("Wait for your turn!")
             return False, None

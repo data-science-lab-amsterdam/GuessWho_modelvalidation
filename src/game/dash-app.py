@@ -14,7 +14,7 @@ from guesswho import *
 
 logging.basicConfig(level=logging.INFO)
 
-LANG = 'en'
+LANG = 'nl'
 
 game = GuessWhoGame(data_file='./data/test.json')
 
@@ -28,7 +28,7 @@ questions = game.PROPERTIES
 initial_hidden_state = json.dumps({c['id']: True for c in characters})
 default_image = '/images/game/unknown.jpg'
 
-text_en = {
+TEXT_EN = {
     'hair color': 'Hair color',
     'dark': 'dark', 'light': 'light', 'none': 'none',
     'hair length': 'Hair length',
@@ -39,8 +39,8 @@ text_en = {
     'yes': 'yes', 'no': 'no',
     'head wear': 'Head wear',
     'hat': 'hat', 'cap': 'cap',
-    'sex': 'Sez',
-    'male': 'male', 'female': 'female',
+    'sex': 'Gender',
+    'male': 'man', 'female': 'woman',
     'facial hair': 'Facial hair',
     'beard': 'beard', 'moustache': 'moustache',
     'accessories': 'Accessories',
@@ -51,16 +51,73 @@ text_en = {
     'level_hard': 'Hard',
     'level_easy': 'Easy',
     'select_character': 'Select computer character',
-    'select_question': 'Select your next question:'
+    'select_question': 'Select your next question:',
+    'category': 'Category:',
+    'options': 'Options:',
+    'ask': 'Ask!',
+    'guess': 'Guess!',
+    'answer': 'Answer',
+    'end_turn': 'End turn',
+    'end_game': 'End game',
+    'waiting_for_computer': 'Waiting for computer to move...',
+    'welcome_header': 'Welcome! To play a game:',
+    'welcome_bullet1': 'Start a new game',
+    'welcome_bullet2': 'Select a character that the computer needs to guess',
+    'welcome_bullet3': 'Select a question, or make a guess if you\'re feeling confident',
+    'welcome_bullet4': 'Click "End turn" and wait for the computer to move',
+    'start_game': 'Start the game!',
+    'already_moved': 'You\'ve already made a move. Click "End turn".',
+    'not': 'not'
 }
 
-text_nl = {}
+TEXT_NL = {
+    'hair color': 'Haarkleur',
+    'dark': 'donker', 'light': 'licht', 'none': 'geen',
+    'hair length': 'Haarlengte',
+    'short': 'kort', 'long': 'lang', 'bald': 'kaal',
+    'hair type': 'Haartype',
+    'curly': 'krullend', 'straight': 'steil',
+    'glasses': 'Bril',
+    'yes': 'ja', 'no': 'nee',
+    'head wear': 'Hoofddeksel',
+    'hat': 'hoed', 'cap': 'pet',
+    'sex': 'Geslacht',
+    'male': 'man', 'female': 'vrouw',
+    'facial hair': 'Gezichtsbeharing',
+    'beard': 'baard', 'moustache': 'snor',
+    'accessories': 'Accessoires',
+    'chain': 'kettinkje', 'necklace': 'ketting',
+    'player_computer': 'Computer',
+    'player_human': 'Jij',
+    'select_difficulty': 'Selecteer moeilijkheidsgraad',
+    'level_hard': 'Moeilijk',
+    'level_easy': 'Gemakkelijk',
+    'select_character': 'Selecteer karakter voor de computer',
+    'select_question': 'Kies je volgende vraag:',
+    'category': 'Categorie:',
+    'options': 'Opties:',
+    'ask': 'Vraag!',
+    'guess': 'Raad!',
+    'answer': 'Antwoord',
+    'end_turn': 'Einde beurt',
+    'end_game': 'Spel afsluiten',
+    'waiting_for_computer': 'Wachten op de beurt van de computer...',
+    'welcome_header': 'Welkom! Het spel werkt als volgt:',
+    'welcome_bullet1': 'Start het spel',
+    'welcome_bullet2': 'Kies eerst een karakter voor de comouter om te raden',
+    'welcome_bullet3': 'Selecteer een vraag, of doe een gokje. Flip zelf de afgevallen karakters weg',
+    'welcome_bullet4': 'Klik op "Einde beurt" en wacht op de beurt van de computer',
+    'start_game': 'Start het spel!',
+    'already_moved': 'Je hebt al een vraag gesteld. Klik op "Einde beurt".',
+    'not': 'niet'
+}
 
 if LANG == 'nl':
-    TEXT = text_nl
-    GAME_LOGO = 'wiebenik.png'
+    TEXT = TEXT_NL
+    GAME_LOGO = 'wie-is-het-logo.jpg'
+    #GAME_LOGO = 'wie-is-het-logo-2.png'
 else:
-    TEXT = text_en
+    TEXT = TEXT_EN
     GAME_LOGO = 'guesswho_logo.png'
 
 
@@ -241,20 +298,20 @@ app.layout = html.Div(children=[
                     html.H4(TEXT['select_question'])
                 ]),
                 html.Div(className='column', children=[
-                    bulma_field(label='Category:',
+                    bulma_field(label=TEXT['category'],
                                 component=dcc.Dropdown(id='input-question-type',
                                                        options=get_question_type_options())
                                 )
                 ]),
                 html.Div(className='column', children=[
-                    bulma_field('Options:', dcc.Dropdown(id='input-question-value', options=[], multi=False))
+                    bulma_field(TEXT['options'], dcc.Dropdown(id='input-question-value', options=[], multi=False))
                 ]),
                 html.Div(className='column', children=[
                     bulma_field(label=[html.Span(className='is-invisible', children='.')],
                                 component=html.Button(id='input-question-button',
                                                       className='button is-info is-inverted',
                                                       n_clicks=0,
-                                                      children='Ask!'
+                                                      children=TEXT['ask']
                                                       )
                                 )
                 ])
@@ -276,13 +333,13 @@ app.layout = html.Div(children=[
                                 component=html.Button(id='input-guess-button',
                                                       className='button is-info is-inverted',
                                                       n_clicks=0,
-                                                      children='Guess!'
+                                                      children=TEXT['guess']
                                                       )
                                 )
                 ])
             ]),
             html.Div([
-                bulma_field(label='Answer', component=html.Div(id='output-question-answer', children=''))
+                bulma_field(label=TEXT['answer'], component=html.Div(id='output-question-answer', children=''))
             ]),
             html.Div(id='output-hidden-guess', accessKey="")
         ])
@@ -290,7 +347,7 @@ app.layout = html.Div(children=[
 
     # Bottom part
     bulma_center(
-        html.Button(id='input-endturn-button', className='button is-info is-large', n_clicks=0, children='End turn')
+        html.Button(id='input-endturn-button', className='button is-info is-large', n_clicks=0, children=TEXT['end_turn'])
     ),
 
     html.Div(className='modal', id='end-modal', children=[
@@ -299,30 +356,30 @@ app.layout = html.Div(children=[
             html.Div(className='box', children=[
                 html.Div(className='content', children=[
                     html.Div(id='end-modal-content', children=''),
-                    html.Button(id='end-modal-button', className='button is-large', n_clicks=0, children='End game')
+                    html.Button(id='end-modal-button', className='button is-large', n_clicks=0, children=TEXT['end_game'])
                 ])
             ])
         ]),
         html.Button(className="modal-close is-large")
     ]),
 
-    bulma_modal(id='waiting', content='Waiting for computer to move...'),
+    bulma_modal(id='waiting', content=TEXT['waiting_for_computer']),
 
     bulma_modal(id='feedback'),
 
     bulma_modal(id='intro',
                 content=[
-                    html.Img(className='header-logo', src='/images/game/guesswho_logo.png'),
+                    html.Img(className='header-logo', src='/images/game/{}'.format(GAME_LOGO)),
                     html.Br(), html.Br(),
-                    html.Div("Welcome! To play a game:"),
+                    html.Div(TEXT['welcome_header']),
                     html.Ul(children=[
-                        html.Li("Start a new game"),
-                        html.Li("Select a character for your opponent"),
-                        html.Li("You're allowed to start, so go ahead and ask a question, or make a guess if you're feeling confident"),
-                        html.Li("Click 'End turn' and wait for the computer to move")
+                        html.Li(TEXT['welcome_bullet1']),
+                        html.Li(TEXT['welcome_bullet2']),
+                        html.Li(TEXT['welcome_bullet3']),
+                        html.Li(TEXT['welcome_bullet4'])
                     ])
                 ],
-                btn_text='Start game!',
+                btn_text=TEXT['start_game'],
                 btn_class='is-success',
                 active=True
                 ),
@@ -418,13 +475,13 @@ def ask_question(_, question_type, question_value):
     logging.info('{}: {}'.format(question_type, question_value))
     ok, answer = get_answer(question_type, question_value)
     if not ok:
-        return 'You\'ve already made a move. Click "End turn".'
+        return TEXT['already_moved']
     else:
         return '{}, {} {} {}'.format(
-            'Yes' if answer else 'No',
-            question_type,
-            'is' if answer else 'is not',
-            question_value
+            (TEXT['yes'] if answer else TEXT['no']).capitalize(),
+            TEXT[question_type].lower(),
+            'is' if answer else 'is {}'.format(TEXT['not']),
+            TEXT[question_value]
         )
 
 
