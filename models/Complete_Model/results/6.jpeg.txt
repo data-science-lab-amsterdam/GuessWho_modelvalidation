@@ -1,0 +1,1 @@
+{"test_images/6.jpeg": [{"hair_colour": "no_hair", "score": 23}, {"hair_type": "too_short", "score": 55}, {"gender": "man", "score": 91}, {"glasses": "no_glasses", "score": 64}, {"hair_length": "short_hair", "score": 94}, {"facial_hair": "moustache", "score": 77}, {"hat": "none", "score": 79}, {"necklace": "no_necklace", "score": 85}]}

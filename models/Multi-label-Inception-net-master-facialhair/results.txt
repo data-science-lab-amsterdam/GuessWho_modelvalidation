@@ -1,0 +1,132 @@
+
+**test_images/test4.jpg**
+facial_hair (score = 0.51500)
+no_facial_hair (score = 0.48670)
+
+**test_images/test3.jpg**
+facial_hair (score = 0.59395)
+no_facial_hair (score = 0.40720)
+
+**test_images/test2.jpg**
+no_facial_hair (score = 0.91423)
+facial_hair (score = 0.08600)
+
+**test_images/test1.jpg**
+facial_hair (score = 0.82509)
+no_facial_hair (score = 0.17535)
+
+**test_images/test_image1.jpg**
+facial_hair (score = 0.57538)
+no_facial_hair (score = 0.42737)
+
+**test_images/test_image2.jpg**
+facial_hair (score = 0.71480)
+no_facial_hair (score = 0.28676)
+
+**collegas/demi.jpg**
+facial_hair (score = 0.66367)
+no_facial_hair (score = 0.33479)
+
+**collegas/ruben.jpg**
+no_facial_hair (score = 0.55771)
+facial_hair (score = 0.43913)
+
+**collegas/daan.jpg**
+facial_hair (score = 0.51992)
+no_facial_hair (score = 0.47551)
+
+**collegas/timo.jpg**
+facial_hair (score = 0.58920)
+no_facial_hair (score = 0.40723)
+
+**collegas/albert.jpg**
+facial_hair (score = 0.58821)
+no_facial_hair (score = 0.40936)
+
+**collegas/joost.jpg**
+facial_hair (score = 0.62517)
+no_facial_hair (score = 0.37349)
+
+**collegas/coen.jpg**
+facial_hair (score = 0.67291)
+no_facial_hair (score = 0.32556)
+
+**collegas/erna.jpg**
+no_facial_hair (score = 0.70062)
+facial_hair (score = 0.29838)
+
+**collegas/ilse.jpg**
+no_facial_hair (score = 0.71968)
+facial_hair (score = 0.28022)
+
+**collegas/jasmina.jpg**
+no_facial_hair (score = 0.68828)
+facial_hair (score = 0.31414)
+
+**collegas/joost.jpg**
+facial_hair (score = 0.62517)
+no_facial_hair (score = 0.37349)
+
+**collegas/koen.jpg**
+no_facial_hair (score = 0.53027)
+facial_hair (score = 0.46549)
+
+**collegas/robert.jpg**
+facial_hair (score = 0.90124)
+no_facial_hair (score = 0.09747)
+
+**collegas/walter.jpg**
+facial_hair (score = 0.66425)
+no_facial_hair (score = 0.33405)
+
+**collegas/robert.jpg**
+facial_hair (score = 0.77950)
+no_facial_hair (score = 0.22198)
+
+**collegas/joost.jpg**
+no_facial_hair (score = 0.59750)
+facial_hair (score = 0.40678)
+
+**collegas/demi.jpg**
+facial_hair (score = 0.56495)
+no_facial_hair (score = 0.42915)
+
+**collegas/walter.jpg**
+no_facial_hair (score = 0.56780)
+facial_hair (score = 0.43322)
+
+**collegas/timo.jpg**
+no_facial_hair (score = 0.60224)
+facial_hair (score = 0.39743)
+
+**collegas/ruben.jpg**
+no_facial_hair (score = 0.70776)
+facial_hair (score = 0.29530)
+
+**collegas/mylene.jpg**
+facial_hair (score = 0.59479)
+no_facial_hair (score = 0.40907)
+
+**collegas/margit.jpg**
+no_facial_hair (score = 0.54118)
+facial_hair (score = 0.46048)
+
+**collegas/koen.jpg**
+no_facial_hair (score = 0.69036)
+facial_hair (score = 0.30924)
+
+**collegas/kim.jpg**
+no_facial_hair (score = 0.72201)
+facial_hair (score = 0.28284)
+
+**collegas/katherine.jpg**
+no_facial_hair (score = 0.59615)
+facial_hair (score = 0.40184)
+
+**collegas/daan.jpg**
+no_facial_hair (score = 0.67617)
+facial_hair (score = 0.32564)
+
+**test_images/test1.jpg**
+facial_hair (score = 0.73853)
+no_facial_hair (score = 0.25667)

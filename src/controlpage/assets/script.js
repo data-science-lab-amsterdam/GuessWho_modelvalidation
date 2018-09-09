@@ -43,7 +43,6 @@ var save_data = function()
     // put json into hidden data container
     var json_string = JSON.stringify(data['features']);
     document.getElementById('data-container2').accessKey = json_string;
-}
 
 var init = function() {
 

@@ -8,13 +8,12 @@ import flask
 import glob
 import json
 
-from expo_models.Complete_Model import main_model
+from models.Complete_Model import main_model
 
-
-image_directory = '/Users/demi/Documents/dsl/friday_funday/expo2018/dashapp/images/'
-list_of_images = [os.path.basename(x) for x in glob.glob(os.path.join(image_directory, '*.jpeg')) if 'dummy' not in x]
+cwd = os.getcwd()
+image_directory = os.path.join(cwd, 'data/images/faces/')
+list_of_images = [os.path.basename(x) for x in glob.glob(os.path.join(image_directory, '*.jpeg')) if 'dummy.jpeg.png' not in x]
 static_image_route = '/static/'
-
 feature_keys = ['hair_colour', 'hair_type', 'hair_length', 'gender', 'hat', 'glasses', 'necklace', 'facial_hair']
 
 current_image_object = None
@@ -116,13 +115,15 @@ app.layout = html.Div([
 ])
 
 
-@app.server.route('/images/<path:path>')
+@app.server.route('/<path:path>')
 def serve_images(path):
     """
     Pass local images to the web server
     """
+    print(path)
     root_dir = os.getcwd()
-    return flask.send_from_directory(os.path.join(root_dir, 'images'), path)
+    # return flask.send_from_directory(os.path.join(root_dir, 'data/images/faces'), path)
+    return flask.send_from_directory(image_directory, path)
 
 
 @app.callback(
@@ -135,7 +136,7 @@ def update_image_src(value):
     """
     if value is None or value == '':
         return '/assets/dummy.png'
-    return os.path.join('/images', value)
+    return os.path.join(image_directory, value)
 
 
 @app.callback(
@@ -149,7 +150,7 @@ def choose_image(dropdown_value):
     if dropdown_value is None or dropdown_value == '':
         return ''
     print('You\'ve selected "{}"'.format(dropdown_value))
-    image_file = os.path.join('./images', dropdown_value)
+    image_file = os.path.join(image_directory, dropdown_value)
     global current_image_object
     print('model caluculation..')
     data_raw = main_model.main_model(image_file)
@@ -160,7 +161,7 @@ def choose_image(dropdown_value):
             'score': x['score']
         } for x in data_raw['features']
     }
-
+    print(data)
     current_image_object = data
     print('model done calculating')
     # return data
@@ -174,6 +175,7 @@ def choose_image(dropdown_value):
 def save_correct_data(json_string):
     features = json.loads(json_string)
     data_output = current_image_object
+    print(data_output)
     data_output['features'] = features
     try:
         filepath = './data/checked/{}.json'.format(data_output)

@@ -1,0 +1,5 @@
+
+**test_images/test_image1.jpg**
+none (score = 0.87156)
+cap (score = 0.11497)
+hat (score = 0.03895)

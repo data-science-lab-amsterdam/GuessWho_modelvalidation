@@ -1,0 +1,80 @@
+
+**test_images/demi.jpg**
+woman (score = 0.54460)
+man (score = 0.45659)
+
+**test_images/daan.jpg**
+man (score = 0.78267)
+woman (score = 0.21696)
+
+**test_images/ruben.jpg**
+man (score = 0.71980)
+woman (score = 0.27958)
+
+**test_images/joost.jpg**
+man (score = 0.82765)
+woman (score = 0.17120)
+
+**test_images/mylene.jpg**
+woman (score = 0.71670)
+man (score = 0.28709)
+
+**test_images/demi.jpg**
+woman (score = 0.54460)
+man (score = 0.45659)
+
+**test_images/daan.jpg**
+man (score = 0.78267)
+woman (score = 0.21696)
+
+**test_images/test_image2.jpg**
+man (score = 0.52556)
+woman (score = 0.48007)
+
+**test_images/trans.jpg**
+woman (score = 0.98033)
+man (score = 0.01994)
+
+**test_images/test4.jpg**
+man (score = 0.88487)
+woman (score = 0.11302)
+
+**test_images/test2.jpg**
+woman (score = 0.81829)
+man (score = 0.18204)
+
+**test_images/short_hair.jpg**
+man (score = 0.73165)
+woman (score = 0.26882)
+
+**test_images/short_hair.jpg**
+woman (score = 0.53076)
+man (score = 0.47138)
+
+**test_images/demi.jpg**
+woman (score = 0.56051)
+man (score = 0.43768)
+
+**test_images/joost.jpg**
+man (score = 0.79387)
+woman (score = 0.20454)
+
+**test_images/ruben.jpg**
+man (score = 0.65929)
+woman (score = 0.34111)
+
+**test_images/mylene.jpg**
+woman (score = 0.82375)
+man (score = 0.17490)
+
+**test_images/test_image2.jpg**
+woman (score = 0.62315)
+man (score = 0.37727)
+
+**test_images/test1.jpg**
+man (score = 0.68887)
+woman (score = 0.31729)
+
+**test_images/test1.jpg**
+man (score = 0.68887)
+woman (score = 0.31729)

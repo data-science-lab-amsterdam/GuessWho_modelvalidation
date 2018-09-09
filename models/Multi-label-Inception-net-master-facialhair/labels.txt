@@ -1,0 +1,2 @@
+facial_hair
+no_facial_hair
