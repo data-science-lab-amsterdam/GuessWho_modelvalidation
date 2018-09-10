@@ -67,7 +67,10 @@ TEXT_EN = {
     'welcome_bullet4': 'Click "End turn" and wait for the computer to move',
     'start_game': 'Start the game!',
     'already_moved': 'You\'ve already made a move. Click "End turn".',
-    'not': 'not'
+    'not': 'not',
+    'make_a_guess': '...or make a guess!',
+    'pick_a_character': 'Pick a character'
+
 }
 
 TEXT_NL = {
@@ -109,7 +112,9 @@ TEXT_NL = {
     'welcome_bullet4': 'Klik op "Einde beurt" en wacht op de beurt van de computer',
     'start_game': 'Start het spel!',
     'already_moved': 'Je hebt al een vraag gesteld. Klik op "Einde beurt".',
-    'not': 'niet'
+    'not': 'niet',
+    'make_a_guess': '...of waag een gokje!',
+    'pick_a_character': 'Kies een karakter'
 }
 
 if LANG == 'nl':
@@ -318,10 +323,10 @@ app.layout = html.Div(children=[
             ]),
             html.Div(className='columns', children=[
                 html.Div(className='column', children=[
-                    html.H4('...or make a guess!')
+                    html.H4(TEXT['make_a_guess'])
                 ]),
                 html.Div(className='column is-half', children=[
-                    bulma_field(label='Pick a character',
+                    bulma_field(label=TEXT['pick_a_character'],
                                 component=dcc.Dropdown(id='input-character-guess',
                                                        options=get_character_options(),
                                                        multi=False
