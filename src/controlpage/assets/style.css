@@ -1,0 +1,16 @@
+
+div.container {
+    width: 90%;
+}
+
+select {
+    width: 150px;
+}
+
+img#image {
+    height: 200px;
+}
+
+._dash-undo-redo {
+    display: none;
+}

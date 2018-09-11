@@ -1,36 +1,120 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output, State
-
+from dash.dependencies import Input, Output
 import os
 import flask
 import glob
 import json
+import logging
 
-from expo_models.Complete_Model import main_model
+import model_scoring
 
 
-image_directory = '/Users/demi/Documents/dsl/friday_funday/expo2018/dashapp/images/'
-list_of_images = [os.path.basename(x) for x in glob.glob(os.path.join(image_directory, '*.jpeg')) if 'dummy' not in x]
-static_image_route = '/static/'
+logging.basicConfig(level=logging.INFO)
 
-feature_keys = ['hair_colour', 'hair_type', 'hair_length', 'gender', 'hat', 'glasses', 'necklace', 'facial_hair']
+IMAGES_DIR = './data/images/faces'
 
 current_image_object = None
 
+feature_data = [
+    {
+        'label': 'Haarkleur',
+        'value': 'hair_colour',
+        'options': [
+            {'label': 'licht', 'value': 'light'},
+            {'label': 'donker', 'value': 'dark'},
+            {'label': 'geen haar', 'value': 'no_hair'}
+        ]
+    }, {
+        'label': 'Haartype',
+        'value': 'hair_type',
+        'options': [
+            {'label': 'krullend', 'value': 'curly'},
+            {'label': 'stijl', 'value': 'straight'},
+            {'label': 'kort', 'value': 'too_short'}
+        ]
+    }, {
+        'label': 'Haarlengte',
+        'value': 'hair_length',
+        'options': [
+            {'label': 'kaal', 'value': 'bold'},
+            {'label': 'kort', 'value': 'short_hair'},
+            {'label': 'lang', 'value': 'long_hair'}
+        ]
+    }, {
+        'label': 'Geslacht',
+        'value': 'gender',
+        'options': [
+            {'label': 'man', 'value': 'man'},
+            {'label': 'vrouw', 'value': 'woman'}
+        ]
+    }, {
+        'label': 'Hoofddeksel',
+        'value': 'hat',
+        'options': [
+            {'label': 'hoed', 'value': 'hat'},
+            {'label': 'pet', 'value': 'cap'},
+            {'label': 'geen', 'value': 'none'}
+        ]
+    }, {
+        'label': 'Bril',
+        'value': 'glasses',
+        'options': [
+            {'label': 'bril', 'value': 'glasses'},
+            {'label': 'geen bril', 'value': 'no_glasses'}
+        ]
+    }, {
+        'label': 'Stropdas',
+        'value': 'tie',
+        'options': [
+            {'label': 'met das', 'value': 'tie'},
+            {'label': 'zonder das', 'value': 'no_tie'}
+        ]
+    }, {
+        'label': 'Gezichtsbeharing',
+        'value': 'facial_hair',
+        'options': [
+            {'label': 'baard', 'value': 'beard'},
+            {'label': 'snor', 'value': 'moustache'},
+            {'label': 'geen', 'value': 'no_facial_hair'}
+        ]
+    }
+]
 
-def bulma_field(label, component):
+feature_keys = [x['value'] for x in feature_data]
+
+list_of_images = [os.path.basename(x) for x in glob.glob('./data/images/faces/*.jpg') if 'dummy' not in x]
+
+
+def bulma_modal(id, content=None, btn_text='OK', btn_class='is-info', active=False):
     """
-    Handle boiler plate stuff for putting a label on a dcc / input field
+    Create a modal (overlay) in bulma format
     """
-    return html.Div(className='field', children=[
-        html.Label(className='label', children=label),
-        html.Div(className='control', children=[component])
+    return html.Div(className='modal {}'.format('is-active' if active else ''), id='{}-modal'.format(id), children=[
+        html.Div(className='modal-background'),
+        html.Div(className='modal-content', children=[
+            html.Div(className='box', children=[
+                html.Div(className='content', children=[
+                    html.Div(id='{}-modal-content'.format(id), children=content),
+                    html.Button(id='{}-modal-button'.format(id),
+                                className='button is-medium {}'.format(btn_class),
+                                n_clicks=0,
+                                children=btn_text
+                                )
+                ])
+            ])
+        ])
     ])
 
 
-def bulma_dropdown(id, options):
+def bulma_dropdown(id, options, value=''):
+    """
+    Wrapper to create a bulma select/dropdown
+    :param id: name for id of html element
+    :param options: list of dicts with label and value
+    :return: Dash html component
+    """
     return html.Div(id=id, className='select', children=[
         html.Select([
             html.Option(value=o['value'], children=o['label']) for o in options
@@ -38,81 +122,60 @@ def bulma_dropdown(id, options):
     ])
 
 
+def show_field_row(data):
+    return html.Tr([
+        html.Td([
+            html.Label(className='label field-label', children=data['label']),
+        ]),
+        html.Td([
+            bulma_dropdown(id='input-'+data['value'], options=data['options'])
+        ]),
+        html.Td('hier komt nog een bar chart met de scores')
+    ])
+
+
 app = dash.Dash()
 
-app.layout = html.Div([
-    html.H1(children='Choose player'),
+app.layout = html.Div(className='container is-fluid', children=[
+
+    # Choose image
+    html.H1(children='Kies een foto'),
     dcc.Dropdown(
         id='image-dropdown',
         options=[{'label': i, 'value': i} for i in list_of_images],
         value=''
     ),
-    html.Img(id='image', src='/assets/dummy.png'),
+    #html.Div(id='hidden-input-image', accessKey=''),
+    html.Figure([
+        html.Img(id='image', src='/assets/dummy.png')
+    ]),
+
+    # hidden json data containers
     html.Div(id='data-container', accessKey='{}'),
     html.Div(id='data-container2', accessKey='{}'),
-    html.Div(className='columns', children=[
-        html.Div(className='column', children=[
-            bulma_field(label='Haarkleur', component=bulma_dropdown(id='input-hair_colour', 
-                options=[{'label': 'licht', 'value': 'light'},
-                        {'label': 'Donker', 'value': 'dark'}])),
 
-            bulma_field(label='Haartype', component=bulma_dropdown(id='input-hair_type', 
-                options=[{'label': 'krullend', 'value': 'curly'},
-                {'label': 'stijl', 'value': 'straight'}])),
+    # dropdown field for features
+    html.Table(className='table is-striped', children=[
+        html.Tbody([
+            show_field_row(field) for field in feature_data
+        ])
+    ]),
 
-            bulma_field(label='Haarlengte', component=bulma_dropdown(id='input-hair_length', 
-                options=[{'label': 'kaal', 'value': 'bold'},
-                {'label': 'kort', 'value': 'short'},
-                {'label': 'lang', 'value': 'long'}])),
+    html.Button('Opslaan', id='save-button', className='button is-medium is-info', n_clicks=0),
+    html.Div(id='output-save', children=''),
 
-            bulma_field(label='Geslacht', component=bulma_dropdown(id='input-gender', 
-                options=[{'label': 'Man', 'value': 'male'},
-                        {'label': 'Vrouw', 'value': 'female'}])),
+    dcc.Input(id='testdiv', type='text', value=''),
 
-            bulma_field(label='Hoed of pet', component=bulma_dropdown(id='input-hat', 
-                options=[{'label': 'Hoed', 'value': 'hat'},
-                        {'label': 'Pet', 'value': 'cap'},
-                        {'label': 'Geen', 'value': 'none'}]
-                )),
-
-            bulma_field(label='Bril', component=bulma_dropdown(id='input-glasses', 
-                options=[{'label': 'Bril', 'value': 'yes'},
-                        {'label': 'Geen Bril', 'value': 'no'}]
-                )),
-
-            bulma_field(label='Accessories', component=bulma_dropdown(id='input-necklace', 
-                options=[{'label': 'kleine ketting', 'value': 'necklace'},
-                        {'label': 'grote ketting', 'value': 'chain'},
-                        {'label': 'geen ketting', 'value': 'none'}]
-                        )),
-
-            bulma_field(label='Gezichtsbeharing', component=bulma_dropdown(id='input-facial_hair', 
-                options=[{'label': 'Baard', 'value': 'beard'},
-                        {'label': 'Snor', 'value': 'snor'},
-                        {'label': 'Geen gezichtsbeharing', 'value': 'none'}]
-                        ))
-            ])
-        ]),
-    # dcc.Input(id='hidden-hair_colour', type='hidden', value=''),
-    # dcc.Input(id='hidden-hair_length', type='hidden', value=''),
-    # dcc.Input(id='hidden-hair_length', type='hidden', value=''),
-    # dcc.Input(id='hidden-gender', type='hidden', value=''),
-    # dcc.Input(id='hidden-hat', type='hidden', value=''),
-    # dcc.Input(id='hidden-glasses', type='hidden', value=''),
-    # dcc.Input(id='hidden-necklace', type='hidden', value='')
-
-    # html.Div([dcc.Input(id='input-{}'.format(x), type='text', value='') for x in feature_keys]),
-    
-    # html.Div(dcc.Input(id='input-hair_colour')),
-    # html.Div(dcc.Input(id='input-hair_type')),
-    # html.Div(dcc.Input(id='input-gender')),
-    # html.Div(dcc.Input(id='input-glasses')),
-    # html.Div(dcc.Input(id='input-hair_length')),
-    # html.Div(dcc.Input(id='input-facial_hair')),
-    # html.Div(dcc.Input(id='input-hat')),
-    # html.Div(dcc.Input(id='input-necklace')),
-    html.Button('Correct', id='save-button', n_clicks=0),
-    html.Div(id='output-save', children='')
+    # modal for when model in scoring
+    bulma_modal(id='waiting',
+                content=[
+                    html.Img(className='header-logo', src='/assets/web-development.gif'),
+                    html.Br(), html.Br(),
+                    html.H3('Analyzing image. Please wait...'),
+                ],
+                btn_class='is-hidden',
+                active=False
+                )
 ])
 
 
@@ -122,12 +185,25 @@ def serve_images(path):
     Pass local images to the web server
     """
     root_dir = os.getcwd()
-    return flask.send_from_directory(os.path.join(root_dir, 'images'), path)
+    return flask.send_from_directory(os.path.join(root_dir, 'data/images/faces'), path)
 
 
 @app.callback(
-    dash.dependencies.Output('image', 'src'),
-    [dash.dependencies.Input('image-dropdown', 'value')]
+    Output('waiting-modal', 'className'),
+    [Input('image-dropdown', 'value')]
+)
+def show_waiting_modal(value):
+    """
+    Show the selected image
+    """
+    if value is None or value == '':
+        return 'modal'
+    return 'modal is-active'
+
+
+@app.callback(
+    Output('image', 'src'),
+    [Input('image-dropdown', 'value')]
 )
 def update_image_src(value):
     """
@@ -135,24 +211,27 @@ def update_image_src(value):
     """
     if value is None or value == '':
         return '/assets/dummy.png'
+    logging.info('Selected image: {}'.format(value))
     return os.path.join('/images', value)
 
 
 @app.callback(
-    dash.dependencies.Output('data-container', 'accessKey'),
-    [dash.dependencies.Input('image-dropdown', 'value')]
+    Output('data-container', 'accessKey'),
+    [Input('image-dropdown', 'value')]
 )
 def choose_image(dropdown_value):
     """
     Use selected image to score model on and return estimated features
     """
+
     if dropdown_value is None or dropdown_value == '':
         return ''
-    print('You\'ve selected "{}"'.format(dropdown_value))
-    image_file = os.path.join('./images', dropdown_value)
+    logging.info('You\'ve selected "{}"'.format(dropdown_value))
+    image_file = os.path.join(IMAGES_DIR, dropdown_value)
+
     global current_image_object
-    print('model caluculation..')
-    data_raw = main_model.main_model(image_file)
+    logging.info('Start model scoring..')
+    data_raw = model_scoring.predict(image_file)
     data = data_raw
     data['features'] = { 
         x['key']: {
@@ -162,16 +241,23 @@ def choose_image(dropdown_value):
     }
 
     current_image_object = data
-    print('model done calculating')
-    # return data
+    logging.info('End model scoring')
+
     return json.dumps(current_image_object)
 
 
 @app.callback(
-    dash.dependencies.Output('output-save', 'children'),
-    [dash.dependencies.Input('data-container2', 'accessKey')]
+    Output('output-save', 'children'),
+    [Input('save-button', 'n_clicks')],
+    [dash.dependencies.State('data-container2', 'accessKey'),
+     dash.dependencies.State('testdiv', 'value')]
 )
-def save_correct_data(json_string):
+def save_correct_data(_, json_string, x2):
+    print('save button geklikt')
+    print(json_string)
+    print(x2)
+    if json_string is None or json_string == '{}':
+        return ''
     features = json.loads(json_string)
     data_output = current_image_object
     data_output['features'] = features
@@ -180,10 +266,10 @@ def save_correct_data(json_string):
         print("Saving data to {}".format(filepath))
         with open(filepath, 'w') as f:
             json.dump(data_output, f)
-        return True
+        return 'Data saved'
     except Exception as e:
         print(e)
-        return False
+        return 'Saving failed'
 
 
 if __name__ == '__main__':
