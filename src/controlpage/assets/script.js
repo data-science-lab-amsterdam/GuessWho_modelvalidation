@@ -60,12 +60,15 @@ var save_data = function()
 var init = function() {
 
     // listen for changes (by back-end) in hidden data-container
+
     var observer = new MutationObserver(function(mutations) {
         console.log('mutation observed!')
         mutations.forEach(function(mutation) {
             if (mutation.attributeName == "accesskey") {  // note the small k for key!
                 console.log("data has been updated")
-                read_data()
+                //read_data()
+                // hide the waiting modal
+                document.getElementById('waiting-modal').className='modal'; /* removed the is-active class */
             }
         });
     });
@@ -75,7 +78,7 @@ var init = function() {
     });
 
     // listen for click on save button
-    document.getElementById('save-button').addEventListener('mouseover', save_data);
+    //document.getElementById('save-button').addEventListener('mouseover', save_data);
 
     // listen for change in image selection\
     /*

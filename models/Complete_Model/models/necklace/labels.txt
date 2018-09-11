@@ -1,3 +1,0 @@
-necklace
-no_necklace
-tie

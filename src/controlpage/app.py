@@ -128,7 +128,7 @@ def show_field_row(data):
             html.Label(className='label field-label', children=data['label']),
         ]),
         html.Td([
-            bulma_dropdown(id='input-'+data['value'], options=data['options'])
+            dcc.Dropdown(id='input-'+data['value'], className='feature-dropdown', options=data['options'])
         ]),
         html.Td('hier komt nog een bar chart met de scores')
     ])
@@ -145,14 +145,13 @@ app.layout = html.Div(className='container is-fluid', children=[
         options=[{'label': i, 'value': i} for i in list_of_images],
         value=''
     ),
-    #html.Div(id='hidden-input-image', accessKey=''),
+
     html.Figure([
         html.Img(id='image', src='/assets/dummy.png')
     ]),
 
     # hidden json data containers
     html.Div(id='data-container', accessKey='{}'),
-    html.Div(id='data-container2', accessKey='{}'),
 
     # dropdown field for features
     html.Table(className='table is-striped', children=[
@@ -163,8 +162,6 @@ app.layout = html.Div(className='container is-fluid', children=[
 
     html.Button('Opslaan', id='save-button', className='button is-medium is-info', n_clicks=0),
     html.Div(id='output-save', children=''),
-
-    dcc.Input(id='testdiv', type='text', value=''),
 
     # modal for when model in scoring
     bulma_modal(id='waiting',
@@ -179,7 +176,7 @@ app.layout = html.Div(className='container is-fluid', children=[
 ])
 
 
-@app.server.route('/<path:path>')
+@app.server.route('/images/<path:path>')
 def serve_images(path):
     """
     Pass local images to the web server
@@ -194,11 +191,22 @@ def serve_images(path):
 )
 def show_waiting_modal(value):
     """
-    Show the selected image
+    Show the waigin modal after selecting an image
     """
     if value is None or value == '':
         return 'modal'
     return 'modal is-active'
+
+
+# @app.callback(
+#     Output('waiting-modal', 'className'),
+#     [Input('data-container', 'accessKey')]
+# )
+# def hide_waiting_modal(_):
+#     """
+#     Hide the waiting modal once imagde data is loaded
+#     """
+#     return 'modal'
 
 
 @app.callback(
@@ -234,13 +242,12 @@ def choose_image(dropdown_value):
     logging.info('Start model scoring..')
     data_raw = model_scoring.predict(image_file)
     data = data_raw
-    data['features'] = { 
+    data['features'] = {
         x['key']: {
             'value': x['value'],
             'score': x['score']
         } for x in data_raw['features']
     }
-    print(data)
     current_image_object = data
     logging.info('End model scoring')
 
@@ -248,23 +255,122 @@ def choose_image(dropdown_value):
 
 
 @app.callback(
-    Output('output-save', 'children'),
-    [Input('save-button', 'n_clicks')],
-    [dash.dependencies.State('data-container2', 'accessKey'),
-     dash.dependencies.State('testdiv', 'value')]
+    Output('input-hair_colour', 'value'),
+    [Input('data-container', 'accessKey')]
 )
-def save_correct_data(_, json_string, x2):
-    print('save button geklikt')
-    print(json_string)
-    print(x2)
-    if json_string is None or json_string == '{}':
+def update_hair_colour(json_string):
+    if json_string is None or json_string == '' or json_string == '{}':
         return ''
-    features = json.loads(json_string)
+    data = json.loads(json_string)
+    return data['features']['hair_colour']['value']
+
+
+@app.callback(
+    Output('input-hair_type', 'value'),
+    [Input('data-container', 'accessKey')]
+)
+def update_hair_type(json_string):
+    if json_string is None or json_string == '' or json_string == '{}':
+        return ''
+    data = json.loads(json_string)
+    return data['features']['hair_type']['value']
+
+
+@app.callback(
+    Output('input-hair_length', 'value'),
+    [Input('data-container', 'accessKey')]
+)
+def update_hair_length(json_string):
+    if json_string is None or json_string == '' or json_string == '{}':
+        return ''
+    data = json.loads(json_string)
+    return data['features']['hair_length']['value']
+
+
+@app.callback(
+    Output('input-gender', 'value'),
+    [Input('data-container', 'accessKey')]
+)
+def update_gender(json_string):
+    if json_string is None or json_string == '' or json_string == '{}':
+        return ''
+    data = json.loads(json_string)
+    return data['features']['gender']['value']
+
+
+@app.callback(
+    Output('input-glasses', 'value'),
+    [Input('data-container', 'accessKey')]
+)
+def update_glasses(json_string):
+    if json_string is None or json_string == '' or json_string == '{}':
+        return ''
+    data = json.loads(json_string)
+    return data['features']['glasses']['value']
+
+
+@app.callback(
+    Output('input-facial_hair', 'value'),
+    [Input('data-container', 'accessKey')]
+)
+def update_facial_hair(json_string):
+    if json_string is None or json_string == '' or json_string == '{}':
+        return ''
+    data = json.loads(json_string)
+    return data['features']['facial_hair']['value']
+
+
+@app.callback(
+    Output('input-hat', 'value'),
+    [Input('data-container', 'accessKey')]
+)
+def update_hat(json_string):
+    if json_string is None or json_string == '' or json_string == '{}':
+        return ''
+    data = json.loads(json_string)
+    return data['features']['hat']['value']
+
+
+@app.callback(
+    Output('input-tie', 'value'),
+    [Input('data-container', 'accessKey')]
+)
+def update_tie(json_string):
+    if json_string is None or json_string == '' or json_string == '{}':
+        return ''
+    data = json.loads(json_string)
+    return data['features']['tie']['value']
+
+
+@app.callback(
+    dash.dependencies.Output('output-save', 'children'),
+    [dash.dependencies.Input('save-button', 'n_clicks')],
+    [dash.dependencies.State('input-hair_colour', 'value'),
+     dash.dependencies.State('input-hair_type', 'value'),
+     dash.dependencies.State('input-gender', 'value'),
+     dash.dependencies.State('input-glasses', 'value'),
+     dash.dependencies.State('input-hair_length', 'value'),
+     dash.dependencies.State('input-facial_hair', 'value'),
+     dash.dependencies.State('input-hat', 'value'),
+     dash.dependencies.State('input-tie', 'value')]
+)
+def save_data(n_clicks, f_hc, f_ht, f_ge, f_gl, f_hl, f_fh, f_h, f_t):
+    if n_clicks is None or n_clicks == 0:
+        return ''
+
     data_output = current_image_object
-    print(data_output)
-    data_output['features'] = features
+    data_output['features'] = {
+        'hair_colour': f_hc,
+        'hair_type': f_ht,
+        'hair_length': f_hl,
+        'gender': f_ge,
+        'glasses': f_gl,
+        'facial_hair': f_fh,
+        'hat': f_h,
+        'tie': f_t
+    }
     try:
-        filepath = './data/checked/{}.json'.format(data_output)
+        filepath = './data/checked/{}.json'.format(data_output['name'])
         print("Saving data to {}".format(filepath))
         with open(filepath, 'w') as f:
             json.dump(data_output, f)

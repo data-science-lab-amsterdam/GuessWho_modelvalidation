@@ -1,1 +1,0 @@
-{"test_images/5.jpeg": [{"hair_colour": "blonde", "score": 28}, {"hair_type": "straight", "score": 63}, {"gender": "woman", "score": 98}, {"glasses": "no_glasses", "score": 79}, {"hair_length": "long_hair", "score": 77}, {"facial_hair": "no_facial_hair", "score": 87}, {"hat": "none", "score": 95}, {"necklace": "no_necklace", "score": 81}]}

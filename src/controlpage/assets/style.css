@@ -6,6 +6,9 @@ div.container {
 select {
     width: 150px;
 }
+.feature-dropdown {
+    width: 150px;
+}
 
 img#image {
     height: 200px;

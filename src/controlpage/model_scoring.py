@@ -27,9 +27,8 @@ def predict(image_path):
     image_data = tf.gfile.FastGFile(image_path, 'rb').read()
 
     # Setup the JSON file that will be used and create some features used for identification.
-    char_name = re.findall('(?<=/)\w+', image_path)[0]
     output_data = {
-        'name': char_name,
+        'name': Path(image_path).name,
         'timestamp': time.time(),
         'url': image_path,
         'features': []  # Features will be a list that will be appended based on model outputs
