@@ -184,9 +184,7 @@ def serve_images(path):
     """
     Pass local images to the web server
     """
-    print(path)
     root_dir = os.getcwd()
-<<<<<<< HEAD
     return flask.send_from_directory(os.path.join(root_dir, 'data/images/faces'), path)
 
 
@@ -201,10 +199,6 @@ def show_waiting_modal(value):
     if value is None or value == '':
         return 'modal'
     return 'modal is-active'
-=======
-    # return flask.send_from_directory(os.path.join(root_dir, 'data/images/faces'), path)
-    return flask.send_from_directory(image_directory, path)
->>>>>>> 7f81a690992808269b67a0935fccfbecb7f8bfef
 
 
 @app.callback(
@@ -217,12 +211,8 @@ def update_image_src(value):
     """
     if value is None or value == '':
         return '/assets/dummy.png'
-<<<<<<< HEAD
     logging.info('Selected image: {}'.format(value))
     return os.path.join('/images', value)
-=======
-    return os.path.join(image_directory, value)
->>>>>>> 7f81a690992808269b67a0935fccfbecb7f8bfef
 
 
 @app.callback(
@@ -236,14 +226,10 @@ def choose_image(dropdown_value):
 
     if dropdown_value is None or dropdown_value == '':
         return ''
-<<<<<<< HEAD
+
     logging.info('You\'ve selected "{}"'.format(dropdown_value))
     image_file = os.path.join(IMAGES_DIR, dropdown_value)
 
-=======
-    print('You\'ve selected "{}"'.format(dropdown_value))
-    image_file = os.path.join(image_directory, dropdown_value)
->>>>>>> 7f81a690992808269b67a0935fccfbecb7f8bfef
     global current_image_object
     logging.info('Start model scoring..')
     data_raw = model_scoring.predict(image_file)
