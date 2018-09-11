@@ -1,0 +1,3 @@
+curly
+straight
+too_short
