@@ -6,6 +6,7 @@ import os
 import flask
 import glob
 import json
+from pathlib import Path
 import logging
 
 import model_scoring
@@ -84,7 +85,15 @@ feature_data = [
 
 feature_keys = [x['value'] for x in feature_data]
 
-list_of_images = [os.path.basename(x) for x in glob.glob('./data/images/faces/*.jpg') if 'dummy' not in x]
+
+def get_image_list():
+    all_faces = [os.path.basename(x) for x in glob.glob('./data/images/faces/*.jpg') if 'dummy' not in x]
+    checked_faces = [x.stem for x in Path().glob('./data/checked/*json')]
+    remaining_faces = [x for x in all_faces if x not in checked_faces]
+    return remaining_faces
+
+
+list_of_images = get_image_list()
 
 
 def bulma_modal(id, content=None, btn_text='OK', btn_class='is-info', active=False):
@@ -124,8 +133,8 @@ def bulma_dropdown(id, options, value=''):
 
 def bulma_columns(components, extra_classes=None):
     if extra_classes is None:
-        extra_classes = ['' for c in components]
-    return html.Div(className='columns has-text-centered', children=[
+        extra_classes = ['' for _ in components]
+    return html.Div(className='columns is-vcentered', children=[
         html.Div(className='column {}'.format(cls), children=[comp]) for comp, cls in zip(components, extra_classes)
     ])
 
@@ -138,66 +147,100 @@ def bulma_center(component):
     ])
 
 
-def show_field_row(data):
-    return html.Tr([
-        html.Td([
-            html.Label(className='label field-label', children=data['label']),
-        ]),
-        html.Td([
-            dcc.Dropdown(id='input-'+data['value'], className='feature-dropdown', options=data['options'])
-        ]),
-        html.Td('hier komt nog een bar chart met de scores')
+def bulma_figure(url):
+    return html.Figure(className="figure", children=[
+        html.Img(src=url),
     ])
+
+
+def show_field_row(data):
+    # return html.Tr([
+    #     html.Td([
+    #         html.Label(className='label field-label is-vertical-center', children=data['label']),
+    #     ]),
+    #     html.Td([
+    #         dcc.Dropdown(id='input-'+data['value'], className='feature-dropdown is-vertical-center', options=data['options'])
+    #     ]),
+    #     html.Td([
+    #         html.Div('hier komt nog een bar chart met de scores', id='graph-container-'+data['value'], className='graph-container is-vertical-center')
+    #     ])
+    # ])
+
+    return bulma_columns([
+        html.Label(className='label field-label has-text-right', children=data['label']),
+        dcc.Dropdown(id='input-' + data['value'],
+                     className='feature-dropdown is-vertical-center',
+                     options=data['options']
+                     ),
+        html.Div('hier komt nog een bar chart met de scores',
+                 id='graph-container-' + data['value'],
+                 className='graph-container is-vertical-center'
+                 )
+    ], ['has-text-right', '', ''])
 
 
 app = dash.Dash()
 
-app.layout = html.Div(className='container is-fluid', children=[
+app.layout = html.Div([
 
-    html.Div('', id='spacer-top'),
+    html.Div(className='container is-fluid', children=[
 
-    # Choose image
-    bulma_columns(
-        components=[
-            html.H1(children='Kies een foto'),
-            dcc.Dropdown(
-                id='image-dropdown',
-                options=[{'label': i, 'value': i} for i in list_of_images],
-                value=''
-            ),
-            html.Button('Start analyse', id='start-model-button', className='button is-info', n_clicks=0)
-        ],
-        extra_classes=['', 'is-half', '']
-    ),
-    bulma_center(
-        html.Figure([
-            html.Img(id='image', src='/assets/dummy.png')
-        ])
-    ),
+        html.Div('', id='spacer-top'),
 
-    # hidden json data containers
-    html.Div(id='data-container', accessKey='{}'),
+        # Choose image
+        bulma_columns(
+            components=[
+                html.H1(children='Kies een foto'),
+                dcc.Dropdown(
+                    id='image-dropdown',
+                    options=[{'label': i, 'value': i} for i in list_of_images],
+                    value=''
+                ),
+                html.Button('Start analyse', id='start-model-button', className='button is-info', n_clicks=0)
+            ],
+            extra_classes=['', 'is-half', '']
+        ),
+        bulma_center(
+            html.Figure([
+                html.Img(id='image', src='/assets/dummy.png')
+            ])
+        ),
 
-    # dropdown field for features
-    html.Table(className='table is-striped', children=[
-        html.Tbody([
-            show_field_row(field) for field in feature_data
-        ])
+        # hidden json data containers
+        html.Div(id='data-container', accessKey='{}'),
+
+        # dropdown field for features
+        #html.Table(className='table is-striped', children=[
+        ##   html.Tbody([
+            html.Div([
+                show_field_row(field) for field in feature_data
+            ]),
+        #]),
+
+        html.Button('Opslaan', id='save-button', className='button is-medium is-success', n_clicks=0),
+        html.Div(id='output-save', children=''),
+
+        # modal for when model in scoring
+        bulma_modal(id='waiting',
+                    content=[
+                        html.Img(className='header-logo', src='/assets/web-development.gif'),
+                        html.Br(), html.Br(),
+                        html.H3('Analyzing image. Please wait...'),
+                    ],
+                    btn_class='is-hidden',
+                    active=False
+                    ),
     ]),
-
-    html.Button('Opslaan', id='save-button', className='button is-medium is-success', n_clicks=0),
-    html.Div(id='output-save', children=''),
-
-    # modal for when model in scoring
-    bulma_modal(id='waiting',
-                content=[
-                    html.Img(className='header-logo', src='/assets/web-development.gif'),
-                    html.Br(), html.Br(),
-                    html.H3('Analyzing image. Please wait...'),
-                ],
-                btn_class='is-hidden',
-                active=False
-                )
+    #html.Div(className="container", children=[
+        # footer
+        html.Footer(className="footer", children=[
+            bulma_columns([
+                bulma_figure("/assets/tensorflow-logo.png"),
+                bulma_figure("/assets/dash-logo-stripe.svg"),
+                bulma_figure("/assets/python-logo-generic.svg")
+            ])
+        ])
+    #])
 ])
 
 
@@ -208,23 +251,6 @@ def serve_images(path):
     """
     root_dir = os.getcwd()
     return flask.send_from_directory(os.path.join(root_dir, 'data/images/faces'), path)
-
-
-
-
-
-# @app.callback(
-#     Output('waiting-modal', 'className'),
-#     [Input('image-dropdown', 'value')]
-# )
-# def show_waiting_modal(value):
-#     """
-#     Show the waigin modal after selecting an image
-#     """
-#     if value is None or value == '':
-#         return 'modal'
-#     logging.info("showing waiting modal")
-#     return 'modal is-active'
 
 
 @app.callback(

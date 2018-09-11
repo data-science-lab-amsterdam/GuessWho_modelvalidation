@@ -1,5 +1,75 @@
 var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
 
+
+var show_graphs = function()
+{
+    // fetch data
+    var raw_data = document.getElementById("data-container").getAttribute('accessKey');
+    data = JSON.parse(decodeURIComponent(raw_data));
+
+    // for each feature...
+    for (var key in data['features']) {
+        var item = data['features'][key];
+        var value = item['value'];
+        var score = item['score'];
+        console.log([key, value, score]);
+
+        var color_class = 'is-success';
+        if (score < 80) {
+            color_class = 'is-warning'
+        } else if (score < 55) {
+            color_class = 'is-danger'
+        }
+        document.getElementById('graph-container-'+key).innerHTML = '<progress class="progress show-value is-medium '+color_class+'" value="'+score+'" max="100">'+score+'%</progress>'
+        //show_graph('graph-container-hair_colour', ['licht', 'donker', 'geen'], [0.1, 0.84, 0.06]);
+    }
+
+}
+
+
+var show_graph = function(element_id, labels, scores)
+{
+    Highcharts.chart(element_id, {
+    chart: {
+        type: 'bar'
+    },
+    title:{
+        text:''
+    },
+    xAxis: {
+        categories: labels,
+        title: {
+            text: null
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'probability',
+            align: 'high'
+        },
+        labels: {
+            overflow: 'justify'
+        }
+    },
+    plotOptions: {
+        bar: {
+            dataLabels: {
+                enabled: true
+            }
+        }
+    },
+    credits: {
+        enabled: false
+    },
+    series: [{
+        name: '',
+        showInLegend: false,
+        data: scores
+    }]
+});
+}
+
 var init = function() {
 
     // listen for changes (by back-end) in hidden data-container
@@ -11,6 +81,9 @@ var init = function() {
                 console.log("data has been updated")
                 // hide the waiting modal
                 document.getElementById('waiting-modal').className='modal'; /* removed the is-active class */
+
+                // show graphs
+                show_graphs()
             }
         });
     });

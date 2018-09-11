@@ -1,9 +1,9 @@
 
 #spacer-top {
-    min-height: 40px;
+    min-height: 20px;
 }
 
-div.container {
+div.container.is-fluid {
     width: 90%;
 }
 
@@ -11,13 +11,63 @@ select {
     width: 150px;
 }
 .feature-dropdown {
-    width: 150px;
+    xwidth: 150px;
+}
+
+.is-vertical-center {
+    display: flex;
+    align-items: center;
+}
+
+div.column {
+    padding: 4px;
 }
 
 img#image {
     height: 200px;
 }
 
+.graph-container {
+    width: 200px;
+}
+
+footer {
+    margin-top: 20px;
+    height: 100px;
+}
+footer figure img {
+    height: 60px;
+}
+
 ._dash-undo-redo {
     display: none;
+}
+
+progress.show-value {
+  position: relative;
+}
+
+progress.show-value:after {
+  content: attr(value)'%';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: calc(1rem / 1.5);
+  line-height: 1rem;
+}
+
+progress.show-value.is-small:after {
+  font-size: calc(0.75rem / 1.5);
+  line-height: 0.75rem;
+}
+
+progress.show-value.is-medium:after {
+  font-size: calc(1.25rem / 1.5);
+  line-height: 1.25rem;
+}
+
+progress.show-value.is-large:after {
+  font-size: calc(1.5rem / 1.5);
+  line-height: 1.5rem;
 }
