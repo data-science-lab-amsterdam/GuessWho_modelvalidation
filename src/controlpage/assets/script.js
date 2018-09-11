@@ -80,7 +80,10 @@ var init = function() {
             if (mutation.attributeName == "accesskey") {  // note the small k for key!
                 console.log("data has been updated")
                 // hide the waiting modal
-                document.getElementById('waiting-modal').className='modal'; /* removed the is-active class */
+                document.getElementById('waiting-modal').className = 'modal'; /* removed the is-active class */
+
+                // hide the saving message
+                document.getElementById('output-save').innerHTML = '';
 
                 // show graphs
                 show_graphs()
