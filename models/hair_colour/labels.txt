@@ -1,0 +1,3 @@
+light
+dark
+no_hair
