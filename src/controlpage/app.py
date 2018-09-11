@@ -1,7 +1,7 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import os
 import flask
 import glob
@@ -145,10 +145,10 @@ app.layout = html.Div(className='container is-fluid', children=[
         options=[{'label': i, 'value': i} for i in list_of_images],
         value=''
     ),
-
     html.Figure([
         html.Img(id='image', src='/assets/dummy.png')
     ]),
+    html.Button('Start analyse', id='start-model-button', className='button is-medium is-info', n_clicks=0),
 
     # hidden json data containers
     html.Div(id='data-container', accessKey='{}'),
@@ -160,7 +160,7 @@ app.layout = html.Div(className='container is-fluid', children=[
         ])
     ]),
 
-    html.Button('Opslaan', id='save-button', className='button is-medium is-info', n_clicks=0),
+    html.Button('Opslaan', id='save-button', className='button is-medium is-success', n_clicks=0),
     html.Div(id='output-save', children=''),
 
     # modal for when model in scoring
@@ -185,28 +185,21 @@ def serve_images(path):
     return flask.send_from_directory(os.path.join(root_dir, 'data/images/faces'), path)
 
 
-@app.callback(
-    Output('waiting-modal', 'className'),
-    [Input('image-dropdown', 'value')]
-)
-def show_waiting_modal(value):
-    """
-    Show the waigin modal after selecting an image
-    """
-    if value is None or value == '':
-        return 'modal'
-    return 'modal is-active'
+
 
 
 # @app.callback(
 #     Output('waiting-modal', 'className'),
-#     [Input('data-container', 'accessKey')]
+#     [Input('image-dropdown', 'value')]
 # )
-# def hide_waiting_modal(_):
+# def show_waiting_modal(value):
 #     """
-#     Hide the waiting modal once imagde data is loaded
+#     Show the waigin modal after selecting an image
 #     """
-#     return 'modal'
+#     if value is None or value == '':
+#         return 'modal'
+#     logging.info("showing waiting modal")
+#     return 'modal is-active'
 
 
 @app.callback(
@@ -225,14 +218,14 @@ def update_image_src(value):
 
 @app.callback(
     Output('data-container', 'accessKey'),
-    [Input('image-dropdown', 'value')]
+    [Input('start-model-button', 'n_clicks')],
+    [State('image-dropdown', 'value')]
 )
-def choose_image(dropdown_value):
+def choose_image(n_clicks, dropdown_value):
     """
     Use selected image to score model on and return estimated features
     """
-
-    if dropdown_value is None or dropdown_value == '':
+    if n_clicks is None or n_clicks == 0:
         return ''
 
     logging.info('You\'ve selected "{}"'.format(dropdown_value))

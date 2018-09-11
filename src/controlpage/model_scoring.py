@@ -37,7 +37,7 @@ def predict(image_path):
     # Read model names from provided directory
     model_dirs = glob.glob(str(Path('./models') / '*'))
     model_names = [Path(m).name for m in model_dirs]
-    logging.info("Model names found are: ", model_names)
+    logging.info("Model names found are: {}".format(', '.join(model_names)))
 
     # Loop over models
     for model_name in model_names:
