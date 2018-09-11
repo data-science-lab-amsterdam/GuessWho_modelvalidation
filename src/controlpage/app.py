@@ -172,8 +172,7 @@ def show_field_row(data):
                      className='feature-dropdown is-vertical-center',
                      options=data['options']
                      ),
-        html.Div('hier komt nog een bar chart met de scores',
-                 id='graph-container-' + data['value'],
+        html.Div(id='graph-container-' + data['value'],
                  className='graph-container is-vertical-center'
                  )
     ], ['has-text-right', '', ''])
