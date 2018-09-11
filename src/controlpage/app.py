@@ -122,6 +122,22 @@ def bulma_dropdown(id, options, value=''):
     ])
 
 
+def bulma_columns(components, extra_classes=None):
+    if extra_classes is None:
+        extra_classes = ['' for c in components]
+    return html.Div(className='columns has-text-centered', children=[
+        html.Div(className='column {}'.format(cls), children=[comp]) for comp, cls in zip(components, extra_classes)
+    ])
+
+
+def bulma_center(component):
+    return html.Div(className='columns', children=[
+        html.Div(className='column', children=[]),
+        html.Div(className='column has-text-centered', children=[component]),
+        html.Div(className='column', children=[])
+    ])
+
+
 def show_field_row(data):
     return html.Tr([
         html.Td([
@@ -138,17 +154,26 @@ app = dash.Dash()
 
 app.layout = html.Div(className='container is-fluid', children=[
 
+    html.Div('', id='spacer-top'),
+
     # Choose image
-    html.H1(children='Kies een foto'),
-    dcc.Dropdown(
-        id='image-dropdown',
-        options=[{'label': i, 'value': i} for i in list_of_images],
-        value=''
+    bulma_columns(
+        components=[
+            html.H1(children='Kies een foto'),
+            dcc.Dropdown(
+                id='image-dropdown',
+                options=[{'label': i, 'value': i} for i in list_of_images],
+                value=''
+            ),
+            html.Button('Start analyse', id='start-model-button', className='button is-info', n_clicks=0)
+        ],
+        extra_classes=['', 'is-half', '']
     ),
-    html.Figure([
-        html.Img(id='image', src='/assets/dummy.png')
-    ]),
-    html.Button('Start analyse', id='start-model-button', className='button is-medium is-info', n_clicks=0),
+    bulma_center(
+        html.Figure([
+            html.Img(id='image', src='/assets/dummy.png')
+        ])
+    ),
 
     # hidden json data containers
     html.Div(id='data-container', accessKey='{}'),

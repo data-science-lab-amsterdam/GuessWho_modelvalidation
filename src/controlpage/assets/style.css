@@ -1,4 +1,8 @@
 
+#spacer-top {
+    min-height: 40px;
+}
+
 div.container {
     width: 90%;
 }
