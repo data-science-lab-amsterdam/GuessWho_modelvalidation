@@ -92,11 +92,11 @@ TEXT_NL = {
     'chain': 'kettinkje', 'necklace': 'ketting',
     'player_computer': 'Computer',
     'player_human': 'Jij',
-    'select_difficulty': 'Selecteer moeilijkheidsgraad',
+    'select_difficulty': 'Selecteer een moeilijkheidsgraad',
     'level_hard': 'Moeilijk',
-    'level_easy': 'Gemakkelijk',
-    'select_character': 'Selecteer karakter voor de computer',
-    'select_question': 'Kies je volgende vraag:',
+    'level_easy': 'Makkelijk',
+    'select_character': 'Selecteer een awesome avatar',
+    'select_question': 'Stel een vraag:',
     'category': 'Categorie:',
     'options': 'Opties:',
     'ask': 'Vraag!',
@@ -104,17 +104,17 @@ TEXT_NL = {
     'answer': 'Antwoord',
     'end_turn': 'Einde beurt',
     'end_game': 'Spel afsluiten',
-    'waiting_for_computer': 'Wachten op de beurt van de computer...',
-    'welcome_header': 'Welkom! Het spel werkt als volgt:',
-    'welcome_bullet1': 'Start het spel',
-    'welcome_bullet2': 'Kies eerst een karakter voor de comouter om te raden',
-    'welcome_bullet3': 'Selecteer een vraag, of doe een gokje. Flip zelf de afgevallen karakters weg',
+    'waiting_for_computer': 'De computer is nu aan de beurt...',
+    'welcome_header': '',
+    'welcome_bullet1': 'Jij start het spel, stel goede vragen om de computer te verslaan',
+    'welcome_bullet2': 'Selecteer een vraag, of raad de avatar van de computer',
+    'welcome_bullet3': 'De computer beantwoord jouw vraag. Klik zelf de avatars weg.',
     'welcome_bullet4': 'Klik op "Einde beurt" en wacht op de beurt van de computer',
     'start_game': 'Start het spel!',
     'already_moved': 'Je hebt al een vraag gesteld. Klik op "Einde beurt".',
     'not': 'niet',
-    'make_a_guess': '...of waag een gokje!',
-    'pick_a_character': 'Kies een karakter'
+    'make_a_guess': 'IK WEET HET!',
+    'pick_a_character': 'De computer heeft ...'
 }
 
 if LANG == 'nl':
@@ -197,6 +197,7 @@ def render_board_characters(player_id):
                 ]
             )
         )
+
     return elements
 
 
@@ -255,101 +256,108 @@ app.layout = html.Div(children=[
     ]),
 
     # Computer player board
-    html.Div(className='character-board panel', children=[
-        html.P(className="panel-heading", children=TEXT['player_computer']),
-        html.Div(className="panel-block is-block", children=[
-            html.Div(id="computer-board", children=render_board_characters(player_id=1)),
-            html.Progress(id='computer-progress', className="progress is-info", value="0", max="100"),
-            html.Div(id='output-hidden-state', accessKey=initial_hidden_state)
-        ])
+    html.Div(id='container-player', className='container is-fluid', children=[
+        html.Div(id='panel-computer-board', className='character-board panel', children=[
+            html.P(className="panel-heading", children=TEXT['player_computer']),
+            html.Div(className="panel-block is-block", children=[
+                html.Div(id="computer-board", children=render_board_characters(player_id=1)),
+                html.Progress(id='computer-progress', className="progress is-info", value="0", max="100"),
+                html.Div(id='output-hidden-state', accessKey=initial_hidden_state)
+            ])
+        ]),
     ]),
-
-    # Select computer difficulty and character
-    bulma_center(
-        html.Div(id='computer-character', className='level', children=[
-            html.Div(className='level-left', children=[
-                html.Div(className='level-item', children=[
-                    bulma_field(label=TEXT['select_difficulty'],
-                                component=dcc.Dropdown(id='input-computer-mode',
-                                                       options=[{'label': TEXT['level_hard'], 'value': 'hard'},
-                                                                {'label': TEXT['level_easy'], 'value': 'easy'}],
-                                                       value='hard'
-                                                       )
-                                )
-                ]),
-                html.Div(className='level-item', children=[
-                    bulma_field(label=TEXT['select_character'],
-                                component=dcc.Dropdown(id='input-character-select', options=get_character_options())
-                                )
-                ]),
-                html.Div(className='level-item', children=[
-                    html.Img(id='output-selected-character', src=default_image)
-                ])
-            ]),
-            html.Div(className='level-right', children=[])
-        ])
-    ),
+    html.Br(),
+    # # Select computer difficulty and character
+    # bulma_center(
+    #     html.Div(id='computer-character', className='level', children=[
+    #         html.Div(className='level-left', children=[
+    #             # html.Div(className='level-item', children=[
+    #             #     bulma_field(label=TEXT['select_difficulty'],
+    #             #                 component=dcc.Dropdown(id='input-computer-mode',
+    #             #                                        options=[{'label': TEXT['level_hard'], 'value': 'hard'},
+    #             #                                                 {'label': TEXT['level_easy'], 'value': 'easy'}],
+    #             #                                        value='hard'
+    #             #                                        )
+    #             #                 )
+    #             # ]),
+    #             # html.Div(className='level-item', children=[
+    #             #     bulma_field(label=TEXT['select_character'],
+    #             #                 component=dcc.Dropdown(id='input-character-select', options=get_character_options())
+    #             #                 )
+    #             # ]),
+    #             # html.Div(className='level-item', children=[
+    #             #     html.Img(id='output-selected-character', src=default_image)
+    #             # ]),
+    #         ]),
+    #         html.Div(className='level-right', children=[])
+    #     ])
+    # ),
     dcc.Input(id='output-dummy-1', type='hidden', className='is-hidden', value=''),
     dcc.Input(id='output-dummy-2', type='hidden', className='is-hidden', value=''),
 
     # Human player board
-    html.Div(className='character-board panel', children=[
-        html.P(id="player-name", className="panel-heading", children=TEXT['player_human']),
-        html.Div(className="panel-block is-block", children=[
-            html.Div(id='player-board', children=render_board_characters(player_id=2)),
-            html.Progress(id='player-progress', className="progress is-danger", value="0", max="100"),
-            html.Div(className='columns', children=[
-                html.Div(className='column', children=[
-                    html.H4(TEXT['select_question'])
-                ]),
-                html.Div(className='column', children=[
-                    bulma_field(label=TEXT['category'],
-                                component=dcc.Dropdown(id='input-question-type',
-                                                       options=get_question_type_options())
-                                )
-                ]),
-                html.Div(className='column', children=[
-                    bulma_field(TEXT['options'], dcc.Dropdown(id='input-question-value', options=[], multi=False))
-                ]),
-                html.Div(className='column', children=[
-                    bulma_field(label=[html.Span(className='is-invisible', children='.')],
-                                component=html.Button(id='input-question-button',
-                                                      className='button is-info is-inverted',
-                                                      n_clicks=0,
-                                                      children=TEXT['ask']
-                                                      )
-                                )
+    html.Div(className='container is-fluid', children=[
+        html.Div(id='panel-player-board', className='character-board panel', children=[
+            html.P(id="player-name", className="panel-heading", children=TEXT['player_human']),
+            html.Div(className="panel-block is-block", children=[
+                html.Div(id='player-board', children=render_board_characters(player_id=2)),
+                html.Progress(id='player-progress', className="progress is-danger", value="0", max="100")
                 ])
-            ]),
-            html.Div(className='columns', children=[
-                html.Div(className='column', children=[
-                    html.H4(TEXT['make_a_guess'])
-                ]),
-                html.Div(className='column is-half', children=[
-                    bulma_field(label=TEXT['pick_a_character'],
-                                component=dcc.Dropdown(id='input-character-guess',
-                                                       options=get_character_options(),
-                                                       multi=False
-                                                       )
-                                )
-                ]),
-                html.Div(className='column', children=[
-                    bulma_field(label=[html.Span(className='is-invisible', children='.')],
-                                component=html.Button(id='input-guess-button',
-                                                      className='button is-info is-inverted',
-                                                      n_clicks=0,
-                                                      children=TEXT['guess']
-                                                      )
-                                )
-                ])
-            ]),
-            html.Div([
-                bulma_field(label=TEXT['answer'], component=html.Div(id='output-question-answer', children=''))
-            ]),
-            html.Div(id='output-hidden-guess', accessKey="")
-        ])
-    ]),
+            ])
+        ]),
+    # start questoin board
 
+    html.Div(className='container is-fluid', children=[
+                html.Div(id='question-board-question', className='columns', children=[
+                    html.Div(className='column', children=[
+                        html.H4(TEXT['select_question'])
+                    ]),
+                    html.Div(className='column', children=[
+                        bulma_field(label=TEXT['category'],
+                                    component=dcc.Dropdown(id='input-question-type',
+                                                           options=get_question_type_options())
+                                    )
+                    ]),
+                    html.Div(className='column', children=[
+                        bulma_field(TEXT['options'], dcc.Dropdown(id='input-question-value', options=[], multi=False))
+                    ]),
+                    html.Div(className='column', children=[
+                        bulma_field(label=[html.Span(className='is-invisible', children='.')],
+                                    component=html.Button(id='input-question-button',
+                                                          className='button is-info is-inverted',
+                                                          n_clicks=0,
+                                                          children=TEXT['ask']
+                                                          )
+                                    )
+                    ])
+                ]),
+                html.Div(id='question-board-character', className='columns', children=[
+                    html.Div(className='column', children=[
+                        html.H4(TEXT['make_a_guess'])
+                    ]),
+                    html.Div(className='column is-half', children=[
+                        bulma_field(label=TEXT['pick_a_character'],
+                                    component=dcc.Dropdown(id='input-character-guess',
+                                                           options=get_character_options(),
+                                                           multi=False
+                                                           )
+                                    )
+                    ]),
+                    html.Div(className='column', children=[
+                        bulma_field(label=[html.Span(className='is-invisible', children='.')],
+                                    component=html.Button(id='input-guess-button',
+                                                          className='button is-info is-inverted',
+                                                          n_clicks=0,
+                                                          children=TEXT['guess']
+                                                          )
+                                    )
+                    ])
+                ]),
+                html.Div([
+                    bulma_field(label=TEXT['answer'], component=html.Div(id='output-question-answer', children=''))
+                ]),
+                html.Div(id='output-hidden-guess', accessKey="")
+            ]),
     # Bottom part
     bulma_center(
         html.Button(id='input-endturn-button', className='button is-info is-large', n_clicks=0, children=TEXT['end_turn'])
@@ -375,17 +383,37 @@ app.layout = html.Div(children=[
     bulma_modal(id='intro',
                 content=[
                     html.Img(className='header-logo', src='/images/game/{}'.format(GAME_LOGO)),
-                    html.Br(), html.Br(),
-                    html.Div(TEXT['welcome_header']),
+                    html.Br(),
+                    # html.Div(TEXT['welcome_header']),
+                    html.Div(className='level-item', children=[
+                        bulma_field(label=TEXT['select_difficulty'],
+                                    component=dcc.Dropdown(id='input-computer-mode',
+                                                           options=[{'label': TEXT['level_hard'], 'value': 'hard'},
+                                                                    {'label': TEXT['level_easy'], 'value': 'easy'}],
+                                                           value='hard'
+                                                           )
+                                    )
+                    ]),
+                    html.Br(),
+                    html.Div(className='level-item', children=[
+                        bulma_field(label=TEXT['select_character'],
+                                    component=dcc.Dropdown(id='input-character-select', options=get_character_options())
+                                    )
+                    ]),
+                    html.Br(),
+                    html.Div(className='level-item', children=[
+                        html.Img(id='output-selected-character', src=default_image)
+                    ]),
+                    html.Br(),
                     html.Ul(children=[
                         html.Li(TEXT['welcome_bullet1']),
                         html.Li(TEXT['welcome_bullet2']),
                         html.Li(TEXT['welcome_bullet3']),
                         html.Li(TEXT['welcome_bullet4'])
-                    ])
+                    ]),
                 ],
                 btn_text=TEXT['start_game'],
-                btn_class='is-success',
+                btn_class='is-danger',
                 active=True
                 ),
 

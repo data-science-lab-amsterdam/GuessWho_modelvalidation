@@ -35,7 +35,7 @@ var text_en = {
     'ok': 'OK',
     'guess_incorrect': 'Too bad! That\'s incorrect...',
     'already_moved': 'You\'ve already made a move. Click "End turn".',
-    'button_already_moved': 'Sorry. I won\'t try to cheat again',
+    'f_already_moved': 'Sorry. I won\'t try to cheat again',
     'waiting': 'Waiting for computer to move...'
 }
 
