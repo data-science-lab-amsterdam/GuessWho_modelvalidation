@@ -1,5 +1,19 @@
 var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
 
+var global_counter = 0;
+
+var runWaitingTextAnimation = function()
+{
+    texts = document.getElementById('waiting-text').innerHTML.split('|');
+    ani_timer = setInterval(function() {updateWaitingText(texts)}, 1000);
+}
+
+var updateWaitingText = function(texts)
+{
+    global_counter++;
+    var text = texts[global_counter % texts.length];
+    document.getElementById('waiting-text').innerHTML = text;
+}
 
 var show_graphs = function()
 {
@@ -105,6 +119,8 @@ var init = function() {
     document.querySelector('#end-modal-button').addEventListener('click', function() {
         location.reload()
     })
+
+    runWaitingTextAnimation()
 }
 
 

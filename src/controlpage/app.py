@@ -17,7 +17,9 @@ from crop_faces import crop_image
 
 logging.basicConfig(level=logging.INFO)
 
-IMAGES_DIR = './data/images/faces'
+RAW_IMAGES_DIR = './data/images/faces'
+CHECKED_IMAGES_DIR = './data/images/faces_checked'
+CHECKED_DATA_DIR = './data/labels_checked'
 
 current_image_data = None
 
@@ -87,9 +89,11 @@ feature_keys = [x['value'] for x in feature_data]
 
 
 def get_image_list():
-    p = Path('./data')
-    all_faces = [x.name for x in p.glob('images/faces/*.jpg') if 'dummy' not in x.stem]
-    checked_faces = [x.stem for x in p.glob('labels_checked/*.json')]
+    """
+    Get a list of raw image files that have not been checked yet
+    """
+    all_faces = [x.name for x in Path(RAW_IMAGES_DIR).glob('*.jpg') if 'dummy' not in x.stem]
+    checked_faces = [x.stem for x in Path(CHECKED_DATA_DIR).glob('*.json')]
     remaining_faces = [x for x in all_faces if x not in checked_faces]
     return remaining_faces
 
@@ -149,7 +153,7 @@ def bulma_center(component):
 
 
 def bulma_figure(url):
-    return html.Figure(className="figure", children=[
+    return html.Figure(className="figure has-text-centered", children=[
         html.Img(src=url),
     ])
 
@@ -181,7 +185,7 @@ def crop_image_to_face(img_file):
         print(e)
         cropped_image = image_rgb
 
-    img_file_out = str(Path('./data/images/faces_checked') / Path(img_file).name)
+    img_file_out = str(Path(CHECKED_IMAGES_DIR) / Path(img_file).name)
     io.imsave(img_file_out, cropped_image)
     return img_file_out
 
@@ -211,11 +215,11 @@ app.layout = html.Div([
             '',
             html.Figure(className="image", children=[
                 html.Caption(className="caption", children="Original image"),
-                html.Img(id='image', src='/assets/dummy.png'),
+                html.Img(id='image', src='/images/controlpage/dummy.png'),
             ]),
             html.Figure(className="image", children=[
                 html.Caption(className="caption", children="Detected face"),
-                html.Img(id='cropped-image', src='/assets/dummy.png'),
+                html.Img(id='cropped-image', src='/images/controlpage/dummy.png'),
             ]),
             ''
         ]),
@@ -251,9 +255,9 @@ app.layout = html.Div([
         # modal for when model in scoring
         bulma_modal(id='waiting',
                     content=[
-                        html.Img(className='header-logo', src='/assets/web-development.gif'),
+                        html.Img(className='header-logo', src='/images/controlpage/web-development.gif'),
                         html.Br(), html.Br(),
-                        html.H3('Analyzing image. Please wait...'),
+                        html.H3(id='waiting-text', children='Analyzing image | Running face detection | Scoring Tensorflow models | Please wait...'),
                     ],
                     btn_class='is-hidden',
                     active=False
@@ -263,9 +267,10 @@ app.layout = html.Div([
     # footer
     html.Footer(className="footer", children=[
         bulma_columns([
-            bulma_figure("/assets/tensorflow-logo.png"),
-            bulma_figure("/assets/dash-logo-stripe.svg"),
-            bulma_figure("/assets/python-logo-generic.svg")
+            bulma_figure("/images/controlpage/tensorflow-logo.png"),
+            bulma_figure("/images/controlpage/dash-logo-stripe.svg"),
+            bulma_figure("/images/controlpage/python-logo-generic.svg"),
+            bulma_figure("/images/game/Logo_datasciencelab.png")
         ])
     ])
 ])
@@ -289,7 +294,7 @@ def update_image_src(value):
     Show the selected image
     """
     if value is None or value == '':
-        return '/assets/dummy.png'
+        return '/images/controlpage/dummy.png'
     logging.info('Selected image: {}'.format(value))
     return os.path.join('/images/faces', value)
 
@@ -302,7 +307,7 @@ def update_cropped_image_src(_):
     """
     Show the selected image
     """
-    return '/assets/dummy.png'
+    return '/images/controlpage/dummy.png'
 
 
 @app.callback(
@@ -318,7 +323,7 @@ def choose_image(n_clicks, dropdown_value):
         return ''
 
     logging.info('You\'ve selected "{}"'.format(dropdown_value))
-    image_file = os.path.join(IMAGES_DIR, dropdown_value)
+    image_file = Path(RAW_IMAGES_DIR) / dropdown_value
 
     cropped_img_file = crop_image_to_face(image_file)
 
@@ -458,8 +463,7 @@ def save_data(n_clicks, name, f_hc, f_ht, f_ge, f_gl, f_hl, f_fh, f_h, f_t):
         'tie': f_t
     }
     try:
-        data_filepath = './data/labels_checked/{}.json'.format(data_output['filename'])
-
+        data_filepath = '{}/{}.json'.format(CHECKED_DATA_DIR, data_output['filename'])
         logging.info("Saving data to {}".format(data_filepath))
         with open(data_filepath, 'w') as f:
             json.dump(data_output, f)
