@@ -68,7 +68,7 @@ class GuessWhoGame:
         for filename in Path(self.data_dir).glob('*.json'):
             with open(str(filename), 'r') as f:
                 data = json.loads(f.read())
-                data['id'] = data['name']
+                data['id'] = data['url']
                 all_data.append(data)
         return all_data
 
