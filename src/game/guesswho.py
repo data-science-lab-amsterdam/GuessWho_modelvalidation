@@ -64,11 +64,13 @@ class GuessWhoGame:
         self.game_has_started = False
 
     def _read_data(self):
-        data = []
+        all_data = []
         for filename in Path(self.data_dir).glob('*.json'):
-            with open(filename, 'r') as f:
-                data.append(json.loads(f.read()))
-        return data
+            with open(str(filename), 'r') as f:
+                data = json.loads(f.read())
+                data['id'] = data['name']
+                all_data.append(data)
+        return all_data
 
     def set_computer_character(self, name):
         """
@@ -99,7 +101,7 @@ class GuessWhoGame:
         """
         Get the character items, without the properties
         """
-        return [{k: v for k, v in x.items() if k in ['id', 'name', 'file']} for x in self.data]
+        return [{k: v for k, v in x.items() if k in ['id', 'name', 'url']} for x in self.data]
 
     def get_question_types(self):
         """
@@ -123,7 +125,7 @@ class GuessWhoGame:
 
         k, v = question
         logging.info("Answering question if {} is {} for character '{}'".format(k, v, character['name']))
-        answer = character['properties'][k] == v
+        answer = character['features'][k] == v
         logging.info("Answer is {}".format(answer))
         self.player_has_made_a_move = True
         return True, answer
@@ -168,7 +170,7 @@ class GuessWhoGame:
         """
         Reloads the game instance
         """
-        self.__init__(self.data_file)
+        self.__init__(self.data_dir)
 
 
 class Board:
@@ -285,7 +287,7 @@ class ComputerPlayer(BasePlayer):
         newrows = []
         for row in self.board.data:
             newrow = {k: v for k, v in row.items() if k in ['id', 'name']}
-            newrow.update(row['properties'])
+            newrow.update(row['features'])
             newrow['is_open'] = True
             newrows.append(newrow)
         self.dataframe = pd.DataFrame(newrows).set_index('id')
@@ -393,7 +395,7 @@ class ComputerPlayer(BasePlayer):
         k, v = question
         logging.info("Updating board: {}, {}, {}".format(k, v, answer))
         for character in self.board:
-            if (character['properties'][k] == v) != answer:
+            if (character['features'][k] == v) != answer:
                 self.options[character['id']] = False
                 logging.info('Flipping id {}'.format(character['id']))
                 self.dataframe.loc[character['id'], 'is_open'] = False

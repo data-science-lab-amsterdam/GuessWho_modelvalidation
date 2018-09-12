@@ -28,20 +28,21 @@ initial_hidden_state = json.dumps({c['id']: True for c in characters})
 default_image = '/images/game/unknown.jpg'
 
 TEXT_EN = {
-    'hair color': 'Hair color',
+    'hair_color': 'Hair color',
     'dark': 'dark', 'light': 'light', 'none': 'none',
-    'hair length': 'Hair length',
+    'hair_length': 'Hair length',
     'short': 'short', 'long': 'long', 'bald': 'bald',
-    'hair type': 'Hair type',
+    'hair_type': 'Hair type',
     'curly': 'curly', 'straight': 'straight',
     'glasses': 'Glasses',
     'yes': 'yes', 'no': 'no',
     'head wear': 'Head wear',
     'hat': 'hat', 'cap': 'cap',
-    'sex': 'Gender',
+    'gender': 'Gender',
     'male': 'man', 'female': 'woman',
-    'facial hair': 'Facial hair',
+    'facial_hair': 'Facial hair',
     'beard': 'beard', 'moustache': 'moustache',
+    'tie': 'tie',
     'accessories': 'Accessories',
     'chain': 'chain', 'necklace': 'necklace',
     'player_computer': 'Computer',
@@ -73,19 +74,20 @@ TEXT_EN = {
 }
 
 TEXT_NL = {
-    'hair color': 'Haarkleur',
+    'hair_color': 'Haarkleur',
     'dark': 'donker', 'light': 'licht', 'none': 'geen',
-    'hair length': 'Haarlengte',
+    'hair_length': 'Haarlengte',
     'short': 'kort', 'long': 'lang', 'bald': 'kaal',
-    'hair type': 'Haartype',
+    'hair_type': 'Haartype',
     'curly': 'krullend', 'straight': 'steil',
     'glasses': 'Bril',
     'yes': 'ja', 'no': 'nee',
     'head wear': 'Hoofddeksel',
     'hat': 'hoed', 'cap': 'pet',
-    'sex': 'Geslacht',
+    'gender': 'Geslacht',
     'male': 'man', 'female': 'vrouw',
-    'facial hair': 'Gezichtsbeharing',
+    'facial_hair': 'Gezichtsbeharing',
+    'tie': 'stropdas',
     'beard': 'baard', 'moustache': 'snor',
     'accessories': 'Accessoires',
     'chain': 'kettinkje', 'necklace': 'ketting',
@@ -148,7 +150,7 @@ def reset_game():
     global characters
     global questions
     
-    game = GuessWhoGame(data_file='./data/test.json')
+    game = GuessWhoGame(data_dir='./data/labels_checked')
     characters = game.get_characters()
     questions = game.PROPERTIES
 
@@ -190,7 +192,7 @@ def render_board_characters(player_id):
                 n_clicks=0,
                 children=[
                     html.Figure(className='character-container has-text-centered', children=[
-                        html.Img(id='img-p{}-character-{}'.format(player_id, c['id']), className='character-image', src=c['file']),
+                        html.Img(id='img-p{}-character-{}'.format(player_id, c['id']), className='character-image', src=c['url']),
                         html.Figcaption(className='character-caption', children=c['name'])
                     ])
                 ]
@@ -346,12 +348,12 @@ app.layout = html.Div(children=[
                 ])
             ]),
             html.Div(id='column3', className='column is-one-fifth', children=[
-                html.Img(className='header-logo', src='/images/game/Logo_datasciencelab.png'),
-                html.Div(className='tile', children=[
-                    html.Div(id='tile1', className='tile is-parent is-vertial', children=[
-                        html.Div(id='tile-up', className='tile is-child notification is-primary')
-                        ])
-                    ])
+                html.Img(className='header-logo', src='/images/game/Logo_datasciencelab.png')
+                # html.Div(className='tile', children=[
+                #     html.Div(id='tile1', className='tile is-parent is-vertial', children=[
+                #         html.Div(id='tile-up', className='tile is-child notification is-primary')
+                #         ])
+                #     ])
 
             ])
         ]), #close columlist
@@ -470,7 +472,7 @@ def select_character(name):
     for c in characters:
         if c['name'] == name:
             game.set_computer_character(name)
-            return c['file']
+            return c['url']
     raise ValueError("Character '{}' not found".format(name))
 
 
