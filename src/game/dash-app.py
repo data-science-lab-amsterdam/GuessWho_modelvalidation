@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 
 LANG = 'nl'
 
-game = GuessWhoGame(data_file='./data/test.json')
+game = GuessWhoGame(data_dir='./data/labels_checked')
 
 # characters = [
 #     {'name': os.path.splitext(os.path.basename(filename))[0].split('-')[0],
