@@ -346,7 +346,12 @@ app.layout = html.Div(children=[
                 ])
             ]),
             html.Div(id='column3', className='column is-one-fifth', children=[
-                html.Img(className='header-logo', src='/images/game/Logo_datasciencelab.png')
+                html.Img(className='header-logo', src='/images/game/Logo_datasciencelab.png'),
+                html.Div(className='tile', children=[
+                    html.Div(id='tile1', className='tile is-parent is-vertial', children=[
+                        html.Div(id='tile-up', className='tile is-child notification is-primary')
+                        ])
+                    ])
 
             ])
         ]), #close columlist
