@@ -25,7 +25,7 @@ feature_data = [
         'options': [
             {'label': 'licht', 'value': 'light'},
             {'label': 'donker', 'value': 'dark'},
-            {'label': 'geen haar', 'value': 'no_hair'}
+            {'label': 'te kort', 'value': 'too_short'}
         ]
     }, {
         'label': 'Haartype',
@@ -33,52 +33,49 @@ feature_data = [
         'options': [
             {'label': 'krullend', 'value': 'curly'},
             {'label': 'stijl', 'value': 'straight'},
-            {'label': 'kort', 'value': 'too_short'}
+            {'label': 'te kort', 'value': 'too_short'}
         ]
     }, {
         'label': 'Haarlengte',
         'value': 'hair_length',
         'options': [
-            {'label': 'kaal', 'value': 'bold'},
-            {'label': 'kort', 'value': 'short_hair'},
-            {'label': 'lang', 'value': 'long_hair'}
+            {'label': 'kort', 'value': 'short'},
+            {'label': 'lang', 'value': 'long'}
         ]
     }, {
         'label': 'Geslacht',
         'value': 'gender',
         'options': [
-            {'label': 'man', 'value': 'man'},
-            {'label': 'vrouw', 'value': 'woman'}
+            {'label': 'man', 'value': 'male'},
+            {'label': 'vrouw', 'value': 'female'}
         ]
     }, {
         'label': 'Hoofddeksel',
         'value': 'hat',
         'options': [
-            {'label': 'hoed', 'value': 'hat'},
-            {'label': 'pet', 'value': 'cap'},
-            {'label': 'geen', 'value': 'none'}
+            {'label': 'ja', 'value': 'yes'},
+            {'label': 'nee', 'value': 'no'}
         ]
     }, {
         'label': 'Bril',
         'value': 'glasses',
         'options': [
-            {'label': 'bril', 'value': 'glasses'},
-            {'label': 'geen bril', 'value': 'no_glasses'}
+            {'label': 'ja', 'value': 'yes'},
+            {'label': 'nee', 'value': 'no'}
         ]
     }, {
         'label': 'Stropdas',
         'value': 'tie',
         'options': [
-            {'label': 'met das', 'value': 'tie'},
-            {'label': 'zonder das', 'value': 'no_tie'}
+            {'label': 'ja', 'value': 'yes'},
+            {'label': 'nee', 'value': 'no'}
         ]
     }, {
         'label': 'Gezichtsbeharing',
         'value': 'facial_hair',
         'options': [
-            {'label': 'baard', 'value': 'beard'},
-            {'label': 'snor', 'value': 'moustache'},
-            {'label': 'geen', 'value': 'no_facial_hair'}
+            {'label': 'ja', 'value': 'yes'},
+            {'label': 'nee', 'value': 'no'}
         ]
     }
 ]
