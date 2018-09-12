@@ -15,10 +15,10 @@ var show_graphs = function()
         console.log([key, value, score]);
 
         var color_class = 'is-success';
-        if (score < 80) {
-            color_class = 'is-warning'
-        } else if (score < 55) {
+        if (score < 55) {
             color_class = 'is-danger'
+        } else if (score < 80) {
+            color_class = 'is-warning'
         }
         document.getElementById('graph-container-'+key).innerHTML = '<progress class="progress show-value is-medium '+color_class+'" value="'+score+'" max="100">'+score+'%</progress>'
         //show_graph('graph-container-hair_colour', ['licht', 'donker', 'geen'], [0.1, 0.84, 0.06]);
@@ -80,7 +80,10 @@ var init = function() {
             if (mutation.attributeName == "accesskey") {  // note the small k for key!
                 console.log("data has been updated")
                 // hide the waiting modal
-                document.getElementById('waiting-modal').className='modal'; /* removed the is-active class */
+                document.getElementById('waiting-modal').className = 'modal'; /* removed the is-active class */
+
+                // hide the saving message
+                document.getElementById('output-save').innerHTML = '';
 
                 // show graphs
                 show_graphs()

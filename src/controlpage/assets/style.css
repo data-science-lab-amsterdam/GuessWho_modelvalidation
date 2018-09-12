@@ -31,6 +31,10 @@ img#image {
     width: 200px;
 }
 
+#save-button {
+    margin-top: 20px;
+}
+
 footer {
     margin-top: 20px;
     height: 100px;

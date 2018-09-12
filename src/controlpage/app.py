@@ -172,8 +172,7 @@ def show_field_row(data):
                      className='feature-dropdown is-vertical-center',
                      options=data['options']
                      ),
-        html.Div('hier komt nog een bar chart met de scores',
-                 id='graph-container-' + data['value'],
+        html.Div(id='graph-container-' + data['value'],
                  className='graph-container is-vertical-center'
                  )
     ], ['has-text-right', '', ''])
@@ -216,9 +215,12 @@ app.layout = html.Div([
                 show_field_row(field) for field in feature_data
             ]),
         #]),
-
-        html.Button('Opslaan', id='save-button', className='button is-medium is-success', n_clicks=0),
-        html.Div(id='output-save', children=''),
+        bulma_center(
+            html.Div([
+                html.Button('Opslaan', id='save-button', className='button is-medium is-success', n_clicks=0),
+                html.Div(id='output-save', children='')
+            ])
+        ),
 
         # modal for when model in scoring
         bulma_modal(id='waiting',
