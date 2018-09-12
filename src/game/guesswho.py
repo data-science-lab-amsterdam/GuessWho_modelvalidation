@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import logging
 import time
+from pathlib import Path
 
 
 def random_from(my_list):
@@ -36,20 +37,19 @@ class GuessWhoGame:
     """
     SLEEP_BETWEEN_TURNS = 1
     PROPERTIES = {
-        'hair color': ['dark', 'light', 'none'],
-        'hair length': ['short', 'long', 'bald'],
-        'hair type': ['curly', 'straight'],
+        'hair_color': ['dark', 'light', 'too_short'],
+        'hair_length': ['short', 'long'],
+        'hair_type': ['curly', 'straight', 'too_short'],
         'glasses': ['yes', 'no'],
-        'head wear': ['hat', 'cap', 'none'],
-        'sex': ['male', 'female'],
-        'facial hair': ['beard', 'moustache', 'none'],
-        'accessories': ['chain', 'necklace', 'none']
+        'hat': ['yes', 'no'],
+        'gender': ['male', 'female'],
+        'facial_hair': ['yes', 'no'],
+        'tie': ['yes', 'no']
     }
 
-    def __init__(self, data_file):
-        self.data_file = data_file
-        with open(data_file, 'r') as f:
-            self.data = json.loads(f.read())
+    def __init__(self, data_dir):
+        self.data_dir = data_dir
+        self.data = self._read_data()
 
         self.board = Board(self.data)
 
@@ -62,6 +62,13 @@ class GuessWhoGame:
         self.whose_turn_is_it = 'human'
         self.player_has_made_a_move = False
         self.game_has_started = False
+
+    def _read_data(self):
+        data = []
+        for filename in Path(self.data_dir).glob('*.json'):
+            with open(filename, 'r') as f:
+                data.append(json.loads(f.read()))
+        return data
 
     def set_computer_character(self, name):
         """
