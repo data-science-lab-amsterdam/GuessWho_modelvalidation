@@ -1,3 +1,2 @@
-cap
-hat
-none
+yes
+no

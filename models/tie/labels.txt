@@ -1,2 +1,2 @@
-no_tie
-tie
+no
+yes

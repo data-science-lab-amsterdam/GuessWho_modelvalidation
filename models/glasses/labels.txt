@@ -1,2 +1,2 @@
-glasses
-no_glasses
+yes
+no

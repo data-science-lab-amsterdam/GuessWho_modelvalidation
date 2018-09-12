@@ -1,2 +1,2 @@
-man
-woman
+male
+female
