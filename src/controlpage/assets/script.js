@@ -5,7 +5,10 @@ var show_graphs = function()
 {
     // fetch data
     var raw_data = document.getElementById("data-container").getAttribute('accessKey');
-    data = JSON.parse(decodeURIComponent(raw_data));
+    var data = JSON.parse(decodeURIComponent(raw_data));
+
+    // show cropped image
+    document.getElementById('cropped-image').src = data['url'].replace('data', '');
 
     // for each feature...
     for (var key in data['features']) {
@@ -82,9 +85,6 @@ var init = function() {
                 // hide the waiting modal
                 document.getElementById('waiting-modal').className = 'modal'; /* removed the is-active class */
 
-                // hide the saving message
-                document.getElementById('output-save').innerHTML = '';
-
                 // show graphs
                 show_graphs()
             }
@@ -100,6 +100,10 @@ var init = function() {
         console.log('Models being scored in the back-end');
         // show waiting modal
         document.getElementById('waiting-modal').className='modal is-active';
+    })
+
+    document.querySelector('#end-modal-button').addEventListener('click', function() {
+        location.reload()
     })
 }
 

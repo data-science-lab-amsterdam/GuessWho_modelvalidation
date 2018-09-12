@@ -4,19 +4,22 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 import os
 import flask
-import glob
+import re
 import json
 from pathlib import Path
 import logging
+import face_recognition
+from skimage import io
 
 import model_scoring
+from crop_faces import crop_image
 
 
 logging.basicConfig(level=logging.INFO)
 
 IMAGES_DIR = './data/images/faces'
 
-current_image_object = None
+current_image_data = None
 
 feature_data = [
     {
@@ -84,8 +87,9 @@ feature_keys = [x['value'] for x in feature_data]
 
 
 def get_image_list():
-    all_faces = [os.path.basename(x) for x in glob.glob('./data/images/faces/*.jpg') if 'dummy' not in x]
-    checked_faces = [x.stem for x in Path().glob('./data/checked/*json')]
+    p = Path('./data')
+    all_faces = [x.name for x in p.glob('images/faces/*.jpg') if 'dummy' not in x.stem]
+    checked_faces = [x.stem for x in p.glob('labels_checked/*.json')]
     remaining_faces = [x for x in all_faces if x not in checked_faces]
     return remaining_faces
 
@@ -151,18 +155,6 @@ def bulma_figure(url):
 
 
 def show_field_row(data):
-    # return html.Tr([
-    #     html.Td([
-    #         html.Label(className='label field-label is-vertical-center', children=data['label']),
-    #     ]),
-    #     html.Td([
-    #         dcc.Dropdown(id='input-'+data['value'], className='feature-dropdown is-vertical-center', options=data['options'])
-    #     ]),
-    #     html.Td([
-    #         html.Div('hier komt nog een bar chart met de scores', id='graph-container-'+data['value'], className='graph-container is-vertical-center')
-    #     ])
-    # ])
-
     return bulma_columns([
         html.Label(className='label field-label has-text-right', children=data['label']),
         dcc.Dropdown(id='input-' + data['value'],
@@ -173,6 +165,25 @@ def show_field_row(data):
                  className='graph-container is-vertical-center'
                  )
     ], ['has-text-right', '', ''])
+
+
+def crop_image_to_face(img_file):
+    image_rgb = face_recognition.load_image_file(img_file)
+
+    # run the face detection model to find face locations
+    try:
+        face_location = face_recognition.face_locations(image_rgb)[0]
+        (top, right, bottom, left) = face_location
+        area = (left, top, bottom - top, right - left)
+        cropped_image = crop_image(image_rgb, area, padding=0.25)
+    except Exception as e:
+        print("Error during cropping to face. Using original image.")
+        print(e)
+        cropped_image = image_rgb
+
+    img_file_out = str(Path('./data/images/faces_checked') / Path(img_file).name)
+    io.imsave(img_file_out, cropped_image)
+    return img_file_out
 
 
 app = dash.Dash()
@@ -196,28 +207,46 @@ app.layout = html.Div([
             ],
             extra_classes=['', 'is-half', '']
         ),
-        bulma_center(
-            html.Figure([
-                html.Img(id='image', src='/assets/dummy.png')
-            ])
-        ),
+        bulma_columns([
+            '',
+            html.Figure(className="image", children=[
+                html.Caption(className="caption", children="Original image"),
+                html.Img(id='image', src='/assets/dummy.png'),
+            ]),
+            html.Figure(className="image", children=[
+                html.Caption(className="caption", children="Detected face"),
+                html.Img(id='cropped-image', src='/assets/dummy.png'),
+            ]),
+            ''
+        ]),
 
         # hidden json data containers
         html.Div(id='data-container', accessKey='{}'),
 
+        # field for character name
+        bulma_columns([
+            html.Label(className='label field-label has-text-right', children='Naam'),
+            dcc.Input(id='input-character-name', className='input', type='text', value='', placeholder='Voer naam in voor karakter...'),
+            html.Div('')
+        ]),
+
         # dropdown field for features
-        #html.Table(className='table is-striped', children=[
-        ##   html.Tbody([
-            html.Div([
-                show_field_row(field) for field in feature_data
-            ]),
-        #]),
+        html.Div([
+            show_field_row(field) for field in feature_data
+        ]),
+
+        # save button
         bulma_center(
             html.Div([
-                html.Button('Opslaan', id='save-button', className='button is-medium is-success', n_clicks=0),
-                html.Div(id='output-save', children='')
+                html.Button('Opslaan', id='save-button', className='button is-medium is-success', n_clicks=0)
             ])
         ),
+
+        bulma_modal(id='end',
+                    content='Data opgeslagen!',
+                    btn_class='is-success',
+                    active=False
+                    ),
 
         # modal for when model in scoring
         bulma_modal(id='waiting',
@@ -230,16 +259,15 @@ app.layout = html.Div([
                     active=False
                     ),
     ]),
-    #html.Div(className="container", children=[
-        # footer
-        html.Footer(className="footer", children=[
-            bulma_columns([
-                bulma_figure("/assets/tensorflow-logo.png"),
-                bulma_figure("/assets/dash-logo-stripe.svg"),
-                bulma_figure("/assets/python-logo-generic.svg")
-            ])
+
+    # footer
+    html.Footer(className="footer", children=[
+        bulma_columns([
+            bulma_figure("/assets/tensorflow-logo.png"),
+            bulma_figure("/assets/dash-logo-stripe.svg"),
+            bulma_figure("/assets/python-logo-generic.svg")
         ])
-    #])
+    ])
 ])
 
 
@@ -249,7 +277,7 @@ def serve_images(path):
     Pass local images to the web server
     """
     root_dir = os.getcwd()
-    return flask.send_from_directory(os.path.join(root_dir, 'data/images/faces'), path)
+    return flask.send_from_directory(os.path.join(root_dir, 'data/images'), path)
 
 
 @app.callback(
@@ -263,7 +291,18 @@ def update_image_src(value):
     if value is None or value == '':
         return '/assets/dummy.png'
     logging.info('Selected image: {}'.format(value))
-    return os.path.join('/images', value)
+    return os.path.join('/images/faces', value)
+
+
+@app.callback(
+    Output('cropped-image', 'src'),
+    [Input('image-dropdown', 'value')]
+)
+def update_cropped_image_src(_):
+    """
+    Show the selected image
+    """
+    return '/assets/dummy.png'
 
 
 @app.callback(
@@ -281,20 +320,24 @@ def choose_image(n_clicks, dropdown_value):
     logging.info('You\'ve selected "{}"'.format(dropdown_value))
     image_file = os.path.join(IMAGES_DIR, dropdown_value)
 
-    global current_image_object
+    cropped_img_file = crop_image_to_face(image_file)
+
+    global current_image_data
     logging.info('Start model scoring..')
-    data_raw = model_scoring.predict(image_file)
+    data_raw = model_scoring.predict(cropped_img_file)
     data = data_raw
+    data['url'] = cropped_img_file
+    data['filename'] = Path(cropped_img_file).name
     data['features'] = {
         x['key']: {
             'value': x['value'],
             'score': x['score']
         } for x in data_raw['features']
     }
-    current_image_object = data
+    current_image_data = data
     logging.info('End model scoring')
 
-    return json.dumps(current_image_object)
+    return json.dumps(current_image_data)
 
 
 @app.callback(
@@ -386,22 +429,24 @@ def update_tie(json_string):
 
 
 @app.callback(
-    dash.dependencies.Output('output-save', 'children'),
-    [dash.dependencies.Input('save-button', 'n_clicks')],
-    [dash.dependencies.State('input-hair_colour', 'value'),
-     dash.dependencies.State('input-hair_type', 'value'),
-     dash.dependencies.State('input-gender', 'value'),
-     dash.dependencies.State('input-glasses', 'value'),
-     dash.dependencies.State('input-hair_length', 'value'),
-     dash.dependencies.State('input-facial_hair', 'value'),
-     dash.dependencies.State('input-hat', 'value'),
-     dash.dependencies.State('input-tie', 'value')]
+    Output('end-modal', 'className'),
+    [Input('save-button', 'n_clicks')],
+    [State('input-character-name', 'value'),
+     State('input-hair_colour', 'value'),
+     State('input-hair_type', 'value'),
+     State('input-gender', 'value'),
+     State('input-glasses', 'value'),
+     State('input-hair_length', 'value'),
+     State('input-facial_hair', 'value'),
+     State('input-hat', 'value'),
+     State('input-tie', 'value')]
 )
-def save_data(n_clicks, f_hc, f_ht, f_ge, f_gl, f_hl, f_fh, f_h, f_t):
+def save_data(n_clicks, name, f_hc, f_ht, f_ge, f_gl, f_hl, f_fh, f_h, f_t):
     if n_clicks is None or n_clicks == 0:
-        return ''
+        return 'modal'
 
-    data_output = current_image_object
+    data_output = current_image_data
+    data_output['name'] = re.sub('[^\w_.)( -]', '', name)
     data_output['features'] = {
         'hair_colour': f_hc,
         'hair_type': f_ht,
@@ -413,14 +458,15 @@ def save_data(n_clicks, f_hc, f_ht, f_ge, f_gl, f_hl, f_fh, f_h, f_t):
         'tie': f_t
     }
     try:
-        filepath = './data/checked/{}.json'.format(data_output['name'])
-        print("Saving data to {}".format(filepath))
-        with open(filepath, 'w') as f:
+        data_filepath = './data/labels_checked/{}.json'.format(data_output['filename'])
+
+        logging.info("Saving data to {}".format(data_filepath))
+        with open(data_filepath, 'w') as f:
             json.dump(data_output, f)
-        return 'Data saved'
     except Exception as e:
         print(e)
-        return 'Saving failed'
+
+    return 'modal is-active'
 
 
 if __name__ == '__main__':

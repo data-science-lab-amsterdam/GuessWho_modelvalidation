@@ -23,7 +23,15 @@ div.column {
     padding: 4px;
 }
 
-img#image {
+figure caption {
+    width: 150px;
+    height: 30px;
+}
+figure img#image,
+figure img#cropped-image {
+
+    width: auto;
+    min-height: 200px;
     height: 200px;
 }
 
