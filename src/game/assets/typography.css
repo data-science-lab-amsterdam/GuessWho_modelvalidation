@@ -13,20 +13,38 @@ input, div.Select, div.Select-input, div.Select-placeholder, div.Select-menu-out
     min-width: 200px;
 }
 
-/*img#output-selected-character {
-    width: 20%;
-    height: 25%;
-}*/
-
-img.header-logo {
-    height: 30%;
-    width: 40%;
+/*wie is het logos*/
+img.header-logo-modal {
     margin-top:50px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
+    height: 25%;
+    width: 40%;
     margin-left: 50%;
     margin-right: -50%;
     transform: translate(-50%, -50%)
 }
+
+#intro-modal-content > img
+{
+    margin-top:50px;
+/*    margin-bottom: 20px;*/
+    height: 25%;
+    width: 40%;
+    margin-left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
+}
+/*wie is het logo op board*/
+#level1-column1 > img{
+    margin-top:8%;
+    margin-bottom: 0px
+}
+/*DSL log*/
+#level1-column3 > img{
+    margin-top:8%;
+    margin-left: 10%
+}
+
 
 div.character-board {
 /*    width: 800px;
@@ -85,17 +103,12 @@ div#spacer {
 
 #panel-computer-board{
     background-color: rgb(222, 31, 63);
-/*    width: 100%;
-    height: 80%;*/
-/*    margin-left: 20%*/
 }
 
 #panel-player-board{
     background-color: rgb(31, 147, 222);
-/*    width: 65%;
-    height: 25%;*/
-/*    margin-left: 20%*/
 }
+
 #question-board-question{
     width: 100%;
     height: 10%;
@@ -119,7 +132,7 @@ div#spacer {
     margin-left: 50%;
     margin-right: -50%;
     transform: translate(-50%, -50%);
-    margin-top: 20%;
+    margin-top: 10%;
 }
 
 #output-selected-character{
@@ -173,4 +186,32 @@ div#spacer {
 }
 #input-guess-button{
     margin-left: 10%
+}
+
+#feedback-modal > div.modal-content > div > div{
+    font-size: large;
+    height: 75%;
+    width: 75%;
+    margin-left: 25%;
+}
+#level3-question-board{
+
+ height: 5%;
+}
+
+#level-answer-board{
+    height: 5%;
+    margin-left: 20%;
+    font-size:medium;
+}
+/*#output-question-answer
+{
+    height: 5%;
+    margin-left: 20%;
+    font-size:medium;
+}*/
+#level-item-answer-board > div:nth-child(1) > div > div{
+    height: 5%;
+    margin-left: 20%;
+    font-size:medium;
 }

@@ -116,7 +116,8 @@ TEXT_NL = {
     'welcome_bullet4': 'Klik op "Einde beurt" als je klaar bent',
     'start_game': "Let's play!",
     'start_rules': "Spelregels",
-    'already_moved': 'Je hebt al een vraag gesteld. Klik op "Einde beurt".',
+    'already_moved': 'Je hebt al een vraag gesteld. \
+    Klik op "Einde beurt".',
     'not': 'niet',
     'make_a_guess': '',
     'pick_a_character': 'De computer heeft ...'
@@ -336,7 +337,7 @@ app.layout = html.Div(children=[
                     ])
                 ]),
                 html.Div(id='level-answer-board', className='level', children=[
-                    html.Div(id='level-item-answer-board', className='level-item', children=[
+                    html.Div(id='level-item-answer-board', className='level item has-text-centered', children=[
                         html.Div([
                             bulma_field(label=TEXT['answer'], component=html.Div(id='output-question-answer', children=''))
                         ]),
@@ -374,7 +375,9 @@ app.layout = html.Div(children=[
                                         html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),                                     
                                     ]),
                                     html.Div(id='tile-player-img1', className='tile is-child', children=[
+
                                         html.Img(id='output-selected-character-speler', src=default_image)
+                                        
                                     ]),
                                 ])
                             ])
@@ -403,7 +406,7 @@ app.layout = html.Div(children=[
 
         bulma_modal(id='spelregels',
                     content=[
-                        html.Img(className='header-logo', src='/images/game/{}'.format(GAME_LOGO)),
+                        html.Img(className='header-logo-modal', src='/images/game/{}'.format(GAME_LOGO)),
                         html.Br(),
                         # # De regels
                         html.Ul(children=[
@@ -422,7 +425,6 @@ app.layout = html.Div(children=[
         bulma_modal(id='intro',
                     content=[
                         html.Img(className='header-logo', src='/images/game/{}'.format(GAME_LOGO)),
-                        html.Br(),
 
                         # html.Div(TEXT['welcome_header']),
                         html.Div(className='level-item', children=[
@@ -518,7 +520,6 @@ def select_character(name):
     """
     if name is None:
         return default_image
-
     reset_game()
     logging.info("Setting computer character to {}".format(name))
     for c in characters:
