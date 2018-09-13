@@ -13,25 +13,20 @@ input, div.Select, div.Select-input, div.Select-placeholder, div.Select-menu-out
     min-width: 200px;
 }
 
-img#output-selected-character {
-    width: 70px;
-    height: 70px;
-}
+/*img#output-selected-character {
+    width: 20%;
+    height: 25%;
+}*/
 
 img.header-logo {
-    height: 80px;
-    width: 200px;
+    height: 30%;
+    width: 40%;
     margin-top:50px;
     margin-bottom: 30px;
     margin-left: 50%;
     margin-right: -50%;
     transform: translate(-50%, -50%)
 }
-#output-selected-character{
-    height: 100px;
-    width: 50px;
-}
-
 
 div.character-board {
 /*    width: 800px;
@@ -65,9 +60,9 @@ figcaption.character-caption {
 
 img.character-image {
     border: 2px solid white;
-    margin: 4px;
-    width: 90px;
-    height: 90px;
+    margin: 2px;
+    width: 60px;
+    height: 75px;
 }
 
 div.modal button {
@@ -102,10 +97,8 @@ div#spacer {
 /*    margin-left: 20%*/
 }
 #question-board-question{
-    margin-top: 5%;
     width: 100%;
     height: 10%;
-    margin-bottom:5%;
 /*    margin-left: 20%*/
 }
 #question-board-character{
@@ -132,8 +125,8 @@ div#spacer {
 #output-selected-character{
     margin-top: 30px;
     margin-bottom: 30px;
-    width: 150%;
-    height: 150%;
+    width: 20%;
+    height: 30%;
 }
 #column3 > img
 {
@@ -174,4 +167,10 @@ div#spacer {
 }
 #level2-column3{
     margin-top: auto;
+}
+#question-board-character{
+    margin-left: 20%
+}
+#input-guess-button{
+    margin-left: 10%
 }

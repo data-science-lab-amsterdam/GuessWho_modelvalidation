@@ -2,6 +2,8 @@
 import numpy as np
 import glob
 import os
+import math
+import re
 import json
 import logging
 import dash
@@ -102,7 +104,7 @@ TEXT_NL = {
     'category': 'Kies een categorie',
     'options': 'selecteer een optie',
     'ask': 'Stel deze vraag',
-    'guess': 'Raad!',
+    'guess': 'Raad deze speler',
     'answer': '',
     'end_turn': 'Einde beurt',
     'end_game': 'Spel afsluiten',
@@ -116,7 +118,7 @@ TEXT_NL = {
     'start_rules': "Spelregels",
     'already_moved': 'Je hebt al een vraag gesteld. Klik op "Einde beurt".',
     'not': 'niet',
-    'make_a_guess': 'IK WEET HET!',
+    'make_a_guess': '',
     'pick_a_character': 'De computer heeft ...'
 }
 
@@ -184,24 +186,30 @@ def guess_character(name):
     return ok, answer
 
 
-def render_board_characters(player_id):
-    elements = []
-    for c in characters:
-        elements.append(
+def render_board_characters(player_id, num_per_row=9):
+    elements = [[] for _ in range(math.ceil(len(characters)/num_per_row))]
+    for i, c in enumerate(characters):
+        #img_src = '/'.join('/'.split(c['url'])[1:])
+        img_src = re.sub('^data', '', c['url'])
+        elm = html.Div(className='column', children=[
             html.A(
                 id='a-p{}-character-{}'.format(player_id, c['id']),
                 href="javascript:clickCharacter({}, {})".format(player_id, c['id']),
                 n_clicks=0,
                 children=[
-                    html.Figure(className='character-container has-text-centered', children=[
-                        html.Img(id='img-p{}-character-{}'.format(player_id, c['id']), className='character-image', src=c['url']),
-                        html.Figcaption(className='character-caption', children=c['name'])
+                    html.Figure(className='character-container', children=[
+                        html.Img(id='img-p{}-character-{}'.format(player_id, c['id']), className='character-image is-3by4', src=img_src)
+                        # html.Figcaption(className='character-caption', children=c['name'])
                     ])
                 ]
             )
-        )
-
-    return elements
+        ])
+        row_num = math.floor(i / num_per_row)
+        elements[row_num].append(elm)
+        
+    return [
+        html.Div(className='columns is-9 has-text-centered', children=row_elements) for row_elements in elements
+    ]
 
 
 def bulma_center(component):
@@ -257,12 +265,40 @@ app.layout = html.Div(children=[
     html.Div(id='game-container', className='container is-fluid', children=[
         html.Div(className='columns', children=[
             html.Div(id='column1', className='column is-one-fifth', children=[
-                    html.Div(id='level1-image-whoami', className='level', children=[
-        # COLUMN1
-                # bulma_columns([
-                        html.Img(className='header-logo', src='/images/game/{}'.format(GAME_LOGO))
+                html.Div(id='level1-column1', className='level', children=[
+                    html.Img(className='header-logo', src='/images/game/{}'.format(GAME_LOGO))
+                    ]),
+                html.Div(id='level2-column1', className='level', children=[
+                    html.Div(className='tile is-vertical', children=[
+                        html.Div(id='tile1_column1', className='tile', children=[
+                            html.Div(className='tile is-parent', children=[
+                                html.Div(className='article', children=[
+                                    html.Div(id='tile-player-choice', className='tile is-child', children=[
+                                        html.Div(id='question-board-character', className='level', children=[
+                                                bulma_field(label=TEXT['pick_a_character'],
+                                                            component=dcc.Dropdown(id='input-character-guess',
+                                                                                   options=get_character_options(),
+                                                                                   multi=False
+                                                                                   )
+                                                            )
+                                        ]),
+                                        html.Div(id='question-board-character1', className='level', children=[
+                                            bulma_field(label=[html.Span(className='is-invisible', children='.')],
+                                                        component=html.Button(id='input-guess-button',
+                                                                                className='button is-info is-inverted',
+                                                                                n_clicks=0,
+                                                                                children=TEXT['guess']
+                                                                            )
+                                                        )
+                                        ])
+                                    ])
+                                ])
+                            ])
+                        ])
                     ])
+                ])
             ]),
+
             html.Div(id='column2', className='column is-three-fifth', children=[
                 # Computer player board
                 html.Div(id='level1-computer-board', className='level', children=[
@@ -278,9 +314,6 @@ app.layout = html.Div(children=[
                 # start questoin board
                 html.Div(id='level3-question-board', className='level', children=[
                     html.Div(id='question-board-question', className='columns', children=[
-                        # html.Div(className='column', children=[
-                        #     html.H4(TEXT['select_question'])
-                        # ]),
                         html.Div(className='column', children=[
                             bulma_field(label=TEXT['category'],
                                         component=dcc.Dropdown(id='input-question-type',
@@ -307,7 +340,9 @@ app.layout = html.Div(children=[
                         html.Div([
                             bulma_field(label=TEXT['answer'], component=html.Div(id='output-question-answer', children=''))
                         ]),
-                        html.Div(id='output-hidden-guess', accessKey=""),
+                        html.Div(id='output-awnser', className='button is-hidden', children=[
+                            html.Div(id='output-hidden-guess', accessKey="")
+                        ])
                     ])
                 ]),
                 # Human player board
@@ -318,36 +353,6 @@ app.layout = html.Div(children=[
                             html.Div(id='player-board', children=render_board_characters(player_id=2)),
                             html.Progress(id='player-progress', className="progress is-danger", value="0", max="100")
                         ])
-                    ])
-                ]),
-                html.Div(id='level4-quess', className='level', children=[
-                    html.Div(id='question-board-character', className='columns', children=[
-                        html.Div(className='column', children=[
-                            html.H4(TEXT['make_a_guess'])
-                        ]),
-                        html.Div(className='column is-half', children=[
-                            bulma_field(label=TEXT['pick_a_character'],
-                                        component=dcc.Dropdown(id='input-character-guess',
-                                                               options=get_character_options(),
-                                                               multi=False
-                                                               )
-                                        )
-                        ]),
-                        html.Div(className='column', children=[
-                            bulma_field(label=[html.Span(className='is-invisible', children='.')],
-                                        component=html.Button(id='input-guess-button',
-                                                              className='button is-info is-inverted',
-                                                              n_clicks=0,
-                                                              children=TEXT['guess']
-                                                              )
-                                        )
-                        ]),
-                        # html.Div(className='column', children=[
-                        #     html.Div([
-                        #         bulma_field(label=TEXT['answer'], component=html.Div(id='output-question-answer', children=''))
-                        #     ]),
-                        #     html.Div(id='output-hidden-guess', accessKey=""),
-                        # ])
                     ])
                 ]),
                 # Bottom part
@@ -366,17 +371,16 @@ app.layout = html.Div(children=[
                                 html.Div(className='article', children=[
                                     html.Div(id='tile-player-img', className='tile is-child', children=[
                                         html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),
-                                        html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),
-                                        html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),
-                                        html.Br(),html.Br(),html.Br(),                                      ]),
+                                        html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),                                     
+                                    ]),
                                     html.Div(id='tile-player-img1', className='tile is-child', children=[
-                                        html.Img(className='header-logo', src='/images/game/Logo_datasciencelab.png')
-                                        ])
-                                    ])
+                                        html.Img(id='output-selected-character-speler', src=default_image)
+                                    ]),
                                 ])
                             ])
                         ])
                     ])
+                ])
             ])
         ]), #close columlist
 
@@ -517,10 +521,20 @@ def select_character(name):
 
     logging.info("Setting computer character to {}".format(name))
     for c in characters:
+        img_src = re.sub('^data', '', c['url'])
         if c['name'] == name:
             game.set_computer_character(name)
-            return c['url']
+            return img_src
     raise ValueError("Character '{}' not found".format(name))
+
+@app.callback(
+    Output(component_id='output-selected-character-speler', component_property='src'),
+    [Input(component_id='output-selected-character', component_property='src')]
+)
+def select_character_speler(img_src):
+    if img_src is None:
+        return default_image
+    return img_src
 
 
 @app.callback(
