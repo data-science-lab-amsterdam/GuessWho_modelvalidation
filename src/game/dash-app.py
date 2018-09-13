@@ -30,12 +30,12 @@ initial_hidden_state = json.dumps({c['id']: True for c in characters})
 default_image = '/images/game/unknown.jpg'
 
 TEXT_EN = {
-    'hair_color': 'Hair color',
+    'hair_colour': 'Hair color',
     'dark': 'dark', 'light': 'light', 'none': 'none',
     'hair_length': 'Hair length',
     'short': 'short', 'long': 'long', 'bald': 'bald',
     'hair_type': 'Hair type',
-    'curly': 'curly', 'straight': 'straight',
+    'curly': 'curly', 'straight': 'straight', 'too_short': 'too short',
     'glasses': 'Glasses',
     'yes': 'yes', 'no': 'no',
     'head wear': 'Head wear',
@@ -77,10 +77,10 @@ TEXT_EN = {
 }
 
 TEXT_NL = {
-    'hair_color': 'Haarkleur',
+    'hair_colour': 'Haarkleur',
     'dark': 'donker', 'light': 'licht', 'none': 'geen',
     'hair_length': 'Haarlengte',
-    'short': 'kort', 'long': 'lang', 'bald': 'kaal',
+    'short': 'kort', 'long': 'lang', 'too_short': 'too short',
     'hair_type': 'Haartype',
     'curly': 'krullend', 'straight': 'steil',
     'glasses': 'Bril',

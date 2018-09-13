@@ -205,6 +205,7 @@ app.layout = html.Div([
         html.Div('', id='spacer-top'),
 
         # Choose image
+        html.Div(className='container is-fluid')
         bulma_columns(
             components=[
                 html.Button('Update', id='update-button', className='button is-info', n_clicks=0),
@@ -215,7 +216,8 @@ app.layout = html.Div([
                     value=''
                 ),
                 html.Button('Start analyse', id='start-model-button', className='button is-info', n_clicks=0)
-            ]
+            ],
+            extra_classes=['', 'has-text-right', 'is-half', '']
         ),
         bulma_columns([
             '',
