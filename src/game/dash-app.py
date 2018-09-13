@@ -194,7 +194,7 @@ def render_board_characters(player_id, num_per_row=9):
         elm = html.Div(className='column', children=[
             html.A(
                 id='a-p{}-character-{}'.format(player_id, c['id']),
-                href="javascript:clickCharacter({}, {})".format(player_id, c['id']),
+                href="javascript:clickCharacter({}, '{}')".format(player_id, c['id']),
                 n_clicks=0,
                 children=[
                     html.Figure(className='character-container', children=[
@@ -474,7 +474,7 @@ def start_game(_):
     """
     if _ is None or _ == 0:
         return 'modal is-active'
-    reset_game()
+
     return 'modal'
 
 @app.callback(
@@ -487,7 +487,7 @@ def spelregels(_):
     """
     if _ is None or _ == 0:
         return 'modal is-active'
-    reset_game()
+
     return 'modal'
 
 
@@ -519,6 +519,7 @@ def select_character(name):
     if name is None:
         return default_image
 
+    reset_game()
     logging.info("Setting computer character to {}".format(name))
     for c in characters:
         img_src = re.sub('^data', '', c['url'])
