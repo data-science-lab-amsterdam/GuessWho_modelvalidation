@@ -10,12 +10,14 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
+from pathlib import Path
 import flask
 from guesswho import *
 
 logging.basicConfig(level=logging.INFO)
 
 LANG = 'nl'
+CHECKED_IMAGES_DIR = './data/images/faces_checked'
 
 game = GuessWhoGame(data_dir='./data/labels_checked')
 
@@ -190,7 +192,6 @@ def guess_character(name):
 def render_board_characters(player_id, num_per_row=9):
     elements = [[] for _ in range(math.ceil(len(characters)/num_per_row))]
     for i, c in enumerate(characters):
-        #img_src = '/'.join('/'.split(c['url'])[1:])
         img_src = re.sub('^data', '', c['url'])
         elm = html.Div(className='column', children=[
             html.A(
@@ -438,7 +439,9 @@ app.layout = html.Div(children=[
                                                                )
                                         )
                         ]),
-                        html.Br(),
+                        html.Div(className='level-item', children=[
+                            html.Button('Update', id='update-characters-button', className='button is-info', n_clicks=0),
+                        ]),
                         html.Div(className='level-item', children=[
                             bulma_field(label=TEXT['select_character'],
                                         component=dcc.Dropdown(id='input-character-select', options=get_character_options())
@@ -459,6 +462,7 @@ app.layout = html.Div(children=[
     ])
 ])
 
+
 @app.server.route('/images/<path:path>')
 def serve_images(path):
     """
@@ -466,6 +470,24 @@ def serve_images(path):
     """
     root_dir = os.getcwd()
     return flask.send_from_directory(os.path.join(root_dir, 'data/images'), path)
+
+
+@app.callback(
+    Output('input-character-select', 'options'),
+    [Input('update-characters-button', 'n_clicks')]
+)
+def update_image_dropdown_options():
+    reset_game()
+    return get_character_options()
+
+
+@app.callback(
+    Output('input-character-guess', 'options'),
+    [Input('update-characters-button', 'n_clicks')]
+)
+def update_image_dropdown_options2():
+    reset_game()
+    return get_character_options()
 
 
 @app.callback(

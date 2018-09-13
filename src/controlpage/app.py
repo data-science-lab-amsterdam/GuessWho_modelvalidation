@@ -93,7 +93,7 @@ def get_image_list(last_n=10):
     Get a list of raw image files that have not been checked yet
     """
     all_faces = [x for x in Path(RAW_IMAGES_DIR).glob('*.jpg') if 'dummy' not in x.stem]
-    recent_faces = sorted(all_faces, key=os.path.getmtime)[-last_n:]
+    recent_faces = sorted(all_faces, key=os.path.getmtime, reverse=True)[:last_n]
     checked_faces = [x.stem for x in Path(CHECKED_DATA_DIR).glob('*.json')]
     remaining_faces = [x for x in recent_faces if x.name not in checked_faces]
     if len(remaining_faces) == 0:
