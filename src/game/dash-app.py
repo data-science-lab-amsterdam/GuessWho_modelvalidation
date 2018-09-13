@@ -259,6 +259,8 @@ def bulma_modal(id, content=None, btn_text='OK', btn_class='is-info', active=Fal
 
 
 app = dash.Dash()
+app.css.config.serve_locally = True
+app.scripts.config.serve_locally = True
 
 app.layout = html.Div(children=[
     dcc.Input(id='output-dummy-1', type='hidden', className='is-hidden', value=''),
