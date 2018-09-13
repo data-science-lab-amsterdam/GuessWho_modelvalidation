@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import json
+import os
 import numpy as np
 import pandas as pd
 import logging
@@ -35,6 +36,7 @@ class GuessWhoGame:
     """
     Game controller class
     """
+    NUM_CHARACTERS = 18
     SLEEP_BETWEEN_TURNS = 1
     PROPERTIES = {
         'hair_color': ['dark', 'light', 'too_short'],
@@ -65,7 +67,9 @@ class GuessWhoGame:
 
     def _read_data(self):
         all_data = []
-        for filename in Path(self.data_dir).glob('*.json'):
+        filenames = Path(self.data_dir).glob('*.json')
+        most_recent_files = sorted(filenames, key=os.path.getmtime)[-self.NUM_CHARACTERS:]
+        for filename in most_recent_files:
             with open(str(filename), 'r') as f:
                 data = json.loads(f.read())
                 data['id'] = data['name']
