@@ -72,7 +72,7 @@ class GuessWhoGame:
         for filename in most_recent_files:
             with open(str(filename), 'r') as f:
                 data = json.loads(f.read())
-                data['id'] = data['name']
+                data['id'] = data['url']
                 all_data.append(data)
         return all_data
 

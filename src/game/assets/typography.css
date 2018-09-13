@@ -19,12 +19,17 @@ img#output-selected-character {
 }
 
 img.header-logo {
-    height: 60px;
-    margin-top:40px;
+    height: 80px;
+    width: 200px;
+    margin-top:50px;
     margin-bottom: 30px;
     margin-left: 50%;
     margin-right: -50%;
     transform: translate(-50%, -50%)
+}
+#output-selected-character{
+    height: 100px;
+    width: 50px;
 }
 
 
@@ -61,8 +66,8 @@ figcaption.character-caption {
 img.character-image {
     border: 2px solid white;
     margin: 4px;
-    width: 75px;
-    height: 75px;
+    width: 90px;
+    height: 90px;
 }
 
 div.modal button {
@@ -97,15 +102,17 @@ div#spacer {
 /*    margin-left: 20%*/
 }
 #question-board-question{
-    margin-top: 30px;
-    width: 75%;
+    margin-top: 5%;
+    width: 100%;
     height: 10%;
+    margin-bottom:5%;
 /*    margin-left: 20%*/
 }
 #question-board-character{
-    margin-top: 30px;
+    margin-top: 5%;
     width: 75%;
     height: 10%;
+    margin-bottom: : 5%;
 /*    margin-left: 20%*/
 }
 
@@ -114,6 +121,12 @@ div#spacer {
     margin-right: -50%;
     transform: translate(-50%, -50%);
     /*background-color: rgb(31, 147, 222);*/
+}
+#spelregels-modal-button{
+    margin-left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    margin-top: 20%;
 }
 
 #output-selected-character{
@@ -130,4 +143,35 @@ div#spacer {
 }
 #column2{
     margin-top: 5%
+}
+#level3-question-board{
+    margin-left: 10%;
+}
+#waiting-modal > div.modal-content > div > div{
+    font-size: large;
+    height: 75%;
+    width: 75%;
+    margin-left: 25%;
+}
+#waiting-modal-button{
+    height: 25%;
+    width: 25%;
+    margin-left: 25%;
+}
+
+#spelregels-modal-content > ul{
+
+  list-style: none;
+  text-align: center;
+  list-style-position: inside;
+  font-size: large;
+}
+#input-endturn-button{
+    margin-top: 10%;
+    margin-left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+#level2-column3{
+    margin-top: auto;
 }

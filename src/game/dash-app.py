@@ -66,6 +66,7 @@ TEXT_EN = {
     'welcome_bullet3': 'Select a question, or make a guess if you\'re feeling confident',
     'welcome_bullet4': 'Click "End turn" and wait for the computer to move',
     'start_game': 'Start the game!',
+    'start_rules': 'Spelregels',
     'already_moved': 'You\'ve already made a move. Click "End turn".',
     'not': 'not',
     'make_a_guess': '...or make a guess!',
@@ -97,21 +98,22 @@ TEXT_NL = {
     'level_hard': 'Moeilijk',
     'level_easy': 'Makkelijk',
     'select_character': 'Selecteer een awesome avatar',
-    'select_question': 'Stel een vraag:',
-    'category': 'Categorie:',
-    'options': 'Opties:',
-    'ask': 'Vraag!',
+    'select_question': '',
+    'category': 'Kies een categorie',
+    'options': 'selecteer een optie',
+    'ask': 'Stel deze vraag',
     'guess': 'Raad!',
-    'answer': 'Antwoord',
+    'answer': '',
     'end_turn': 'Einde beurt',
     'end_game': 'Spel afsluiten',
     'waiting_for_computer': 'De computer is nu aan de beurt...',
     'welcome_header': '',
-    'welcome_bullet1': 'Jij start het spel, stel goede vragen om de computer te verslaan',
-    'welcome_bullet2': 'Selecteer een vraag, of raad de avatar van de computer',
-    'welcome_bullet3': 'De computer beantwoord jouw vraag. Klik zelf de avatars weg.',
-    'welcome_bullet4': 'Klik op "Einde beurt" en wacht op de beurt van de computer',
-    'start_game': 'Start',
+    'welcome_bullet1': 'Begint het spel door een categorie en optie te kiezen',
+    'welcome_bullet2': 'Stel je vraag en wacht op antwoord',
+    'welcome_bullet3': 'Klik de spelers weg die niet aan het antwoord voldoen',
+    'welcome_bullet4': 'Klik op "Einde beurt" als je klaar bent',
+    'start_game': "Let's play!",
+    'start_rules': "Spelregels",
     'already_moved': 'Je hebt al een vraag gesteld. Klik op "Einde beurt".',
     'not': 'niet',
     'make_a_guess': 'IK WEET HET!',
@@ -273,22 +275,12 @@ app.layout = html.Div(children=[
                         ])
                     ])
                 ]),
-                # Human player board
-                html.Div(id='level2-player-board', className='level', children=[
-                    html.Div(id='panel-player-board', className='character-board panel', children=[
-                        html.P(id="player-name", className="panel-heading", children=TEXT['player_human']),
-                        html.Div(className="panel-block is-block", children=[
-                            html.Div(id='player-board', children=render_board_characters(player_id=2)),
-                            html.Progress(id='player-progress', className="progress is-danger", value="0", max="100")
-                        ])
-                    ])
-                ]),
                 # start questoin board
                 html.Div(id='level3-question-board', className='level', children=[
                     html.Div(id='question-board-question', className='columns', children=[
-                        html.Div(className='column', children=[
-                            html.H4(TEXT['select_question'])
-                        ]),
+                        # html.Div(className='column', children=[
+                        #     html.H4(TEXT['select_question'])
+                        # ]),
                         html.Div(className='column', children=[
                             bulma_field(label=TEXT['category'],
                                         component=dcc.Dropdown(id='input-question-type',
@@ -307,6 +299,24 @@ app.layout = html.Div(children=[
                                                               children=TEXT['ask']
                                                               )
                                         )
+                        ])
+                    ])
+                ]),
+                html.Div(id='level-answer-board', className='level', children=[
+                    html.Div(id='level-item-answer-board', className='level-item', children=[
+                        html.Div([
+                            bulma_field(label=TEXT['answer'], component=html.Div(id='output-question-answer', children=''))
+                        ]),
+                        html.Div(id='output-hidden-guess', accessKey=""),
+                    ])
+                ]),
+                # Human player board
+                html.Div(id='level2-player-board', className='level', children=[
+                    html.Div(id='panel-player-board', className='character-board panel', children=[
+                        html.P(id="player-name", className="panel-heading", children=TEXT['player_human']),
+                        html.Div(className="panel-block is-block", children=[
+                            html.Div(id='player-board', children=render_board_characters(player_id=2)),
+                            html.Progress(id='player-progress', className="progress is-danger", value="0", max="100")
                         ])
                     ])
                 ]),
@@ -332,29 +342,41 @@ app.layout = html.Div(children=[
                                                               )
                                         )
                         ]),
-                        html.Div(className='column', children=[
-                            html.Div([
-                                bulma_field(label=TEXT['answer'], component=html.Div(id='output-question-answer', children=''))
-                            ]),
-                            html.Div(id='output-hidden-guess', accessKey=""),
-                        ])
+                        # html.Div(className='column', children=[
+                        #     html.Div([
+                        #         bulma_field(label=TEXT['answer'], component=html.Div(id='output-question-answer', children=''))
+                        #     ]),
+                        #     html.Div(id='output-hidden-guess', accessKey=""),
+                        # ])
                     ])
                 ]),
                 # Bottom part
                 html.Div(id='level5-button', className='level', children=[
-                    bulma_center(
-                        html.Button(id='input-endturn-button', className='button is-info is-large', n_clicks=0, children=TEXT['end_turn'])
-                                )
+                    html.Button(id='input-endturn-button', className='button is-info is-large', n_clicks=0, children=TEXT['end_turn'])
                 ])
             ]),
             html.Div(id='column3', className='column is-one-fifth', children=[
-                html.Img(className='header-logo', src='/images/game/Logo_datasciencelab.png')
-                # html.Div(className='tile', children=[
-                #     html.Div(id='tile1', className='tile is-parent is-vertial', children=[
-                #         html.Div(id='tile-up', className='tile is-child notification is-primary')
-                #         ])
-                #     ])
-
+                html.Div(id='level1-column3', className='level', children=[
+                    html.Img(className='header-logo', src='/images/game/Logo_datasciencelab.png')
+                    ]),
+                html.Div(id='level2-column3', className='level', children=[
+                    html.Div(className='tile is-vertical', children=[
+                        html.Div(id='tile1', className='tile', children=[
+                            html.Div(id='tile', className='tile is-parent', children=[
+                                html.Div(className='article', children=[
+                                    html.Div(id='tile-player-img', className='tile is-child', children=[
+                                        html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),
+                                        html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),
+                                        html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),
+                                        html.Br(),html.Br(),html.Br(),                                      ]),
+                                    html.Div(id='tile-player-img1', className='tile is-child', children=[
+                                        html.Img(className='header-logo', src='/images/game/Logo_datasciencelab.png')
+                                        ])
+                                    ])
+                                ])
+                            ])
+                        ])
+                    ])
             ])
         ]), #close columlist
 
@@ -375,10 +397,29 @@ app.layout = html.Div(children=[
 
         bulma_modal(id='feedback'),
 
+        bulma_modal(id='spelregels',
+                    content=[
+                        html.Img(className='header-logo', src='/images/game/{}'.format(GAME_LOGO)),
+                        html.Br(),
+                        # # De regels
+                        html.Ul(children=[
+                            html.Li(TEXT['welcome_bullet1']),
+                            html.Li(TEXT['welcome_bullet2']),
+                            html.Li(TEXT['welcome_bullet3']),
+                            html.Li(TEXT['welcome_bullet4'])
+                        ]),
+                    ],
+
+                    btn_text=TEXT['start_game'],
+                    btn_class='is-danger',
+                    active=True
+                    ),
+
         bulma_modal(id='intro',
                     content=[
                         html.Img(className='header-logo', src='/images/game/{}'.format(GAME_LOGO)),
                         html.Br(),
+
                         # html.Div(TEXT['welcome_header']),
                         html.Div(className='level-item', children=[
                             bulma_field(label=TEXT['select_difficulty'],
@@ -400,15 +441,8 @@ app.layout = html.Div(children=[
                             html.Img(id='output-selected-character', src=default_image)
                         ]),
                         html.Br(),
-                        # # De regels
-                        # html.Ul(children=[
-                        #     html.Li(TEXT['welcome_bullet1']),
-                        #     html.Li(TEXT['welcome_bullet2']),
-                        #     html.Li(TEXT['welcome_bullet3']),
-                        #     html.Li(TEXT['welcome_bullet4'])
-                        # ]),
                     ],
-                    btn_text=TEXT['start_game'],
+                    btn_text=TEXT['start_rules'],
                     btn_class='is-danger',
                     active=True
                     ),
@@ -431,6 +465,19 @@ def serve_images(path):
     [Input('intro-modal-button', 'n_clicks')]
 )
 def start_game(_):
+    """
+    Start a new game with the modal button
+    """
+    if _ is None or _ == 0:
+        return 'modal is-active'
+    reset_game()
+    return 'modal'
+
+@app.callback(
+    Output('spelregels-modal', 'className'),
+    [Input('spelregels-modal-button', 'n_clicks')]
+)
+def spelregels(_):
     """
     Start a new game with the modal button
     """
