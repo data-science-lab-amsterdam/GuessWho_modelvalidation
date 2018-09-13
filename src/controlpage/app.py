@@ -88,17 +88,22 @@ feature_data = [
 feature_keys = [x['value'] for x in feature_data]
 
 
-def get_image_list():
+def get_image_list(last_n=10):
     """
     Get a list of raw image files that have not been checked yet
     """
-    all_faces = [x.name for x in Path(RAW_IMAGES_DIR).glob('*.jpg') if 'dummy' not in x.stem]
+    all_faces = [x for x in Path(RAW_IMAGES_DIR).glob('*.jpg') if 'dummy' not in x.stem]
+    recent_faces = sorted(all_faces, key=os.path.getmtime)[-last_n:]
     checked_faces = [x.stem for x in Path(CHECKED_DATA_DIR).glob('*.json')]
-    remaining_faces = [x for x in all_faces if x not in checked_faces]
-    return remaining_faces
+    remaining_faces = [x for x in recent_faces if x.name not in checked_faces]
+    if len(remaining_faces) == 0:
+        remaining_faces = recent_faces
+
+    return [x.name for x in remaining_faces]
 
 
-list_of_images = get_image_list()
+def get_image_dropdown_options():
+    return [{'label': i, 'value': i} for i in get_image_list()]
 
 
 def bulma_modal(id, content=None, btn_text='OK', btn_class='is-info', active=False):
@@ -191,6 +196,7 @@ def crop_image_to_face(img_file):
 
 
 app = dash.Dash()
+#app.config['suppress_callback_exceptions'] = True
 
 app.layout = html.Div([
 
@@ -201,15 +207,15 @@ app.layout = html.Div([
         # Choose image
         bulma_columns(
             components=[
+                html.Button('Update', id='update-button', className='button is-info', n_clicks=0),
                 html.H1(children='Kies een foto'),
                 dcc.Dropdown(
                     id='image-dropdown',
-                    options=[{'label': i, 'value': i} for i in list_of_images],
+                    options=get_image_dropdown_options(),
                     value=''
                 ),
                 html.Button('Start analyse', id='start-model-button', className='button is-info', n_clicks=0)
-            ],
-            extra_classes=['', 'is-half', '']
+            ]
         ),
         bulma_columns([
             '',
@@ -283,6 +289,14 @@ def serve_images(path):
     """
     root_dir = os.getcwd()
     return flask.send_from_directory(os.path.join(root_dir, 'data/images'), path)
+
+
+@app.callback(
+    Output('image-dropdown', 'options'),
+    [Input('update-button', 'n_clicks')]
+)
+def update_source_images(_):
+    return get_image_dropdown_options()
 
 
 @app.callback(
