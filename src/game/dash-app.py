@@ -200,8 +200,8 @@ def render_board_characters(player_id, num_per_row=9):
                 n_clicks=0,
                 children=[
                     html.Figure(className='character-container', children=[
-                        html.Img(id='img-p{}-character-{}'.format(player_id, c['id']), className='character-image is-3by4', src=img_src)
-                        # html.Figcaption(className='character-caption', children=c['name'])
+                        html.Img(id='img-p{}-character-{}'.format(player_id, c['id']), className='character-image is-3by4', src=img_src),
+                        html.Figcaption(className='character-caption', children=c['name'])
                     ])
                 ]
             )

@@ -19,7 +19,7 @@ img.header-logo-modal {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 60%;
+    width: 45%;
 }
 
 #intro-modal-content > img
@@ -79,9 +79,9 @@ figure.character-container {
 }
 
 figcaption.character-caption {
-    font-size: 80%;
+    font-size: 50%;
     color: white;
-    margin-top: -10px;
+    margin-top: 1px;
 }
 
 img.character-image {

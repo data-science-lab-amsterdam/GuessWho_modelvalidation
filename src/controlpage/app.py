@@ -240,7 +240,7 @@ app.layout = html.Div([
         # field for character name
         bulma_columns([
             html.Label(className='label field-label has-text-right', children='Naam'),
-            dcc.Input(id='input-character-name', className='input', type='text', value='', placeholder='Voer naam in voor karakter...'),
+            dcc.Input(id='input-character-name', className='input', type='text', value='', placeholder='Voer naam in voor karakter...', maxlength=10),
             html.Div('')
         ]),
 
