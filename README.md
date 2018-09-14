@@ -17,8 +17,8 @@
 * Laptop 1
     * Verbind met scherm 1
     * Start PhotoBooth app (op een Mac)
-    * Start het rsync-script
-    * `bash stream_fotos.sh`
+    * Start het rsync-script (en zorg dat de verwijzingen naar de folders kloppen: folder A: photo booth map en folder B: de shared folder. Code 23 error komt voor. Check dus even of nieuwe fotos inderdaad van A naar B gaan.)
+    * `bash src/stream_fotos.sh`
     * Start de controlepagina
     * `python src/controlpage/app.py`
     * Open http://127.0.0.1:8050/ in je browser
@@ -35,15 +35,15 @@
     * Persoon komt in de Photo booth
     * Maak een foto met de PhotoBooth app (foto komt op scherm)
     * Switch naar het browserwindow met de controlepagina
-    * Klik op de 'Update'-knop
+    * Klik op de 'Update'-knop linksbovenin
     * Selecteer de foto (laatste 10 staan in de pulldown)
     * Klik op de 'Start analyse'-knop
-    * Voer een naam in (niet meer dan 10 karakters svp)
+    * Voer een naam in (dring aan op niet meer dan 10 karakters svp !)
     * Pas de classificaties aan waar ze niet kloppen
     * Klik op 'Opslaan'
 * Bij laptop 2:
     * Persoon komt bij het spel
     * Refresh het spel
-    * Klik op de 'Update'-knop en kies een foto
-    * Start en spelen maar
+    * Klik op de 'Update'-knop linkbovenin (refreshed de onlangs genomen fotos) en kies een foto/karakter voor de speler
+    * Start de game, doorloop even de uitleg en spelen maar!
 
