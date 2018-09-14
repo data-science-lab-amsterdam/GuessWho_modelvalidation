@@ -102,6 +102,7 @@ div#spacer {
 }
 
 #panel-computer-board{
+    margin-bottom: 0px;
     background-color: rgb(222, 31, 63);
 }
 
@@ -194,27 +195,20 @@ div#spacer {
     width: 75%;
     margin-left: 25%;
 }
-#level3-question-board{
 
- height: 5%;
+#box-anwser{
+    height: 5%;
 }
 
-#level-answer-board{
-    height: 5%;
-    margin-left: 20%;
-    font-size:medium;
+#output-question-answer{
+    margin: 0 auto;
+    list-style: none;
+    text-align: center;
+    list-style-position: inside;
+    font-size: small;
+    color: #4CAF50;
 }
-/*#output-question-answer
-{
-    height: 5%;
-    margin-left: 20%;
-    font-size:medium;
-}*/
-#level-item-answer-board > div:nth-child(1) > div > div{
-    height: 5%;
-    margin-left: 20%;
-    font-size:medium;
-}
+
 /*player*/
 #level2-column3{
     width: 40%;
@@ -222,4 +216,12 @@ div#spacer {
 }
 #card-player-img{
     height: 30%;
+}
+
+#tile1_column1 > div > div{
+    height: 5%;
+}
+
+#question-board-question{
+    margin-left: 5%;
 }

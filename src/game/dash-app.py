@@ -273,31 +273,12 @@ app.layout = html.Div(children=[
                     html.Img(className='header-logo', src='/images/game/{}'.format(GAME_LOGO))
                     ]),
                 html.Div(id='level2-column1', className='level', children=[
-                    html.Div(className='tile is-vertical', children=[
-                        html.Div(id='tile1_column1', className='tile', children=[
-                            html.Div(className='tile is-parent', children=[
-                                html.Div(className='article', children=[
-                                    html.Div(id='tile-player-choice', className='tile is-child', children=[
-                                        html.Div(id='question-board-character', className='level', children=[
-                                                bulma_field(label=TEXT['pick_a_character'],
-                                                            component=dcc.Dropdown(id='input-character-guess',
-                                                                                   options=get_character_options(),
-                                                                                   multi=False
-                                                                                   )
-                                                            )
-                                        ]),
-                                        html.Div(id='question-board-character1', className='level', children=[
-                                            bulma_field(label=[html.Span(className='is-invisible', children='.')],
-                                                        component=html.Button(id='input-guess-button',
-                                                                                className='button is-info is-inverted',
-                                                                                n_clicks=0,
-                                                                                children=TEXT['guess']
-                                                                            )
-                                                        )
-                                        ])
-                                    ])
-                                ])
-                            ])
+                    # html.Div(className='tile is-vertical', children=[
+                    #     html.Div(id='tile1', className='tile', children=[
+                    #         html.Div(id='tile', className='tile is-parent', children=[
+                    html.Div(className='card', children=[
+                        html.Div(id='card-player-img', className='card-image', children=[                               
+                            html.Img(id='output-selected-character-speler', src=default_image)
                         ])
                     ])
                 ])
@@ -316,7 +297,7 @@ app.layout = html.Div(children=[
                     ])
                 ]),
                 # start questoin board
-                html.Div(id='level3-question-board', className='level', children=[
+                # html.Div(id='level3-question-board', className='level', children=[
                     html.Div(id='question-board-question', className='columns', children=[
                         html.Div(className='column', children=[
                             bulma_field(label=TEXT['category'],
@@ -336,18 +317,19 @@ app.layout = html.Div(children=[
                                                               children=TEXT['ask']
                                                               )
                                         )
-                        ])
+                        # ])
                     ])
                 ]),
-                html.Div(id='level-answer-board', className='level', children=[
-                    html.Div(id='level-item-answer-board', className='level item has-text-centered', children=[
+                # html.Div(id='level-answer-board', className='level', children=[
+                #     html.Div(id='level-item-answer-board', className='level item has-text-centered', children=[
+                    # html.Div(id='box-anwser', className='box', children=[
                         html.Div([
                             bulma_field(label=TEXT['answer'], component=html.Div(id='output-question-answer', children=''))
                         ]),
-                        html.Div(id='output-awnser', className='button is-hidden', children=[
+                        html.Div(id='output-awnser', className='box is-hidden', children=[
                             html.Div(id='output-hidden-guess', accessKey="")
-                        ])
-                    ])
+                        # ])
+                    # ])
                 ]),
                 # Human player board
                 html.Div(id='level2-player-board', className='level', children=[
@@ -360,26 +342,39 @@ app.layout = html.Div(children=[
                     ])
                 ]),
                 # Bottom part
-                html.Div(id='level5-button', className='level', children=[
-                    html.Button(id='input-endturn-button', className='button is-info is-large', n_clicks=0, children=TEXT['end_turn'])
-                ])
+                html.Button(id='input-endturn-button', className='button is-info is-medium', n_clicks=0, children=TEXT['end_turn'])
             ]),
             html.Div(id='column3', className='column is-one-fifth', children=[
                 html.Div(id='level1-column3', className='level', children=[
                     html.Img(className='header-logo', src='/images/game/Logo_datasciencelab.png')
                     ]),
-                html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(), 
-                html.Div(id='level2-column3', className='level', children=[
-                    # html.Div(className='tile is-vertical', children=[
-                    #     html.Div(id='tile1', className='tile', children=[
-                    #         html.Div(id='tile', className='tile is-parent', children=[
-                    html.Div(className='card', children=[
-                        html.Div(id='card-player-img', className='card-image', children=[                               
-                            html.Img(id='output-selected-character-speler', src=default_image)
-                            ])
-                        ])
-                    ])
-                ])
+                html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),
+                html.Br(),html.Br(), html.Br(),html.Br(),html.Br(),html.Br(),
+                html.Br(),html.Br(), html.Br(),html.Br(),
+                    html.Div(className='box', children=[
+                        bulma_field(label=TEXT['pick_a_character'],
+                                    component=dcc.Dropdown(id='input-character-guess',
+                                                           options=get_character_options(),
+                                                           multi=False
+                                                           )
+                                    )
+                        ]),
+                    bulma_field(label=[html.Span(className='is-invisible', children='.')],
+                                component=html.Button(id='input-guess-button',
+                                                        className='button is-info is-inverted',
+                                                        n_clicks=0,
+                                                        children=TEXT['guess']
+                                                    )
+                                )
+                ]),
+                    # bulma_field(label=[html.Span(className='is-invisible', children='.')],
+                    #             component=html.Button(id='input-guess-button',
+                    #                                     className='button is-info is-inverted',
+                    #                                     n_clicks=0,
+                    #                                     children=TEXT['guess']
+                    #                                 )
+                    #             )
+            # ])
         ]), #close columlist
 
         html.Div(className='modal', id='end-modal', children=[
@@ -579,17 +574,17 @@ def ask_question(_, question_type, question_value):
     Ask a quesiton using the information in the pulldowns
     """
     if _ is None or _ == 0:
-        return ''
+        return 'Selecteer een vraag'
     logging.info('{}: {}'.format(question_type, question_value))
     ok, answer = get_answer(question_type, question_value)
     if not ok:
         return TEXT['already_moved']
     else:
-        return '{}, {} {} {}'.format(
+        return '{}, klik nu op de characters in het blauwe speelboord waar {} {} {} weg'.format(
             (TEXT['yes'] if answer else TEXT['no']).capitalize(),
             TEXT[question_type].lower(),
             'is' if answer else 'is {}'.format(TEXT['not']),
-            TEXT[question_value]
+            TEXT[question_value],   
         )
 
 
