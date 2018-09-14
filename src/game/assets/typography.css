@@ -15,13 +15,11 @@ input, div.Select, div.Select-input, div.Select-placeholder, div.Select-menu-out
 
 /*wie is het logos*/
 img.header-logo-modal {
-    margin-top:50px;
-    margin-bottom: 20px;
-    height: 25%;
-    width: 40%;
-    margin-left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%)
+    margin-top: 10%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 45%;
 }
 
 #intro-modal-content > img
@@ -37,12 +35,20 @@ img.header-logo-modal {
 /*wie is het logo op board*/
 #level1-column1 > img{
     margin-top:8%;
-    margin-bottom: 0px
+    margin-bottom: 0px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 70%;
+    width: 70%;
 }
 /*DSL log*/
 #level1-column3 > img{
     margin-top:8%;
-    margin-left: 10%
+    margin-left: 10%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 
@@ -52,8 +58,10 @@ div.character-board {
     margin: 4px;
 }
 div.character-board div.panel-block {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
     padding: 6px;
-    /*background-color: rgb(31, 181, 98);*/
     color: white;
 }
 
@@ -71,9 +79,9 @@ figure.character-container {
 }
 
 figcaption.character-caption {
-    font-size: 80%;
+    font-size: 50%;
     color: white;
-    margin-top: -10px;
+    margin-top: 1px;
 }
 
 img.character-image {
@@ -110,11 +118,10 @@ div#spacer {
     background-color: rgb(31, 147, 222);
 }
 
-#question-board-question{
+/*#question-board-question{
     width: 100%;
     height: 10%;
 /*    margin-left: 20%*/
-}
 #question-board-character{
     margin-top: 5%;
     width: 75%;
@@ -149,11 +156,9 @@ div#spacer {
     margin-bottom: 30px; 
 }
 #column2{
-    margin-top: 5%
+    margin-top: 7%
 }
-#level3-question-board{
-    margin-left: 10%;
-}
+
 #waiting-modal > div.modal-content > div > div{
     font-size: large;
     height: 75%;
@@ -182,9 +187,9 @@ div#spacer {
 #level2-column3{
     margin-top: auto;
 }
-#question-board-character{
+/*#question-board-character{
     margin-left: 20%
-}
+}*/
 #input-guess-button{
     margin-left: 10%
 }
@@ -214,14 +219,44 @@ div#spacer {
     width: 40%;
     margin-left: 10%;
 }
-#card-player-img{
-    height: 30%;
-}
 
 #tile1_column1 > div > div{
     height: 5%;
 }
 
+#level1-computer-board{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+}
 #question-board-question{
-    margin-left: 5%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+}
+
+#level2-player-board{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+}
+#input-guess-button{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 60%;
+}
+#column3 > div.box{
+    margin-top:50%;
+}
+#output-selected-character-speler{
+    margin-top: 10%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    height: 60%;
+
 }

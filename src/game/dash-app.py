@@ -200,8 +200,8 @@ def render_board_characters(player_id, num_per_row=9):
                 n_clicks=0,
                 children=[
                     html.Figure(className='character-container', children=[
-                        html.Img(id='img-p{}-character-{}'.format(player_id, c['id']), className='character-image is-3by4', src=img_src)
-                        # html.Figcaption(className='character-caption', children=c['name'])
+                        html.Img(id='img-p{}-character-{}'.format(player_id, c['id']), className='character-image is-3by4', src=img_src),
+                        html.Figcaption(className='character-caption', children=c['name'])
                     ])
                 ]
             )
@@ -267,19 +267,14 @@ app.layout = html.Div(children=[
     dcc.Input(id='output-dummy-1', type='hidden', className='is-hidden', value=''),
     dcc.Input(id='output-dummy-2', type='hidden', className='is-hidden', value=''),
     html.Div(id='game-container', className='container is-fluid', children=[
-        html.Div(className='columns', children=[
+        html.Div(className='columns is-centered', children=[
             html.Div(id='column1', className='column is-one-fifth', children=[
                 html.Div(id='level1-column1', className='level', children=[
-                    html.Img(className='header-logo', src='/images/game/{}'.format(GAME_LOGO))
+                    html.Img(className='header-logo-wieishet', src='/images/game/{}'.format(GAME_LOGO))
                     ]),
                 html.Div(id='level2-column1', className='level', children=[
-                    # html.Div(className='tile is-vertical', children=[
-                    #     html.Div(id='tile1', className='tile', children=[
-                    #         html.Div(id='tile', className='tile is-parent', children=[
-                    html.Div(className='card', children=[
                         html.Div(id='card-player-img', className='card-image', children=[                               
                             html.Img(id='output-selected-character-speler', src=default_image)
-                        ])
                     ])
                 ])
             ]),
@@ -297,28 +292,30 @@ app.layout = html.Div(children=[
                     ])
                 ]),
                 # start questoin board
-                # html.Div(id='level3-question-board', className='level', children=[
-                    html.Div(id='question-board-question', className='columns', children=[
-                        html.Div(className='column', children=[
-                            bulma_field(label=TEXT['category'],
-                                        component=dcc.Dropdown(id='input-question-type',
-                                                               options=get_question_type_options())
-                                        )
-                        ]),
-                        html.Div(className='column', children=[
-                            bulma_field(TEXT['options'], 
-                                dcc.Dropdown(id='input-question-value', options=[], multi=False))
-                        ]),
-                        html.Div(className='column', children=[
-                            bulma_field(label=[html.Span(className='is-invisible', children='.')],
-                                        component=html.Button(id='input-question-button',
-                                                              className='button is-info is-inverted',
-                                                              n_clicks=0,
-                                                              children=TEXT['ask']
-                                                              )
-                                        )
-                        # ])
-                    ])
+                # html.Div(id='level3-question-board', className='box', children=[
+                    html.Div(id='question-board-question', className='columns has-text-centered', children=[
+                            html.Div(className='column is-one-third', children=[
+                                bulma_field(label=TEXT['category'],
+                                            component=dcc.Dropdown(id='input-question-type',
+                                                                   options=get_question_type_options())
+                                            )
+                            ]),
+                            html.Div(className='column is-one-third', children=[
+                                bulma_field(TEXT['options'], 
+                                    dcc.Dropdown(id='input-question-value', options=[], multi=False)
+                                    )
+
+                            ]),   
+                            html.Div(className='column is-one-third', children=[
+                                bulma_field(label=[html.Span(className='is-invisible', children='.')],
+                                            component=html.Button(id='input-question-button',
+                                                                  className='button is-info is-inverted',
+                                                                  n_clicks=0,
+                                                                  children=TEXT['ask']
+                                                                  )
+                                            )
+                            # ])
+                        ])
                 ]),
                 # html.Div(id='level-answer-board', className='level', children=[
                 #     html.Div(id='level-item-answer-board', className='level item has-text-centered', children=[
@@ -349,8 +346,7 @@ app.layout = html.Div(children=[
                     html.Img(className='header-logo', src='/images/game/Logo_datasciencelab.png')
                     ]),
                 html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),
-                html.Br(),html.Br(), html.Br(),html.Br(),html.Br(),html.Br(),
-                html.Br(),html.Br(), html.Br(),html.Br(),
+                html.Br(),html.Br(), html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),
                     html.Div(className='box', children=[
                         bulma_field(label=TEXT['pick_a_character'],
                                     component=dcc.Dropdown(id='input-character-guess',
@@ -367,14 +363,7 @@ app.layout = html.Div(children=[
                                                     )
                                 )
                 ]),
-                    # bulma_field(label=[html.Span(className='is-invisible', children='.')],
-                    #             component=html.Button(id='input-guess-button',
-                    #                                     className='button is-info is-inverted',
-                    #                                     n_clicks=0,
-                    #                                     children=TEXT['guess']
-                    #                                 )
-                    #             )
-            # ])
+
         ]), #close columlist
 
         html.Div(className='modal', id='end-modal', children=[
@@ -580,7 +569,7 @@ def ask_question(_, question_type, question_value):
     if not ok:
         return TEXT['already_moved']
     else:
-        return '{}, klik nu op de characters in het blauwe speelboord waar {} {} {} weg'.format(
+        return '{}, klik nu op de characters in het blauwe speelboord waar {} {} niet {}'.format(
             (TEXT['yes'] if answer else TEXT['no']).capitalize(),
             TEXT[question_type].lower(),
             'is' if answer else 'is {}'.format(TEXT['not']),
