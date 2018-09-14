@@ -12,12 +12,12 @@
 * installeer de requirements
 * `pip install -r requirements.txt`
 
-#### Starten
-* Verbind 2 laptops dmv een netwerk en zorg dat je de map `./data` (binnen de projectmap) geshared hebt
+#### Opstarten
+* Verbind 2 laptops dmv een netwerk en zorg dat je de map `./data` (binnen de projectmap) geshared hebt. Laptop 2 moet bestanden van Laptop 1 in deze gedeelde folder kunnen lezen.
 * Laptop 1
     * Verbind met scherm 1
     * Start PhotoBooth app (op een Mac)
-    * Start het rsync-script (en zorg dat de verwijzingen naar de folders kloppen: folder A: photo booth map en folder B: de shared folder. Code 23 error komt voor. Check dus even of nieuwe fotos inderdaad van A naar B gaan.)
+    * Start het rsync-script (verwijzingen zouden bij standaard mac instellingen moeten kloppen: folder A: photo booth map en folder B: de shared folder. Code 23 error komt voor. Check dus even of nieuwe fotos inderdaad van A naar B gaan.)
     * `bash src/stream_fotos.sh`
     * Start de controlepagina
     * `python src/controlpage/app.py`
