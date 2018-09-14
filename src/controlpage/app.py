@@ -207,7 +207,7 @@ app.layout = html.Div([
         html.Div('', id='spacer-top'),
 
         # Choose image
-        html.Div(className='container is-fluid')
+        html.Div(className='container is-fluid'),
         bulma_columns(
             components=[
                 html.Button('Update', id='update-button', className='button is-info', n_clicks=0),
