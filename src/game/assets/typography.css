@@ -215,3 +215,11 @@ div#spacer {
     margin-left: 20%;
     font-size:medium;
 }
+/*player*/
+#level2-column3{
+    width: 40%;
+    margin-left: 10%;
+}
+#card-player-img{
+    height: 30%;
+}

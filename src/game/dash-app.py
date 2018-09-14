@@ -365,26 +365,18 @@ app.layout = html.Div(children=[
                 html.Div(id='level1-column3', className='level', children=[
                     html.Img(className='header-logo', src='/images/game/Logo_datasciencelab.png')
                     ]),
+                html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(), 
                 html.Div(id='level2-column3', className='level', children=[
-                    html.Div(className='tile is-vertical', children=[
-                        html.Div(id='tile1', className='tile', children=[
-                            html.Div(id='tile', className='tile is-parent', children=[
-                                html.Div(className='article', children=[
-                                    html.Div(id='tile-player-img', className='tile is-child', children=[
-                                        html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),
-                                        html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),                                     
-                                    ]),
-                                    html.Div(id='tile-player-img1', className='tile is-child', children=[
-
-                                        html.Img(id='output-selected-character-speler', src=default_image)
-                                        
-                                    ]),
-                                ])
+                    # html.Div(className='tile is-vertical', children=[
+                    #     html.Div(id='tile1', className='tile', children=[
+                    #         html.Div(id='tile', className='tile is-parent', children=[
+                    html.Div(className='card', children=[
+                        html.Div(id='card-player-img', className='card-image', children=[                               
+                            html.Img(id='output-selected-character-speler', src=default_image)
                             ])
                         ])
                     ])
                 ])
-            ])
         ]), #close columlist
 
         html.Div(className='modal', id='end-modal', children=[
