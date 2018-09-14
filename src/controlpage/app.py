@@ -93,7 +93,7 @@ def get_image_list(last_n=10):
     Get a list of raw image files that have not been checked yet
     """
     all_faces = [x for x in Path(RAW_IMAGES_DIR).glob('*.jpg') if 'dummy' not in x.stem]
-    recent_faces = sorted(all_faces, key=os.path.getmtime)[-last_n:]
+    recent_faces = sorted(all_faces, key=os.path.getmtime, reverse=True)[:last_n]
     checked_faces = [x.stem for x in Path(CHECKED_DATA_DIR).glob('*.json')]
     remaining_faces = [x for x in recent_faces if x.name not in checked_faces]
     if len(remaining_faces) == 0:
@@ -197,6 +197,8 @@ def crop_image_to_face(img_file):
 
 app = dash.Dash()
 #app.config['suppress_callback_exceptions'] = True
+app.css.config.serve_locally = True
+app.scripts.config.serve_locally = True
 
 app.layout = html.Div([
 
@@ -205,6 +207,7 @@ app.layout = html.Div([
         html.Div('', id='spacer-top'),
 
         # Choose image
+        html.Div(className='container is-fluid')
         bulma_columns(
             components=[
                 html.Button('Update', id='update-button', className='button is-info', n_clicks=0),
@@ -215,7 +218,8 @@ app.layout = html.Div([
                     value=''
                 ),
                 html.Button('Start analyse', id='start-model-button', className='button is-info', n_clicks=0)
-            ]
+            ],
+            extra_classes=['', 'has-text-right', 'is-half', '']
         ),
         bulma_columns([
             '',

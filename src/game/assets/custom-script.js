@@ -10,11 +10,11 @@ var qs = function(x) { return document.querySelector(x) };
 var qsa = function(x) { return document.querySelectorAll(x) };
 
 var text_en = {
-    'hair color': 'hair color',
+    'hair_colour': 'hair colour',
     'dark': 'dark', 'light': 'light', 'none': 'none',
-    'hair length': 'hair length',
+    'hair_length': 'hair length',
     'short': 'short', 'long': 'long', 'bald': 'bald',
-    'hair type': 'hair type',
+    'hair_type': 'hair type',
     'curly': 'curly', 'straight': 'straight',
     'glasses': 'glasses',
     'yes': 'yes', 'no': 'no',
@@ -22,7 +22,7 @@ var text_en = {
     'hat': 'hat', 'cap': 'cap',
     'sex': 'gender',
     'male': 'man', 'female': 'woman',
-    'facial hair': 'facial hair',
+    'facial_hair': 'facial hair',
     'beard': 'beard', 'moustache': 'moustache',
     'accessories': 'accessories',
     'chain': 'chain', 'necklace': 'necklace',
@@ -40,11 +40,11 @@ var text_en = {
 }
 
 var text_nl = {
-    'hair color': 'haarkleur',
+    'hair_colour': 'haarkleur',
     'dark': 'donker', 'light': 'licht', 'none': 'geen',
-    'hair length': 'haarlengte',
+    'hair_length': 'haarlengte',
     'short': 'kort', 'long': 'lang', 'bald': 'kaal',
-    'hair type': 'haartype',
+    'hair_type': 'haartype',
     'curly': 'krullend', 'straight': 'steil',
     'glasses': 'bril',
     'yes': 'ja', 'no': 'nee',
@@ -52,7 +52,7 @@ var text_nl = {
     'hat': 'hoed', 'cap': 'pet',
     'sex': 'geslacht',
     'male': 'man', 'female': 'vrouw',
-    'facial hair': 'gezichtsbeharing',
+    'facial_hair': 'gezichtsbeharing',
     'beard': 'baard', 'moustache': 'snor',
     'accessories': 'accessoires',
     'chain': 'kettinkje', 'necklace': 'ketting',
@@ -89,7 +89,7 @@ var clickCharacter = function(player_id, i)
     num_flipped_player += 1;
     flipped_player[i] = true;
 
-    var total_options = document.getElementById('player-board').children.length - 1;
+    var total_options = document.querySelectorAll('#player-board .character-container').length - 1;
     var progress = Math.round((num_flipped_player/total_options) * 100);
     document.getElementById('player-progress').value = progress;
 };
@@ -142,7 +142,7 @@ var flipCharacters = function(ids, idx)
     // update the progress bar
     num_flipped_computer += 1;
     flipped_computer[id] = true;
-    var total_options = document.getElementById('computer-board').children.length - 1;
+    var total_options = document.querySelectorAll('#player-board .character-container').length - 1;
     var progress = Math.round((num_flipped_computer/total_options) * 100);
     document.getElementById('computer-progress').value = progress;
 

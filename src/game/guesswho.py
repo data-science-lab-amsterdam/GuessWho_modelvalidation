@@ -39,7 +39,7 @@ class GuessWhoGame:
     NUM_CHARACTERS = 18
     SLEEP_BETWEEN_TURNS = 1
     PROPERTIES = {
-        'hair_color': ['dark', 'light', 'too_short'],
+        'hair_colour': ['dark', 'light', 'too_short'],
         'hair_length': ['short', 'long'],
         'hair_type': ['curly', 'straight', 'too_short'],
         'glasses': ['yes', 'no'],
