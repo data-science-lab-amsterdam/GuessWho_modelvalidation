@@ -212,6 +212,9 @@ div#spacer {
     margin-left: 20%
 }*/
 
+progress.progress {
+    border: 1px solid white;
+}
 
 #feedback-modal > div.modal-content > div > div{
     font-size: large;
