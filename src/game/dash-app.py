@@ -165,7 +165,7 @@ def get_character_options():
 
 
 def get_question_type_options():
-    return [{'label': TEXT[x], 'value': x} for x in questions.keys()]
+    return [{'label': TEXT[x].capitalize(), 'value': x} for x in questions.keys()]
 
 
 def get_question_value_options(question_type):
