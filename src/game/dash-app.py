@@ -399,9 +399,9 @@ app.layout = html.Div(children=[
                         bulma_field(label='Emailadres',
                                     component=dcc.Input(id='input-user-email', className='input', type='email')
                                     ),
-                        html.Div(className='control', children=[
+                        bulma_center(
                             html.Button(id='input-user-button', className='button is-info is-medium', children='Verzenden')
-                        ]),
+                        ),
                         html.Div(id='output-acknowledge-user-data', children=''),
 
                         html.Br(),
@@ -637,13 +637,15 @@ def make_guess(_, character_name):
     ok, answer = guess_character(character_name)
     if not ok:
         logging.info("No answer received for guess")
-        return '9'
-    if answer:
+        state = '9'
+    elif answer:
         logging.info("Guess is correct! Player has won!")
-        return '1'
+        state = '1'
     else:
         logging.info("Guess is incorrect")
-        return '0'
+        state = '0'
+
+    return json.dumps({'state': state, 'timestamp': str(datetime.now())})
 
 
 @app.callback(
