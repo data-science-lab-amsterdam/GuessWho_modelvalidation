@@ -223,7 +223,14 @@ var handleComputerMove = function()
 // show feedback after a guess
 var handleGuessAnswer = function()
 {
-    var state = qs("#output-hidden-guess").getAttribute('accessKey');
+    console.log('handling guess answer');
+    var raw_data = qs("#output-hidden-guess").getAttribute('accessKey');
+    if (raw_data == '' || raw_data == '{}') {
+        return false;
+    }
+    var data = JSON.parse(decodeURIComponent(raw_data));
+    var state = data['state'];
+    console.log(state);
     if (state == '1') {
         showModal('feedback-modal', {
             'text': text['player_has_won'],
