@@ -65,7 +65,9 @@ div.character-board div.panel-block {
     color: white;
 }
 
-
+img {
+    border-radius: 5%;
+}
 
 div.panel > p.panel-heading {
     padding-top: 4px;
@@ -117,10 +119,13 @@ div#spacer {
 
 #panel-computer-board{
     margin-bottom: 0px;
+}
+
+#panel-computer-board .panel-block {
     background-color: rgb(222, 31, 63);
 }
 
-#panel-player-board{
+#panel-player-board .panel-block {
     background-color: rgb(31, 147, 222);
 }
 
@@ -254,6 +259,7 @@ div#spacer {
 }
 #column3 > div.box{
     margin-top:50%;
+    margin-bottom: 0px;
 }
 #output-selected-character-speler{
     margin-top: 10%;
