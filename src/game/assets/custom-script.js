@@ -204,6 +204,7 @@ var handleComputerMove = function()
 
         // show computer's question and answer
         var modal_text = [
+            '<img src="/images/game/bot.png">',
             '<strong>'+text['computer_question']+':</strong> <em>"Is '+text[state['question'][0]]+' '+text[state['question'][1]]+'?"</em>',
             '<strong>'+text['answer']+':</strong> <em>"'+(state['answer'] ? text['yes'] : text['no'])+'</em>"'
         ].join('<br>');

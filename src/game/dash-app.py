@@ -482,6 +482,7 @@ def start_game(_):
 
     return 'modal'
 
+
 @app.callback(
     Output('spelregels-modal', 'className'),
     [Input('spelregels-modal-button', 'n_clicks')]
@@ -498,7 +499,7 @@ def spelregels(_):
 
 @app.callback(
     Output('output-dummy-2', 'value'),
-    [Input(component_id='input-computer-mode', component_property='value')]
+    [Input('input-computer-mode', 'value')]
 )
 def set_difficulty(difficulty):
     """
@@ -531,6 +532,7 @@ def select_character(name):
             game.set_computer_character(name)
             return img_src
     raise ValueError("Character '{}' not found".format(name))
+
 
 @app.callback(
     Output(component_id='output-selected-character-speler', component_property='src'),
