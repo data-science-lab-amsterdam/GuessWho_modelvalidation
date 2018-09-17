@@ -69,6 +69,7 @@ TEXT_EN = {
     'welcome_bullet2': 'Select a character that the computer needs to guess',
     'welcome_bullet3': 'Select a question, or make a guess if you\'re feeling confident',
     'welcome_bullet4': 'Click "End turn" and wait for the computer to move',
+    'welcome_bullet5': 'Press guess player',
     'start_game': 'Start the game!',
     'start_rules': 'Spelregels',
     'already_moved': 'You\'ve already made a move. Click "End turn".',
@@ -116,6 +117,7 @@ TEXT_NL = {
     'welcome_bullet2': 'Stel je vraag en wacht op antwoord',
     'welcome_bullet3': 'Klik de spelers weg die niet aan het antwoord voldoen',
     'welcome_bullet4': 'Klik op "Einde beurt" als je klaar bent',
+    'welcome_bullet5': 'Weet jij welk karakter de computer heeft? “Raad deze speler” rechts op het speelbord in plaats van een vraag te stellen',
     'start_game': "Let's play!",
     'start_rules': "Spelregels",
     'already_moved': 'Je hebt al een vraag gesteld. Klik op "Einde beurt".',
@@ -270,6 +272,7 @@ app.layout = html.Div(children=[
                 html.Div(id='level1-column1', className='level', children=[
                     html.Img(className='header-logo-wieishet', src='/images/game/{}'.format(GAME_LOGO))
                     ]),
+                html.Button(id='refresh-button', className="button is-medium", children='Herstart spel'),
                 html.Div(id='level2-column1', className='level', children=[
                         html.Div(id='card-player-img', className='card-image', children=[                               
                             html.Img(id='output-selected-character-speler', src=default_image)
@@ -279,9 +282,9 @@ app.layout = html.Div(children=[
 
             html.Div(id='column2', className='column is-three-fifth', children=[
                 # refresh button
-                bulma_center(
-                    html.Button(id='refresh-button', className="button is-medium is-danger", children='Refresh')
-                ),
+                # bulma_center(
+                    # html.Button(id='refresh-button', className="button is-medium is-danger", children='Refresh')
+                # ),
 
                 # Computer player board
                 html.Div(id='level1-computer-board', className='level', children=[
@@ -320,9 +323,6 @@ app.layout = html.Div(children=[
                             # ])
                         ])
                 ]),
-                # html.Div(id='level-answer-board', className='level', children=[
-                #     html.Div(id='level-item-answer-board', className='level item has-text-centered', children=[
-                    # html.Div(id='box-anwser', className='box', children=[
                         html.Div([
                             bulma_field(label=TEXT['answer'], component=html.Div(id='output-question-answer', children=''))
                         ]),
@@ -348,8 +348,6 @@ app.layout = html.Div(children=[
                 html.Div(id='level1-column3', className='level', children=[
                     html.Img(className='header-logo', src='/images/game/Logo_datasciencelab.png')
                     ]),
-                html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),
-                html.Br(),html.Br(), html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),
                     html.Div(className='box', children=[
                         bulma_field(label=TEXT['pick_a_character'],
                                     component=dcc.Dropdown(id='input-character-guess',
@@ -395,6 +393,7 @@ app.layout = html.Div(children=[
                             html.Li(TEXT['welcome_bullet1']),
                             html.Li(TEXT['welcome_bullet2']),
                             html.Li(TEXT['welcome_bullet3']),
+                            html.Li(TEXT['welcome_bullet5']),
                             html.Li(TEXT['welcome_bullet4'])
                         ]),
                     ],
@@ -419,7 +418,7 @@ app.layout = html.Div(children=[
                                         )
                         ]),
                         html.Div(className='level-item', children=[
-                            html.Button('Update', id='update-characters-button', className='button is-info', n_clicks=0),
+                            html.Button('update spelers', id='update-characters-button', className='button is-info', n_clicks=0),
                         ]),
                         html.Div(className='level-item', children=[
                             bulma_field(label=TEXT['select_character'],
