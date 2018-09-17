@@ -21,6 +21,14 @@ img.header-logo-modal {
     width: 45%;
 }
 
+/*centre all select buttons*/
+div.Select-placeholder{
+    text-align: center;
+}
+#react-select-5--value-item{
+    text-align: center;
+}
+
 #intro-modal-content > img
 {
     margin-top:50px;
@@ -32,6 +40,7 @@ img.header-logo-modal {
     transform: translate(-50%, -50%);
     background-color: rgb(222, 31, 63);
     color: white;
+    text-align: center;
 }
 #input-user-button{
     display: block;
@@ -108,7 +117,6 @@ figcaption.character-caption {
 
 img.character-image {
     border: 2px solid white;
-    /*margin: 2px;*/
     width: 60px;
     height: 75px;
 }
@@ -273,17 +281,21 @@ progress.progress {
 
 }
 #column3 > div.box{
-    margin-top:200%;
+    margin-top:190%;
     margin-bottom: 0px;
+    text-align: center;
 
 }
+#input-character-guess{
+    text-align: center;
+}
 #output-selected-character-speler{
-    margin-top: 110%;
+    margin-top: 115%;
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 50%;
-    height: 60%;
+    width: 55%;
+    height: 65%;
 }
 #refresh-button{
     margin-top: 35%;

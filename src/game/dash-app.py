@@ -343,7 +343,7 @@ app.layout = html.Div(children=[
                     ])
                 ]),
                 # Bottom part
-                html.Button(id='input-endturn-button', className='button is-succes is-medium', n_clicks=0, children=TEXT['end_turn'])
+                html.Button(id='input-endturn-button', className='button is-success is-medium', n_clicks=0, children=TEXT['end_turn'])
             ]),
             html.Div(id='column3', className='column is-one-fifth', children=[
                 html.Div(id='level1-column3', className='level', children=[
@@ -355,15 +355,15 @@ app.layout = html.Div(children=[
                                                            options=get_character_options(),
                                                            multi=False
                                                            )
+                                    ),
+                        bulma_field(label=[html.Span(className='is-invisible', children='.')],
+                                    component=html.Button(id='input-guess-button',
+                                                            className='button is-info',
+                                                            n_clicks=0,
+                                                            children=TEXT['guess']
+                                                        )
                                     )
                         ]),
-                    bulma_field(label=[html.Span(className='is-invisible', children='.')],
-                                component=html.Button(id='input-guess-button',
-                                                        className='button is-info',
-                                                        n_clicks=0,
-                                                        children=TEXT['guess']
-                                                    )
-                                )
                 ]),
 
         ]), #close columlist
@@ -421,7 +421,7 @@ app.layout = html.Div(children=[
                         html.Img(className='header-logo', src='/images/game/{}'.format(GAME_LOGO)),
 
                         # html.Div(TEXT['welcome_header']),
-                        html.Div(className='level-item', children=[
+                        html.Div(className='level-item has-text-centered', children=[
                             bulma_field(label=TEXT['select_difficulty'],
                                         component=dcc.Dropdown(id='input-computer-mode',
                                                                options=[{'label': TEXT['level_hard'], 'value': 'hard'},
@@ -492,7 +492,12 @@ def start_game(_):
     if _ is None or _ == 0:
         return 'modal is-active'
 
-    return 'modal'
+    if game.computer_player.character is None:
+        logging.info("Selecteer eerst een avatar!")
+        return 'modal is-active'
+
+    else:
+        return 'modal'
 
 
 @app.callback(
