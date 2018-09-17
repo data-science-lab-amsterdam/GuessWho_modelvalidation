@@ -293,6 +293,9 @@ var init = function() {
     qs('#waiting-modal-button').addEventListener('click', function() {
         closeModal('waiting-modal');
     })
+    qs('#refresh-button').addEventListener('click', function() {
+        location.reload();
+    })
 
 }
 

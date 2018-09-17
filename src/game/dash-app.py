@@ -278,6 +278,11 @@ app.layout = html.Div(children=[
             ]),
 
             html.Div(id='column2', className='column is-three-fifth', children=[
+                # refresh button
+                bulma_center(
+                    html.Button(id='refresh-button', className="button is-medium is-danger", children='Refresh')
+                ),
+
                 # Computer player board
                 html.Div(id='level1-computer-board', className='level', children=[
                     html.Div(id='panel-computer-board', className='character-board panel', children=[
@@ -307,7 +312,7 @@ app.layout = html.Div(children=[
                             html.Div(className='column is-one-third', children=[
                                 bulma_field(label=[html.Span(className='is-invisible', children='.')],
                                             component=html.Button(id='input-question-button',
-                                                                  className='button is-info is-inverted',
+                                                                  className='button is-info',
                                                                   n_clicks=0,
                                                                   children=TEXT['ask']
                                                                   )
@@ -355,7 +360,7 @@ app.layout = html.Div(children=[
                         ]),
                     bulma_field(label=[html.Span(className='is-invisible', children='.')],
                                 component=html.Button(id='input-guess-button',
-                                                        className='button is-info is-inverted',
+                                                        className='button is-info',
                                                         n_clicks=0,
                                                         children=TEXT['guess']
                                                     )
