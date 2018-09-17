@@ -4,6 +4,8 @@ var flipped_player = {};
 var num_flipped_computer = 0;
 var flipped_computer = {};
 
+var original_images = {};
+
 var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
 
 var qs = function(x) { return document.querySelector(x) };
@@ -15,12 +17,12 @@ var text_en = {
     'hair_length': 'hair length',
     'short': 'short', 'long': 'long', 'bald': 'bald',
     'hair_type': 'hair type',
-    'curly': 'curly', 'straight': 'straight',
+    'curly': 'curly', 'straight': 'straight', 'too_short': 'too short',
     'glasses': 'glasses',
     'yes': 'yes', 'no': 'no',
     'head wear': 'Head wear',
     'hat': 'hat', 'cap': 'cap',
-    'sex': 'gender',
+    'gender': 'gender',
     'male': 'man', 'female': 'woman',
     'facial_hair': 'facial hair',
     'beard': 'beard', 'moustache': 'moustache',
@@ -35,7 +37,7 @@ var text_en = {
     'ok': 'OK',
     'guess_incorrect': 'Too bad! That\'s incorrect...',
     'already_moved': 'You\'ve already made a move. Click "End turn".',
-    'f_already_moved': 'Sorry. I won\'t try to cheat again',
+    'already_moved': 'Sorry. I won\'t try to cheat again',
     'waiting': 'Waiting for computer to move...'
 }
 
@@ -45,12 +47,12 @@ var text_nl = {
     'hair_length': 'haarlengte',
     'short': 'kort', 'long': 'lang', 'bald': 'kaal',
     'hair_type': 'haartype',
-    'curly': 'krullend', 'straight': 'steil',
+    'curly': 'krullend', 'straight': 'steil', 'too_short': 'te kort',
     'glasses': 'bril',
     'yes': 'ja', 'no': 'nee',
     'head wear': 'hoofddeksel',
     'hat': 'hoed', 'cap': 'pet',
-    'sex': 'geslacht',
+    'gender': 'geslacht',
     'male': 'man', 'female': 'vrouw',
     'facial_hair': 'gezichtsbeharing',
     'beard': 'baard', 'moustache': 'snor',
@@ -78,16 +80,26 @@ var clickCharacter = function(player_id, i)
         return false;
     }
 
+    var elm = document.getElementById('img-p2-character-'+i);
+
     if (flipped_player[i]) {
-        return false;
+        // undo the flipping
+        elm.src = original_images[i];
+
+        // update the progress bar
+        num_flipped_player -= 1;
+        flipped_player[i] = false;
+    } else {
+        // keep track of the original image
+        original_images[i] = elm.src;
+
+        // flip the clicked image
+        elm.src = '/images/game/closed_red.png';
+
+        // update the progress bar
+        num_flipped_player += 1;
+        flipped_player[i] = true;
     }
-
-    // flip the clicked image
-    document.getElementById('img-p2-character-'+i).src = '/images/game/closed_red.png';
-
-    // update the progress bar
-    num_flipped_player += 1;
-    flipped_player[i] = true;
 
     var total_options = document.querySelectorAll('#player-board .character-container').length - 1;
     var progress = Math.round((num_flipped_player/total_options) * 100);

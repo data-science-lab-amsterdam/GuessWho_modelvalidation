@@ -72,6 +72,10 @@ div.panel > p.panel-heading {
 
 }
 
+#computer-progress {
+    margin-bottom: 0rem;
+}
+
 div.character-board label.label { color: white; }
 
 figure.character-container {
@@ -179,7 +183,7 @@ div#spacer {
   font-size: large;
 }
 #input-endturn-button{
-    margin-top: 10%;
+    margin-top: 5%;
     margin-left: 50%;
     margin-right: -50%;
     transform: translate(-50%, -50%);
