@@ -190,9 +190,7 @@ div#spacer {
 /*#question-board-character{
     margin-left: 20%
 }*/
-#input-guess-button{
-    margin-left: 10%
-}
+
 
 #feedback-modal > div.modal-content > div > div{
     font-size: large;
@@ -246,7 +244,7 @@ div#spacer {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 60%;
+
 }
 #column3 > div.box{
     margin-top:50%;
@@ -258,5 +256,4 @@ div#spacer {
     margin-right: auto;
     width: 50%;
     height: 60%;
-
 }
