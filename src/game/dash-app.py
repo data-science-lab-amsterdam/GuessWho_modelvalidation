@@ -5,6 +5,7 @@ import os
 import math
 import re
 import json
+from datetime import datetime
 import logging
 import dash
 import dash_core_components as dcc
@@ -389,8 +390,22 @@ app.layout = html.Div(children=[
         bulma_modal(id='spelregels',
                     content=[
                         html.Img(className='header-logo-modal', src='/images/game/{}'.format(GAME_LOGO)),
+
                         html.Br(),
-                        # # De regels
+                        html.H5("Wil je updates ontvangen van Data Science Lab en kans maken op de prijs? Laat dan je gegevens achter!"),
+                        bulma_field(label='Naam',
+                                    component=dcc.Input(id='input-user-name', className='input', type='text')
+                                    ),
+                        bulma_field(label='Emailadres',
+                                    component=dcc.Input(id='input-user-email', className='input', type='email')
+                                    ),
+                        html.Div(className='control', children=[
+                            html.Button(id='input-user-button', className='button is-info is-medium', children='Verzenden')
+                        ]),
+                        html.Div(id='output-acknowledge-user-data', children=''),
+
+                        html.Br(),
+                        # De regels
                         html.Ul(children=[
                             html.Li(TEXT['welcome_bullet1']),
                             html.Li(TEXT['welcome_bullet2']),
@@ -482,6 +497,31 @@ def start_game(_):
 
     return 'modal'
 
+
+@app.callback(
+    Output('output-acknowledge-user-data', 'children'),
+    [Input('input-user-button', 'n_clicks')],
+    [State('input-user-name', 'value'),
+     State('input-user-email', 'value')]
+)
+def send_user_data(n_clicks, user_name, user_email):
+    if n_clicks is None or n_clicks == 0:
+        return ''
+
+    data = {
+        'name': user_name,
+        'email': user_email,
+        'timestamp': str(datetime.now())
+    }
+    try:
+        filename = './data/user_data/{}.json'.format(re.sub('[^\w_.)( -]', '', user_name))
+        with open(filename, 'w') as f:
+            json.dump(data, f)
+        logging.info('User data saved to {}'.format(filename))
+        return 'Dank u'
+    except Exception as e:
+        logging.error(e)
+        return 'Mislukt'
 
 @app.callback(
     Output('spelregels-modal', 'className'),
