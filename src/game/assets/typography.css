@@ -15,7 +15,6 @@ input, div.Select, div.Select-input, div.Select-placeholder, div.Select-menu-out
 
 /*wie is het logos*/
 img.header-logo-modal {
-    margin-top: 10%;
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -33,6 +32,19 @@ img.header-logo-modal {
     transform: translate(-50%, -50%);
     background-color: rgb(222, 31, 63);
     color: white;
+}
+#input-user-button{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#output-acknowledge-user-data{
+    list-style: none;
+    text-align: center;
+    list-style-position: inside;
+    font-size: large;
+    color: rgb(222, 31, 63);
 }
 /*wie is het logo op board*/
 #level1-column1 > img{
@@ -104,10 +116,6 @@ img.character-image {
 div.modal button {
     margin-top: 30px;
     margin-bottom: 30px;
-}
-
-div#output-question-answer {
-    font-size: 200%;
 }
 
 div#spacer {
@@ -221,8 +229,10 @@ div#spacer {
     list-style: none;
     text-align: center;
     list-style-position: inside;
-    font-size: small;
+    margin-left: 10%;
+    margin-right: 10%;
     color: #4CAF50;
+    font-size: 200%;
 }
 
 /*player*/
@@ -279,4 +289,33 @@ div#spacer {
     margin-right: auto;
     background-color: rgb(222, 31, 63);
     color: white;
+}
+
+#spelregels-modal-content > h5{
+    margin-top: 5%;
+    margin-bottom: 5%;
+    width: 90%;
+    list-style: none;
+    text-align: center;
+    list-style-position: inside;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+#spelregels-modal-content > div:nth-child(4){
+    width: 70%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+#spelregels-modal-content > div:nth-child(5){
+    width: 70%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+#spelregels-modal-content > ul{
+    width: 90%;
 }

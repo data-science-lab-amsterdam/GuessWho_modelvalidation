@@ -343,7 +343,7 @@ app.layout = html.Div(children=[
                     ])
                 ]),
                 # Bottom part
-                html.Button(id='input-endturn-button', className='button is-info is-medium', n_clicks=0, children=TEXT['end_turn'])
+                html.Button(id='input-endturn-button', className='button is-succes is-medium', n_clicks=0, children=TEXT['end_turn'])
             ]),
             html.Div(id='column3', className='column is-one-fifth', children=[
                 html.Div(id='level1-column3', className='level', children=[
@@ -394,12 +394,10 @@ app.layout = html.Div(children=[
                         bulma_field(label='Naam',
                                     component=dcc.Input(id='input-user-name', className='input', type='text')
                                     ),
-                        bulma_field(label='Emailadres',
+                        bulma_field(label='E-mailadres',
                                     component=dcc.Input(id='input-user-email', className='input', type='email')
                                     ),
-                        bulma_center(
-                            html.Button(id='input-user-button', className='button is-info is-medium', children='Verzenden')
-                        ),
+                        html.Button(id='input-user-button', className='button is-info is-medium', children='Verzenden'),
                         html.Div(id='output-acknowledge-user-data', children=''),
 
                         html.Br(),
@@ -520,7 +518,7 @@ def send_user_data(n_clicks, user_name, user_email):
         return 'Dank u'
     except Exception as e:
         logging.error(e)
-        return 'Mislukt'
+        return 'Mislukt, probeer het nog een keer'
 
 @app.callback(
     Output('spelregels-modal', 'className'),
