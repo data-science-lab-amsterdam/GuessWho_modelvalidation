@@ -55,14 +55,18 @@ img.header-logo-modal {
 div.character-board {
 /*    width: 800px;
     height: 100px;*/
-    margin: 4px;
+    /*margin: 4px;*/
 }
 div.character-board div.panel-block {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    padding: 6px;
+    /*padding: 6px;*/
     color: white;
+}
+
+img {
+    border-radius: 5%;
 }
 
 div.panel > p.panel-heading {
@@ -70,6 +74,10 @@ div.panel > p.panel-heading {
     padding-bottom: 4px;
     font-weight: bold;
 
+}
+
+#computer-progress {
+    margin-bottom: 0rem;
 }
 
 div.character-board label.label { color: white; }
@@ -86,7 +94,7 @@ figcaption.character-caption {
 
 img.character-image {
     border: 2px solid white;
-    margin: 2px;
+    /*margin: 2px;*/
     width: 60px;
     height: 75px;
 }
@@ -111,10 +119,13 @@ div#spacer {
 
 #panel-computer-board{
     margin-bottom: 0px;
+}
+
+#panel-computer-board .panel-block {
     background-color: rgb(222, 31, 63);
 }
 
-#panel-player-board{
+#panel-player-board .panel-block {
     background-color: rgb(31, 147, 222);
 }
 
@@ -156,7 +167,7 @@ div#spacer {
     margin-bottom: 30px; 
 }
 #column2{
-    margin-top: 7%
+    margin-top: 2%
 }
 
 #waiting-modal > div.modal-content > div > div{
@@ -179,7 +190,7 @@ div#spacer {
   font-size: large;
 }
 #input-endturn-button{
-    margin-top: 10%;
+    margin-top: 5%;
     margin-left: 50%;
     margin-right: -50%;
     transform: translate(-50%, -50%);
@@ -190,8 +201,9 @@ div#spacer {
 /*#question-board-character{
     margin-left: 20%
 }*/
-#input-guess-button{
-    margin-left: 10%
+
+progress.progress {
+    border: 1px solid white;
 }
 
 #feedback-modal > div.modal-content > div > div{
@@ -246,10 +258,11 @@ div#spacer {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 60%;
+
 }
 #column3 > div.box{
     margin-top:50%;
+    margin-bottom: 0px;
 }
 #output-selected-character-speler{
     margin-top: 10%;
@@ -258,5 +271,4 @@ div#spacer {
     margin-right: auto;
     width: 50%;
     height: 60%;
-
 }

@@ -5,6 +5,7 @@ import os
 import math
 import re
 import json
+from datetime import datetime
 import logging
 import dash
 import dash_core_components as dcc
@@ -82,7 +83,7 @@ TEXT_NL = {
     'hair_colour': 'Haarkleur',
     'dark': 'donker', 'light': 'licht', 'none': 'geen',
     'hair_length': 'Haarlengte',
-    'short': 'kort', 'long': 'lang', 'too_short': 'too short',
+    'short': 'kort', 'long': 'lang', 'too_short': 'te kort',
     'hair_type': 'Haartype',
     'curly': 'krullend', 'straight': 'steil',
     'glasses': 'Bril',
@@ -118,8 +119,7 @@ TEXT_NL = {
     'welcome_bullet4': 'Klik op "Einde beurt" als je klaar bent',
     'start_game': "Let's play!",
     'start_rules': "Spelregels",
-    'already_moved': 'Je hebt al een vraag gesteld. \
-    Klik op "Einde beurt".',
+    'already_moved': 'Je hebt al een vraag gesteld. Klik op "Einde beurt".',
     'not': 'niet',
     'make_a_guess': '',
     'pick_a_character': 'De computer heeft ...'
@@ -128,7 +128,6 @@ TEXT_NL = {
 if LANG == 'nl':
     TEXT = TEXT_NL
     GAME_LOGO = 'wie-is-het-logo.jpg'
-    #GAME_LOGO = 'wie-is-het-logo-2.png'
 else:
     TEXT = TEXT_EN
     GAME_LOGO = 'guesswho_logo.png'
@@ -167,7 +166,7 @@ def get_character_options():
 
 
 def get_question_type_options():
-    return [{'label': TEXT[x], 'value': x} for x in questions.keys()]
+    return [{'label': TEXT[x].capitalize(), 'value': x} for x in questions.keys()]
 
 
 def get_question_value_options(question_type):
@@ -280,6 +279,11 @@ app.layout = html.Div(children=[
             ]),
 
             html.Div(id='column2', className='column is-three-fifth', children=[
+                # refresh button
+                bulma_center(
+                    html.Button(id='refresh-button', className="button is-medium is-danger", children='Refresh')
+                ),
+
                 # Computer player board
                 html.Div(id='level1-computer-board', className='level', children=[
                     html.Div(id='panel-computer-board', className='character-board panel', children=[
@@ -309,7 +313,7 @@ app.layout = html.Div(children=[
                             html.Div(className='column is-one-third', children=[
                                 bulma_field(label=[html.Span(className='is-invisible', children='.')],
                                             component=html.Button(id='input-question-button',
-                                                                  className='button is-info is-inverted',
+                                                                  className='button is-info',
                                                                   n_clicks=0,
                                                                   children=TEXT['ask']
                                                                   )
@@ -357,7 +361,7 @@ app.layout = html.Div(children=[
                         ]),
                     bulma_field(label=[html.Span(className='is-invisible', children='.')],
                                 component=html.Button(id='input-guess-button',
-                                                        className='button is-info is-inverted',
+                                                        className='button is-info',
                                                         n_clicks=0,
                                                         children=TEXT['guess']
                                                     )
@@ -386,8 +390,22 @@ app.layout = html.Div(children=[
         bulma_modal(id='spelregels',
                     content=[
                         html.Img(className='header-logo-modal', src='/images/game/{}'.format(GAME_LOGO)),
+
                         html.Br(),
-                        # # De regels
+                        html.H5("Wil je updates ontvangen van Data Science Lab en kans maken op de prijs? Laat dan je gegevens achter!"),
+                        bulma_field(label='Naam',
+                                    component=dcc.Input(id='input-user-name', className='input', type='text')
+                                    ),
+                        bulma_field(label='Emailadres',
+                                    component=dcc.Input(id='input-user-email', className='input', type='email')
+                                    ),
+                        bulma_center(
+                            html.Button(id='input-user-button', className='button is-info is-medium', children='Verzenden')
+                        ),
+                        html.Div(id='output-acknowledge-user-data', children=''),
+
+                        html.Br(),
+                        # De regels
                         html.Ul(children=[
                             html.Li(TEXT['welcome_bullet1']),
                             html.Li(TEXT['welcome_bullet2']),
@@ -452,7 +470,7 @@ def serve_images(path):
     Output('input-character-select', 'options'),
     [Input('update-characters-button', 'n_clicks')]
 )
-def update_image_dropdown_options():
+def update_image_dropdown_options(_):
     reset_game()
     return get_character_options()
 
@@ -461,7 +479,7 @@ def update_image_dropdown_options():
     Output('input-character-guess', 'options'),
     [Input('update-characters-button', 'n_clicks')]
 )
-def update_image_dropdown_options2():
+def update_image_dropdown_options2(_):
     reset_game()
     return get_character_options()
 
@@ -479,6 +497,32 @@ def start_game(_):
 
     return 'modal'
 
+
+@app.callback(
+    Output('output-acknowledge-user-data', 'children'),
+    [Input('input-user-button', 'n_clicks')],
+    [State('input-user-name', 'value'),
+     State('input-user-email', 'value')]
+)
+def send_user_data(n_clicks, user_name, user_email):
+    if n_clicks is None or n_clicks == 0:
+        return ''
+
+    data = {
+        'name': user_name,
+        'email': user_email,
+        'timestamp': str(datetime.now())
+    }
+    try:
+        filename = './data/user_data/{}.json'.format(re.sub('[^\w_.)( -]', '', user_name))
+        with open(filename, 'w') as f:
+            json.dump(data, f)
+        logging.info('User data saved to {}'.format(filename))
+        return 'Dank u'
+    except Exception as e:
+        logging.error(e)
+        return 'Mislukt'
+
 @app.callback(
     Output('spelregels-modal', 'className'),
     [Input('spelregels-modal-button', 'n_clicks')]
@@ -495,7 +539,7 @@ def spelregels(_):
 
 @app.callback(
     Output('output-dummy-2', 'value'),
-    [Input(component_id='input-computer-mode', component_property='value')]
+    [Input('input-computer-mode', 'value')]
 )
 def set_difficulty(difficulty):
     """
@@ -528,6 +572,7 @@ def select_character(name):
             game.set_computer_character(name)
             return img_src
     raise ValueError("Character '{}' not found".format(name))
+
 
 @app.callback(
     Output(component_id='output-selected-character-speler', component_property='src'),
@@ -569,10 +614,10 @@ def ask_question(_, question_type, question_value):
     if not ok:
         return TEXT['already_moved']
     else:
-        return '{}, klik nu op de characters in het blauwe speelboord waar {} {} niet {}'.format(
+        return '{}, klik nu op de karakters in het blauwe speelbord waar {} {}{} is'.format(
             (TEXT['yes'] if answer else TEXT['no']).capitalize(),
             TEXT[question_type].lower(),
-            'is' if answer else 'is {}'.format(TEXT['not']),
+            TEXT['not']+' ' if answer else '',
             TEXT[question_value],   
         )
 
@@ -592,13 +637,15 @@ def make_guess(_, character_name):
     ok, answer = guess_character(character_name)
     if not ok:
         logging.info("No answer received for guess")
-        return '9'
-    if answer:
+        state = '9'
+    elif answer:
         logging.info("Guess is correct! Player has won!")
-        return '1'
+        state = '1'
     else:
         logging.info("Guess is incorrect")
-        return '0'
+        state = '0'
+
+    return json.dumps({'state': state, 'timestamp': str(datetime.now())})
 
 
 @app.callback(
