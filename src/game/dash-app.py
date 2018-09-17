@@ -82,7 +82,7 @@ TEXT_NL = {
     'hair_colour': 'Haarkleur',
     'dark': 'donker', 'light': 'licht', 'none': 'geen',
     'hair_length': 'Haarlengte',
-    'short': 'kort', 'long': 'lang', 'too_short': 'too short',
+    'short': 'kort', 'long': 'lang', 'too_short': 'te kort',
     'hair_type': 'Haartype',
     'curly': 'krullend', 'straight': 'steil',
     'glasses': 'Bril',
@@ -118,8 +118,7 @@ TEXT_NL = {
     'welcome_bullet4': 'Klik op "Einde beurt" als je klaar bent',
     'start_game': "Let's play!",
     'start_rules': "Spelregels",
-    'already_moved': 'Je hebt al een vraag gesteld. \
-    Klik op "Einde beurt".',
+    'already_moved': 'Je hebt al een vraag gesteld. Klik op "Einde beurt".',
     'not': 'niet',
     'make_a_guess': '',
     'pick_a_character': 'De computer heeft ...'
@@ -128,7 +127,6 @@ TEXT_NL = {
 if LANG == 'nl':
     TEXT = TEXT_NL
     GAME_LOGO = 'wie-is-het-logo.jpg'
-    #GAME_LOGO = 'wie-is-het-logo-2.png'
 else:
     TEXT = TEXT_EN
     GAME_LOGO = 'guesswho_logo.png'
@@ -452,7 +450,7 @@ def serve_images(path):
     Output('input-character-select', 'options'),
     [Input('update-characters-button', 'n_clicks')]
 )
-def update_image_dropdown_options():
+def update_image_dropdown_options(_):
     reset_game()
     return get_character_options()
 
@@ -461,7 +459,7 @@ def update_image_dropdown_options():
     Output('input-character-guess', 'options'),
     [Input('update-characters-button', 'n_clicks')]
 )
-def update_image_dropdown_options2():
+def update_image_dropdown_options2(_):
     reset_game()
     return get_character_options()
 
@@ -569,10 +567,10 @@ def ask_question(_, question_type, question_value):
     if not ok:
         return TEXT['already_moved']
     else:
-        return '{}, klik nu op de characters in het blauwe speelboord waar {} {} niet {}'.format(
+        return '{}, klik nu op de karakters in het blauwe speelbord waar {} {}{} is'.format(
             (TEXT['yes'] if answer else TEXT['no']).capitalize(),
             TEXT[question_type].lower(),
-            'is' if answer else 'is {}'.format(TEXT['not']),
+            TEXT['not']+' ' if answer else '',
             TEXT[question_value],   
         )
 
