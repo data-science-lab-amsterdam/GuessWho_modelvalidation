@@ -466,6 +466,22 @@ def update_image_dropdown_options2(_):
 
 
 @app.callback(
+    Output('computer-board', 'children'),
+    [Input('update-characters-button', 'n_clicks')]
+)
+def update_computer_board(_):
+    return render_board_characters(player_id=1)
+
+
+@app.callback(
+    Output('player-board', 'children'),
+    [Input('update-characters-button', 'n_clicks')]
+)
+def update_player_board(_):
+    return render_board_characters(player_id=2)
+
+
+@app.callback(
     Output('intro-modal', 'className'),
     [Input('intro-modal-button', 'n_clicks')]
 )
@@ -508,6 +524,7 @@ def send_user_data(n_clicks, user_name, user_email):
     except Exception as e:
         logging.error(e)
         return 'Mislukt, probeer het nog een keer'
+
 
 @app.callback(
     Output('spelregels-modal', 'className'),

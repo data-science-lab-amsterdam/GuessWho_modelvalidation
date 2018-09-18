@@ -50,6 +50,7 @@ class GuessWhoGame:
     }
 
     def __init__(self, data_dir):
+        logging.info("Game reset")
         self.data_dir = data_dir
         self.data = self._read_data()
 
@@ -68,7 +69,8 @@ class GuessWhoGame:
     def _read_data(self):
         all_data = []
         filenames = Path(self.data_dir).glob('*.json')
-        most_recent_files = sorted([str(f) for f in filenames], key=os.path.getmtime)[-self.NUM_CHARACTERS:]
+        most_recent_files = sorted([str(f) for f in filenames], key=os.path.getmtime, reverse=True)[:self.NUM_CHARACTERS]
+        logging.info('Most recent file: {}'.format(most_recent_files[0]))
         for filename in most_recent_files:
             with open(str(filename), 'r') as f:
                 data = json.loads(f.read())
@@ -146,6 +148,8 @@ class GuessWhoGame:
             logging.warning("Player has already made a move and needs to end its turn")
             return False, None
 
+        logging.info('True character id: {}'.format(player_character['id']))
+        logging.info('Guessed character id: {}'.format(guessed_character['id']))
         answer = player_character['id'] == guessed_character['id']
         self.player_has_made_a_move = True
         return True, answer

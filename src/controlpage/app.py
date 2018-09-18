@@ -207,7 +207,6 @@ app.layout = html.Div([
         html.Div('', id='spacer-top'),
 
         # Choose image
-        html.Div(className='container is-fluid'),
         bulma_columns(
             components=[
                 html.Button('Update', id='update-button', className='button is-info', n_clicks=0),
@@ -221,32 +220,36 @@ app.layout = html.Div([
             ],
             extra_classes=['', 'has-text-right', 'is-half', '']
         ),
-        bulma_columns([
-            '',
-            html.Figure(className="image", children=[
-                html.Caption(className="caption", children="Original image"),
-                html.Img(id='image', src='/images/controlpage/dummy.png'),
+
+        html.Div(className='box', children=[
+            # image placeholders
+            bulma_columns([
+                '',
+                html.Figure(className="image", children=[
+                    html.Caption(className="caption", children="Original image"),
+                    html.Img(id='image', src='/images/controlpage/dummy.png'),
+                ]),
+                html.Figure(className="image", children=[
+                    html.Caption(className="caption", children="Detected face"),
+                    html.Img(id='cropped-image', src='/images/controlpage/dummy.png'),
+                ]),
+                ''
             ]),
-            html.Figure(className="image", children=[
-                html.Caption(className="caption", children="Detected face"),
-                html.Img(id='cropped-image', src='/images/controlpage/dummy.png'),
+
+            # hidden json data containers
+            html.Div(id='data-container', accessKey='{}'),
+
+            # field for character name
+            bulma_columns([
+                html.Label(className='label field-label has-text-right', children='Naam'),
+                dcc.Input(id='input-character-name', className='input', type='text', value='', placeholder='Voer naam in voor karakter...', maxlength=10),
+                html.Div('')
             ]),
-            ''
-        ]),
 
-        # hidden json data containers
-        html.Div(id='data-container', accessKey='{}'),
-
-        # field for character name
-        bulma_columns([
-            html.Label(className='label field-label has-text-right', children='Naam'),
-            dcc.Input(id='input-character-name', className='input', type='text', value='', placeholder='Voer naam in voor karakter...', maxlength=10),
-            html.Div('')
-        ]),
-
-        # dropdown field for features
-        html.Div([
-            show_field_row(field) for field in feature_data
+            # dropdown field for features
+            html.Div([
+                show_field_row(field) for field in feature_data
+            ]),
         ]),
 
         # save button
