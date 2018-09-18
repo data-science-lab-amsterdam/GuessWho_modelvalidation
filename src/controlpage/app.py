@@ -277,9 +277,10 @@ app.layout = html.Div([
     # footer
     html.Footer(className="footer", children=[
         bulma_columns([
+            bulma_figure("/images/controlpage/python-logo-generic.svg"),
             bulma_figure("/images/controlpage/tensorflow-logo.png"),
             bulma_figure("/images/controlpage/dash-logo-stripe.svg"),
-            bulma_figure("/images/controlpage/python-logo-generic.svg"),
+            bulma_figure("/images/controlpage/bulma_logo.png"),
             bulma_figure("/images/game/Logo_datasciencelab.png")
         ])
     ])
