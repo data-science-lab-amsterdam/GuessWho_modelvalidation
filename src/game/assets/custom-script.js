@@ -243,7 +243,7 @@ var handleGuessAnswer = function()
         });
     } else if (state == '0') {
         showModal('feedback-modal', {
-            'text': text['guess_incorrect'],
+            'text': '<h5>' + text['guess_incorrect'] + '</h5> <img src="/images/game/wrong.jpg"><p>Klik op "Einde beurt"</p>',
             'style': 'is-danger',
             'button-text': text['ok'],
             'callback': function() {
