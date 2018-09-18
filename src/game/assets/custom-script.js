@@ -58,8 +58,8 @@ var text_nl = {
     'beard': 'baard', 'moustache': 'snor',
     'accessories': 'accessoires',
     'chain': 'kettinkje', 'necklace': 'ketting',
-    'computer_has_won': 'Helaas... De computer heeft zijn karakter geraden en het spel gewonnen!',
-    'player_has_won': 'Gefeliciteerd! Je hebt het juiste karakter geraden en het spel gewonnen!',
+    'computer_has_won': 'Helaas...<br>De computer heeft zijn karakter geraden en het spel gewonnen!',
+    'player_has_won': 'Gefeliciteerd!<br>Je hebt het juiste karakter geraden en het spel gewonnen!',
     'computer_question': 'Vraag van de computer',
     'answer': 'Antwoord',
     'yes': 'Ja',
@@ -111,9 +111,10 @@ var endGame = function(winner)
     closeModal('waiting-modal');
     document.getElementById('end-modal-content').innerHTML = (
         winner == 'computer' ?
-        text['computer_has_won'] :
-        text['player_has_won']
+        '<h5>' + text['computer_has_won'] + '</h5> <img src="/images/game/game_over.jpg">' :
+        '<h5>' + text['player_has_won'] + '</h5> <img src="/images/game/winner.png">'
     );
+
     btn_class = (winner == 'computer' ? 'is-danger' : 'is-succes')
     document.getElementById('end-modal-button').className = 'button is-medium '+btn_class;
     document.getElementById('end-modal').className = 'modal is-active';
@@ -233,7 +234,7 @@ var handleGuessAnswer = function()
     console.log(state);
     if (state == '1') {
         showModal('feedback-modal', {
-            'text': text['player_has_won'],
+            'text': '<h5>' + text['player_has_won'] + '</h5> <img src="/images/game/winner.png">',
             'style': 'is-success',
             'button-text': text['ok'],
             'callback': function() {
