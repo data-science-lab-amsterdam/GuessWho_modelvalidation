@@ -47,7 +47,7 @@ var text_nl = {
     'hair_length': 'haarlengte',
     'short': 'kort', 'long': 'lang', 'bald': 'kaal',
     'hair_type': 'haartype',
-    'curly': 'krullend', 'straight': 'steil', 'too_short': 'te kort',
+    'curly': 'krullend', 'straight': 'steil', 'too_short': 'ondefiniëerbaar',
     'glasses': 'bril',
     'yes': 'ja', 'no': 'nee',
     'head wear': 'hoofddeksel',
