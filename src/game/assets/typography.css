@@ -280,7 +280,7 @@ progress.progress {
 
 }
 #column3 > div.box{
-    margin-top:190%;
+    margin-top:110%;
     margin-bottom: 0px;
     text-align: center;
 
@@ -289,12 +289,12 @@ progress.progress {
     text-align: center;
 }
 #output-selected-character-speler{
-    margin-top: 115%;
+    margin-top: 70%;
     display: block;
     margin-left: auto;
     margin-right: auto;
     width: 55%;
-    height: 65%;
+/*    height: 65%;*/
 }
 #refresh-button{
     margin-top: 35%;
@@ -332,6 +332,10 @@ progress.progress {
 }
 #spelregels-modal-content > ul{
     width: 90%;
+}
+#feedback-modal-content > img{
+    margin-top: 7%;
+    margin-bottom: 7%;
 }
 #feedback-modal > div.modal-content > div > div{
     margin-left: auto;

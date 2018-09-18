@@ -101,7 +101,7 @@ TEXT_NL = {
     'select_character': 'Selecteer een awesome avatar',
     'select_question': '',
     'category': 'Kies een categorie',
-    'options': 'selecteer een optie',
+    'options': 'Kies een optie',
     'ask': 'Stel deze vraag',
     'guess': 'Raad deze speler',
     'answer': '',
