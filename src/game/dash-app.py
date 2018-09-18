@@ -1,6 +1,5 @@
 
 import numpy as np
-import glob
 import os
 import math
 import re
@@ -11,10 +10,11 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
-from pathlib import Path
 import flask
+
 from guesswho import *
-from question_answer import Answers
+from question_answer import answers
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -23,11 +23,6 @@ CHECKED_IMAGES_DIR = './data/images/faces_checked'
 
 game = GuessWhoGame(data_dir='./data/labels_checked')
 
-# characters = [
-#     {'name': os.path.splitext(os.path.basename(filename))[0].split('-')[0],
-#      'file': filename
-#      } for filename in glob.glob('./images/*.jpg')
-# ]
 characters = game.get_characters()
 questions = game.PROPERTIES
 initial_hidden_state = json.dumps({c['id']: True for c in characters})
@@ -136,24 +131,6 @@ else:
     GAME_LOGO = 'guesswho_logo.png'
 
 
-def create_test_data(out_file):
-    idx = 0
-    data = []
-    for c in characters:
-        idx += 1
-        x = c
-        x['id'] = idx
-        x['properties'] = {}
-        for k, v in questions.items():
-            choice = np.random.randint(0, len(v))
-            x['properties'][k] = v[choice]
-        data.append(x)
-    with open(out_file, 'w') as f:
-        json.dump(data, f)
-
-
-#create_test_data('./guesswho/data/test.json')
-
 def reset_game():
     global game
     global characters
@@ -261,6 +238,12 @@ def bulma_modal(id, content=None, btn_text='OK', btn_class='is-info', active=Fal
     ])
 
 
+###########################
+#
+# START MAIN SCRIPT
+#
+# #########################
+
 app = dash.Dash()
 app.css.config.serve_locally = True
 app.scripts.config.serve_locally = True
@@ -299,7 +282,7 @@ app.layout = html.Div(children=[
                         ])
                     ])
                 ]),
-                # start questoin board
+                # start question board
                 # html.Div(id='level3-question-board', className='box', children=[
                     html.Div(id='question-board-question', className='columns has-text-centered', children=[
                             html.Div(className='column is-one-third', children=[
@@ -617,14 +600,7 @@ def ask_question(_, question_type, question_value):
     if not ok:
         return TEXT['already_moved']
     else:
-        print(answer)
-        return 
-        '{}, '.format(
-            (TEXT['yes'] if answer else TEXT['no']).capitalize(),
-            Answers[question_type][answer].lower()
-            # TEXT['not']+' ' if answer else '',
-            # TEXT[question_value],   
-        )
+        return answers[question_type][question_value][str(answer).lower()]
 
 
 @app.callback(
