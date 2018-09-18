@@ -14,6 +14,7 @@ from dash.dependencies import Input, Output, State
 from pathlib import Path
 import flask
 from guesswho import *
+from question_answer import Answers
 
 logging.basicConfig(level=logging.INFO)
 
@@ -114,7 +115,7 @@ TEXT_NL = {
     'end_game': 'Spel afsluiten',
     'waiting_for_computer': 'De computer is nu aan de beurt...',
     'welcome_header': '',
-    'welcome_bullet1': 'Begint het spel door een categorie en optie te kiezen',
+    'welcome_bullet1': 'Begin het spel door een categorie en optie te kiezen',
     'welcome_bullet2': 'Stel je vraag en wacht op antwoord',
     'welcome_bullet3': 'Klik de spelers weg die niet aan het antwoord voldoen',
     'welcome_bullet4': 'Klik op "Einde beurt" als je klaar bent',
@@ -616,11 +617,13 @@ def ask_question(_, question_type, question_value):
     if not ok:
         return TEXT['already_moved']
     else:
-        return '{}, klik nu op de karakters in het blauwe speelbord waar {} {}{} is'.format(
+        print(answer)
+        return 
+        '{}, '.format(
             (TEXT['yes'] if answer else TEXT['no']).capitalize(),
-            TEXT[question_type].lower(),
-            TEXT['not']+' ' if answer else '',
-            TEXT[question_value],   
+            Answers[question_type][answer].lower()
+            # TEXT['not']+' ' if answer else '',
+            # TEXT[question_value],   
         )
 
 

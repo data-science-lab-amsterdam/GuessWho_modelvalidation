@@ -1,0 +1,10 @@
+Answers = {'hair_colour': {'dark': 'De haarkleur is donker', 'light': 'De haarkleur is licht', 
+        'too_short': 'Sorry, het haar is te kort om lengte te classificeren'},
+    'hair_length': {'short': 'De haarklengte is kort', 'long': 'De haarklengte is lang'},
+    'haar_type': {'curly':'Het haar is krullend', 'straight': 'Het haar is stijl', 
+    'too_short': 'Sorry, het haar is te kort om het type te defineren'},
+    'glasses': {'yes': 'Het character heeft een bril', 'no': 'Het character heeft geen bril'},
+    'hat': {'yes': 'Het character heeft een hoed', 'no': 'Het character heeft geen hoed'},
+    'gender': {'male': 'het character is een man', 'female': 'het character is een vrouw'},
+    'facial_hair': {'yes', 'het character heeft gezichtsbeharing', 'no': 'het character heeft geen gezichtsbeharing'},
+    'tie': {'yes', 'het character heeft stropdas', 'no', 'het character heeft geen stropdas'}}
