@@ -1,5 +1,3 @@
-
-import numpy as np
 import os
 import math
 import re
@@ -11,6 +9,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 import flask
+from urllib.parse import quote
 
 from guesswho import *
 from question_answer import answers
@@ -171,7 +170,7 @@ def guess_character(name):
 def render_board_characters(player_id, num_per_row=9):
     elements = [[] for _ in range(math.ceil(len(characters)/num_per_row))]
     for i, c in enumerate(characters):
-        img_src = re.sub('^data', '', c['url'])
+        img_src = quote(re.sub('^data', '', c['url']))
         elm = html.Div(className='column', children=[
             html.A(
                 id='a-p{}-character-{}'.format(player_id, c['id']),
