@@ -65,7 +65,7 @@ var text_nl = {
     'yes': 'Ja',
     'no': 'Nee',
     'ok': 'OK',
-    'guess_incorrect': 'Helaas, je hebt verkeerd geraden...',
+    'guess_incorrect': 'Helaas, je hebt verkeerd geraden, klik "Einde beurt"...',
     'already_moved': 'Je hebt al een vraag gesteld. Klik op "Einde beurt"',
     'button_already_moved': 'Sorry. Ik zal niet meer vals proberen te spelen...',
     'waiting': 'Wachten op de beurt van de computer...'
