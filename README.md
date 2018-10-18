@@ -1,6 +1,6 @@
 # Guess Who - Modelvalidation
 
-### a practical guide on how to create an application to bring a machine learning model into production, using Dash. 
+### A practical guide on how to create an application to bring a machine learning model into production, using Dash. 
 ##### backround information in this repo can be found in this blog:
 
 #### Preparation
