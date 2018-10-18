@@ -25,61 +25,61 @@ current_image_data = None
 
 feature_data = [
     {
-        'label': 'Haarkleur',
+        'label': 'Hair colour',
         'value': 'hair_colour',
         'options': [
             {'label': 'licht', 'value': 'light'},
-            {'label': 'donker', 'value': 'dark'},
+            {'label': 'Dark', 'value': 'dark'},
             {'label': 'te kort', 'value': 'too_short'}
         ]
     }, {
-        'label': 'Haartype',
+        'label': 'Hair type',
         'value': 'hair_type',
         'options': [
             {'label': 'krullend', 'value': 'curly'},
-            {'label': 'stijl', 'value': 'straight'},
+            {'label': 'Straight', 'value': 'straight'},
             {'label': 'te kort', 'value': 'too_short'}
         ]
     }, {
-        'label': 'Haarlengte',
+        'label': 'Hair length',
         'value': 'hair_length',
         'options': [
             {'label': 'kort', 'value': 'short'},
-            {'label': 'lang', 'value': 'long'}
+            {'label': 'Long', 'value': 'long'}
         ]
     }, {
-        'label': 'Geslacht',
+        'label': 'Gender',
         'value': 'gender',
         'options': [
             {'label': 'man', 'value': 'male'},
-            {'label': 'vrouw', 'value': 'female'}
+            {'label': 'Female', 'value': 'female'}
         ]
     }, {
-        'label': 'Hoofddeksel',
+        'label': 'Hat',
         'value': 'hat',
         'options': [
-            {'label': 'ja', 'value': 'yes'},
-            {'label': 'nee', 'value': 'no'}
+            {'label': 'Yes', 'value': 'yes'},
+            {'label': 'No', 'value': 'no'}
         ]
     }, {
-        'label': 'Bril',
+        'label': 'Glasses',
         'value': 'glasses',
         'options': [
-            {'label': 'ja', 'value': 'yes'},
-            {'label': 'nee', 'value': 'no'}
+            {'label': 'Yes', 'value': 'yes'},
+            {'label': 'No', 'value': 'no'}
         ]
     }, {
-        'label': 'Stropdas',
+        'label': 'Tie',
         'value': 'tie',
         'options': [
-            {'label': 'ja', 'value': 'yes'},
-            {'label': 'nee', 'value': 'no'}
+            {'label': 'Yes', 'value': 'yes'},
+            {'label': 'No', 'value': 'no'}
         ]
     }, {
-        'label': 'Gezichtsbeharing',
+        'label': 'Facial hair',
         'value': 'facial_hair',
         'options': [
-            {'label': 'ja', 'value': 'yes'},
+            {'label': 'Yes', 'value': 'yes'},
             {'label': 'nee', 'value': 'no'}
         ]
     }
@@ -210,13 +210,13 @@ app.layout = html.Div([
         bulma_columns(
             components=[
                 html.Button('Update', id='update-button', className='button is-info', n_clicks=0),
-                html.H1(children='Kies een foto'),
+                html.H1(children='Choose image'),
                 dcc.Dropdown(
                     id='image-dropdown',
                     options=get_image_dropdown_options(),
                     value=''
                 ),
-                html.Button('Start analyse', id='start-model-button', className='button is-info', n_clicks=0)
+                html.Button('Start analysing', id='start-model-button', className='button is-info', n_clicks=0)
             ],
             extra_classes=['', 'has-text-right', 'is-half', '']
         ),
@@ -241,8 +241,8 @@ app.layout = html.Div([
 
             # field for character name
             bulma_columns([
-                html.Label(className='label field-label has-text-right', children='Naam'),
-                dcc.Input(id='input-character-name', className='input', type='text', value='', placeholder='Voer naam in voor karakter...', maxlength=10),
+                html.Label(className='label field-label has-text-right', children='Name'),
+                dcc.Input(id='input-character-name', className='input', type='text', value='', placeholder='Enter a name for the avatar...', maxlength=10),
                 html.Div('')
             ]),
 
@@ -255,7 +255,7 @@ app.layout = html.Div([
         # save button
         bulma_center(
             html.Div([
-                html.Button('Opslaan', id='save-button', className='button is-medium is-success', n_clicks=0)
+                html.Button('Save', id='save-button', className='button is-medium is-success', n_clicks=0)
             ])
         ),
 
