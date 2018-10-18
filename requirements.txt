@@ -7,3 +7,4 @@ dash-html-components>=0.11.0
 face-recognition>=1.2.2
 face-recognition-models>=0.3.0 
 scikit-image>=0.14.0 
+tensorflow>=1.11
