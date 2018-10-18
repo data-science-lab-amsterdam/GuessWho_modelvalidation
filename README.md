@@ -1,14 +1,17 @@
-# Big Data Expo 2018 - Guess Who game
+# Guess Who - Modelvalidation
 
-### How to run the page
+### a practical guide on how to create an application to bring a machine learning model into production, using Dash. 
+##### backround information in this repo can be found in this blog:
 
-#### Voorbereiding
+#### Preparation
 * clone this repo to your machine
-* `git clone http://git.datasciencelab.nl/intern/Expo2018.git`
-* `cd to repo`
+* `git clone https://github.com/data-science-lab-amsterdam/GuessWho_modelvalidation.git`
 * Create an enviroment with python >= 3.6 (conda example below)
 * `conda create -n modelvalidation python=3.6`
 * `source activate modelvalidation`
 * installeer de requirements
 * `pip install -r requirements.txt`
 
+#### Run the application
+* `cd to repo`
+* `python src/validation/app.py` 
