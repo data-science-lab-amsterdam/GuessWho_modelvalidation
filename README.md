@@ -9,7 +9,7 @@
 * Create an enviroment with python >= 3.6 (conda example below)
 * `conda create -n modelvalidation python=3.6`
 * `source activate modelvalidation`
-* installeer de requirements
+* Install the requirements
 * `pip install -r requirements.txt`
 
 #### Run the application
