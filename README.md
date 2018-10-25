@@ -4,7 +4,7 @@
 ##### backround information in this repo can be found in this blog:
 
 #### Preparation
-* clone this repo to your machine
+* Clone this repo to your machine
 * `git clone https://github.com/data-science-lab-amsterdam/GuessWho_modelvalidation.git`
 * Create an enviroment with python >= 3.6 (conda example below)
 * `conda create -n modelvalidation python=3.6`
